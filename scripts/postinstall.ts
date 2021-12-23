@@ -1,5 +1,5 @@
-import 'dotenv/config';
-import * as child_process from 'child_process';
+import "dotenv/config";
+import * as child_process from "child_process";
 
 // Uncommment to rename the application binaries on postinstall.
 //const {APP_DISPLAY_NAME} = process.env;
@@ -14,7 +14,15 @@ import * as child_process from 'child_process';
 //  {stdio: 'inherit'}
 //);
 
-child_process.execSync('npx patch-package', { stdio: 'inherit' });
+child_process.execSync("npx patch-package", { stdio: "inherit" });
+
+child_process.execSync(
+  "rm -rf node_modules/@rainbow-me/animated-charts/node_modules/react-native-gesture-handler"
+);
+
+child_process.execSync(
+  "rm -rf node_modules/@walletconnect/react-native-dapp/node_modules/react-native-svg"
+);
 
 // Uncomment to reinstall pods on postinstall.
 // import {macos} from 'platform-detect';

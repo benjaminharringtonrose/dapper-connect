@@ -46,7 +46,7 @@ const App = () => {
     return null;
   }
   return (
-    <GestureHandlerRootView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
         <Host>
           <Root />

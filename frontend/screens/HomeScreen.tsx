@@ -4,7 +4,7 @@ import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 
-import { BalanceInfo, IconTextButton } from "../components";
+import { BalanceInfo, Chart, IconTextButton } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { mockHoldings } from "../constants/mock";
 import { useAppDispatch, useAppSelector } from "../hooks";
@@ -57,8 +57,6 @@ const HomeScreen = () => {
       console.log(e);
     }
   };
-
-  console.log(connector.connected);
 
   function renderWalletInfoSection() {
     return (
@@ -123,12 +121,12 @@ const HomeScreen = () => {
         {/* Header - Wallet Info */}
         {/* {renderWalletInfoSection()} */}
         {/* Chart */}
-        {/* <Chart
+        <Chart
           containerStyle={{ marginTop: SIZES.padding * 2 }}
           chartPrices={
             selectedCoin ? selectedCoin?.sparkline_in_7d?.price : coins[0]?.sparkline_in_7d.price
           }
-        /> */}
+        />
         {/* Top Cryptocurrency */}
         <FlatList
           data={coins}

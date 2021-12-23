@@ -94,7 +94,7 @@
     "test": "npx hardhat test && jest",
     "web:deploy": "expo build:web && gh-pages -d web-build",
     "pods": "cd ios && pod install && cd ..",
-    "nuke": "rm -rf node_modules && yarn && yarn pods"
+    "nuke": "rm -rf node_modules && npm i && npm run pods"
   },
   "version": "1.0.0",
   "private": true,
