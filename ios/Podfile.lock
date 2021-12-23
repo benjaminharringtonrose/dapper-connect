@@ -3,11 +3,11 @@ PODS:
   - DoubleConversion (1.1.6)
   - EXApplication (4.0.1):
     - ExpoModulesCore
-  - EXConstants (12.1.3):
+  - EXConstants (13.0.0):
     - ExpoModulesCore
   - EXErrorRecovery (3.0.4):
     - ExpoModulesCore
-  - EXFileSystem (13.0.3):
+  - EXFileSystem (13.1.0):
     - ExpoModulesCore
   - EXFont (10.0.4):
     - ExpoModulesCore
@@ -16,21 +16,22 @@ PODS:
     - ExpoModulesCore
   - EXManifests (0.2.2):
     - EXJSONUtils
-  - Expo (43.0.4):
+  - Expo (44.0.1):
     - ExpoModulesCore
-  - ExpoModulesCore (0.4.9):
+  - ExpoModulesCore (0.6.3):
     - React-Core
-  - EXSplashScreen (0.13.5):
+    - ReactCommon/turbomodule/core
+  - EXSplashScreen (0.14.1):
     - ExpoModulesCore
     - React-Core
-  - EXStructuredHeaders (2.0.0)
-  - EXUpdates (0.10.15):
+  - EXStructuredHeaders (2.1.0)
+  - EXUpdates (0.11.3):
     - EXManifests
     - ExpoModulesCore
     - EXStructuredHeaders
     - EXUpdatesInterface
     - React-Core
-  - EXUpdatesInterface (0.4.0)
+  - EXUpdatesInterface (0.5.0)
   - FBLazyVector (0.64.3)
   - FBReactNativeSpec (0.64.3):
     - RCT-Folly (= 2020.01.13.00)
@@ -233,8 +234,8 @@ PODS:
     - React-jsi (= 0.64.3)
     - React-perflogger (= 0.64.3)
   - React-jsinspector (0.64.3)
-  - react-native-get-random-values (1.5.0):
-    - React
+  - react-native-get-random-values (1.7.2):
+    - React-Core
   - react-native-safe-area-context (3.3.2):
     - React-Core
   - React-perflogger (0.64.3)
@@ -301,11 +302,13 @@ PODS:
     - React-cxxreact (= 0.64.3)
     - React-jsi (= 0.64.3)
     - React-perflogger (= 0.64.3)
-  - RNCAsyncStorage (1.13.4):
+  - RNCAsyncStorage (1.15.14):
     - React-Core
-  - RNGestureHandler (1.10.3):
+  - RNCMaskedView (0.1.11):
+    - React
+  - RNGestureHandler (2.1.0):
     - React-Core
-  - RNReanimated (2.2.4):
+  - RNReanimated (2.3.1):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -331,13 +334,12 @@ PODS:
     - React-RCTNetwork
     - React-RCTSettings
     - React-RCTText
-    - React-RCTVibration
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.8.0):
+  - RNScreens (3.10.1):
     - React-Core
     - React-RCTImage
-  - RNSVG (9.6.4):
+  - RNSVG (12.1.1):
     - React
   - Yoga (1.14.0)
 
@@ -388,6 +390,7 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -487,6 +490,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNCMaskedView:
+    :path: "../node_modules/@react-native-community/masked-view"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNReanimated:
@@ -502,19 +507,19 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   EXApplication: bdc8dc27713235565da1029a34385229f31b8e08
-  EXConstants: 6d585d93723b18d7a8c283591a335609e3bc153e
+  EXConstants: 5d18484e38e8eacef7695a82214b6ac90133dedf
   EXErrorRecovery: deea88a01d38f8b1c1181b4e1d179b0ba0e4bb5b
-  EXFileSystem: 99aac7962c11c680681819dd9cbca24e20e5b1e7
+  EXFileSystem: 7d1309ba6b38b82ef7fc9e80174de3f9184ac8b4
   EXFont: 1fb13af43dc517c01c0ff21a6e32f9f9bf2ea602
   EXJSONUtils: f515cf71710855d7ba5bfc6752af3b9a6f6aad01
   EXKeepAwake: b571c2ad8323b2fced6e907766e2549f75119471
   EXManifests: 50e42e01335df4e54109dee7be5a91bfd37347db
-  Expo: 363a3f3c60d5a1d4f8badb29a869005487f2d9e4
-  ExpoModulesCore: e41ed0b72daeac74731816ad7997d639f0115a9d
-  EXSplashScreen: 57f329dbf25c5c12800feed79068a056453dc772
-  EXStructuredHeaders: 873e7f329c2f6279c1b1e0229df59c9861560b53
-  EXUpdates: 061b67c33f0e7f8fd335bbb48697c4a4fc8a5157
-  EXUpdatesInterface: e1c01b4f5ec76bd1d6cc714938f9edf5ef6379b9
+  Expo: f8cd8811d9aee5bc651a3285e1101358db610e0d
+  ExpoModulesCore: d04e519b3e8e21523b195bb21a40144e30f1e163
+  EXSplashScreen: 7872675b95bb07c25f922b3d3dfae70c76fb5a00
+  EXStructuredHeaders: 2ce79a3770bd3795bade1aab215ada70deae8bbc
+  EXUpdates: 98b9e647ce7a0e9d5ab67135bf42188c750a99eb
+  EXUpdatesInterface: f459b515151bd73fff7a35366eace34a6c6a0d3f
   FBLazyVector: c71c5917ec0ad2de41d5d06a5855f6d5eda06971
   FBReactNativeSpec: 8f6ca650f85cc1a622ee41045532632a2a08c725
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
@@ -529,7 +534,7 @@ SPEC CHECKSUMS:
   React-jsi: a8b09c29521c798f1783348b37b511ba7b3dbeb3
   React-jsiexecutor: df6abc9fafbecb8e5b7a5fbc5e6d4bd017d594d5
   React-jsinspector: 34e23860273a23695342f58eed3ffd3ba10c31e0
-  react-native-get-random-values: 1404bd5cc0ab0e287f75ee1c489555688fc65f89
+  react-native-get-random-values: 30b3f74ca34e30e2e480de48e4add2706a40ac8f
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   React-perflogger: cc76a4254d19640f1d8ad1c66fdee800414b805c
   React-RCTActionSheet: 7448f049318d8d7e8a9a1ebb742ada721757eea8
@@ -543,11 +548,12 @@ SPEC CHECKSUMS:
   React-RCTVibration: c7f845861e79eae13dc1e8217a3cf47a3945b504
   React-runtimeexecutor: 493d9abb8b23c3f84e19ae221eeba92cadcb70dc
   ReactCommon: 8fea6422328e2fc093e25c9fac67adbcf0f04fb4
-  RNCAsyncStorage: 44539979e1f234262d64d3ce86ec21cceb1b2c5e
-  RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
-  RNReanimated: 024eff8202342abf4b24e11575a16afc441dabfe
-  RNScreens: 6e1ea5787989f92b0671049b808aef64fa1ef98c
-  RNSVG: a53a5de0d90ec96a6502cc3a4534dfcc0c130622
+  RNCAsyncStorage: ea6b5c280997b2b32a587793163b1f10e580c4f7
+  RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
+  RNGestureHandler: e5c7cab5f214503dcefd6b2b0cefb050e1f51c4a
+  RNReanimated: 7f143675d94978c3555345d5bfa8ed6ae800c5d3
+  RNScreens: 522705f2e5c9d27efb17f24aceb2bf8335bc7b8e
+  RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   Yoga: e6ecf3fa25af9d4c87e94ad7d5d292eedef49749
 
 PODFILE CHECKSUM: 933e57e7ce39654c50519b147126e85cef58cf4a

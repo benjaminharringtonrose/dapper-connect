@@ -12,7 +12,6 @@ import {
   View,
 } from "react-native";
 import * as Yup from "yup";
-import "@tensorflow/tfjs-react-native";
 
 import { BalanceInfo, Chart } from "../components";
 import { COLORS, FONTS, icons, mockData, SIZES } from "../constants";
