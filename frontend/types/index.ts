@@ -50,3 +50,67 @@ export interface MeasureLayout {
   width: number;
   height: number;
 }
+
+export interface Token {
+  balance: number;
+  rawBalance: string;
+  tokenInfo: {
+    address: string;
+    coingecko: string;
+    decimals: string;
+    description: string;
+    ethTransferCount: number;
+    holdersCount: number;
+    image: string;
+    issuancesCount: number;
+    lastUpdated: number;
+    name: string;
+    owner: string;
+    price: {
+      availableSupply: number;
+      currency: string;
+      diff: number;
+      diff30d: number;
+      diff7d: number;
+      marketCapUsd: number;
+      rate: number;
+      ts: number;
+      volDiff1: number;
+      volDiff30: number;
+      volDiff7: number;
+      volume24h: number;
+    };
+    publicTags: string[];
+    reddit: string;
+    slot: number;
+    symbol: string;
+    telegram: string;
+    totalSupply: string;
+    twitter: string;
+    website: string;
+  };
+  totalIn: number;
+  totalOut: number;
+}
+
+export interface Account {
+  ETH: {
+    balance: number;
+    price: {
+      availableSupply: number;
+      diff: number;
+      diff30d: number;
+      diff7d: number;
+      marketCapUsd: number;
+      rate: number;
+      ts: number;
+      volDiff1: number;
+      volDiff30: number;
+      volume24h: number;
+    };
+    rawBalance: string;
+  };
+  address: string;
+  countTxs: 2;
+  tokens: Token[];
+}

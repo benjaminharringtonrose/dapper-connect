@@ -1,27 +1,135 @@
-import { useFocusEffect } from "@react-navigation/native";
-import React, { useCallback, useState } from "react";
-import { FlatList, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import * as Yup from "yup";
+import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useWalletConnect } from "@walletconnect/react-native-dapp";
+import React, { useEffect, useState } from "react";
+import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
+import Web3 from "web3";
 
-import { BalanceInfo, Chart } from "../components";
-import { COLORS, FONTS, icons, mockData, SIZES } from "../constants";
-import { mockHoldings } from "../constants/mock";
+import { BalanceInfo, Chart, IconTextButton } from "../components";
+import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { getHoldingsRequested } from "../store/market/slice";
-import { Coin } from "../types";
+import { getAccountRequested } from "../store/account/slice";
+import { getHoldingsRequested, resetHoldings } from "../store/market/slice";
 
 import MainLayout from "./MainLayout";
 
 const PortfolioScreen = () => {
   const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
-  const { holdings, loadingGetHoldings } = useAppSelector((state) => state.market);
-  const dispatch = useAppDispatch();
+  const [ether, setEther] = useState("");
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     dispatch(getHoldingsRequested({ holdings: mockHoldings }));
-  //   }, [])
-  // );
+  const { holdings, loadingGetHoldings } = useAppSelector((state) => state.market);
+  const { account } = useAppSelector((state) => state.account);
+
+  const navigation = useNavigation();
+  const dispatch = useAppDispatch();
+  const connector = useWalletConnect();
+
+  const provider = new Web3.providers.HttpProvider(
+    "https://mainnet.infura.io/v3/7b9909b1c3ed4958a172e2ad2e6c66a3"
+  );
+  const web3: Web3 = new Web3(provider);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: "DapperWallet",
+      headerRight: () => (
+        <TouchableOpacity>
+          <Ionicons name={"wallet"} size={32} color={COLORS.white} onPress={() => connect()} />
+        </TouchableOpacity>
+      ),
+    });
+  });
+
+  async function connect() {
+    try {
+      if (!connector.connected) {
+        await connector.connect();
+      } else {
+        Alert.alert("You're wallet is already connected!", "", [
+          { text: "Nevermind" },
+          {
+            text: "Disconnect",
+            onPress: () => {
+              connector.killSession();
+              dispatch(resetHoldings());
+            },
+          },
+        ]);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    if (connector.connected) {
+      (async () => {
+        dispatch(getAccountRequested({ address: connector.accounts[0] }));
+      })();
+    }
+  }, [connector.connected]);
+
+  const totalWallet = holdings?.reduce((a, b) => a + (b.total || 0), 0);
+  const valueChange = holdings?.reduce((a, b) => a + (b.holdingValueChange7d || 0), 0);
+  const percentageChange = valueChange
+    ? (valueChange / (totalWallet - valueChange)) * 100
+    : undefined;
+
+  function renderWalletInfoSection() {
+    return (
+      <View
+        style={{
+          paddingTop: SIZES.padding,
+          paddingHorizontal: SIZES.padding,
+          borderRadius: 25,
+          borderWidth: 1,
+          borderColor: COLORS.gray,
+          backgroundColor: COLORS.black,
+        }}
+      >
+        {/* Balance Info */}
+        <BalanceInfo
+          title={"Your Wallet"}
+          displayAmount={totalWallet}
+          changePercentage={percentageChange}
+        />
+        {/* Buttons */}
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: 30,
+            marginBottom: -15,
+            paddingHorizontal: SIZES.radius,
+          }}
+        >
+          <IconTextButton
+            label={"Transfer"}
+            icon={icons.send}
+            containerStyle={{
+              flex: 1,
+              height: 40,
+              marginRight: SIZES.radius,
+            }}
+            onPress={() => console.log("Transfer")}
+          />
+          <IconTextButton
+            label={"Withdraw"}
+            icon={icons.withdraw}
+            containerStyle={{
+              flex: 1,
+              height: 40,
+              marginRight: SIZES.radius,
+            }}
+            onPress={() => console.log("Widthdraw")}
+          />
+        </View>
+      </View>
+    );
+  }
+
+  const onRefresh = () => {
+    dispatch(getAccountRequested({ address: connector.accounts[0] }));
+  };
 
   const chartPrices = selectedCoin
     ? selectedCoin?.sparklineIn7d?.value
@@ -30,17 +138,24 @@ const PortfolioScreen = () => {
   return (
     <MainLayout>
       <View style={{ flex: 1, backgroundColor: COLORS.black }}>
+        <View style={{ paddingBottom: SIZES.radius }}>
+          {/* Header - Wallet Info */}
+          {renderWalletInfoSection()}
+        </View>
         {/* Chart */}
-        <Chart
-          containerStyle={{ marginTop: SIZES.radius }}
-          chartPrices={chartPrices}
-          loading={loadingGetHoldings}
-        />
+        <Chart containerStyle={{ marginTop: SIZES.radius }} chartPrices={chartPrices} />
         {/* Assets */}
         <FlatList
           data={holdings}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ marginTop: SIZES.padding, paddingHorizontal: SIZES.padding }}
+          refreshControl={
+            <RefreshControl
+              refreshing={loadingGetHoldings}
+              onRefresh={onRefresh}
+              tintColor={COLORS.white}
+            />
+          }
           ListHeaderComponent={
             <View>
               {/* Section Title */}
