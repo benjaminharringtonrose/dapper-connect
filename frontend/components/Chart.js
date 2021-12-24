@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-color-literals */
 import {
   ChartDot,
   ChartPath,
@@ -45,11 +46,11 @@ const Chart = ({ containerStyle, chartPrices }) => {
 
   const formatNumber = (value, roundingPoint) => {
     if (value > 1e9) {
-      return `${(value / 1e9).toFixed(roundingPoint)}B`;
+      return `$${(value / 1e9).toFixed(roundingPoint)}B`;
     } else if (value > 1e6) {
-      return `${(value / 1e6).toFixed(roundingPoint)}M`;
+      return `$${(value / 1e6).toFixed(roundingPoint)}M`;
     } else if (value > 1e3) {
-      return `${(value / 1e3).toFixed(roundingPoint)}K`;
+      return `$${(value / 1e3).toFixed(roundingPoint)}K`;
     } else {
       return value.toFixed(roundingPoint);
     }
@@ -109,7 +110,7 @@ const Chart = ({ containerStyle, chartPrices }) => {
       {/* Chart */}
       {data.length > 0 && (
         <ChartPathProvider data={{ points, smoothingStrategy: "bezier" }}>
-          <ChartPath height={150} width={SIZES.width} stroke={COLORS.lightGreen} strokeWidth={2} />
+          <ChartPath height={150} width={SIZES.width} stroke={"purple"} strokeWidth={2} />
           <ChartDot>
             <View
               style={{
@@ -136,7 +137,7 @@ const Chart = ({ containerStyle, chartPrices }) => {
                     width: 15,
                     height: 15,
                     borderRadius: 10,
-                    backgroundColor: COLORS.lightGreen,
+                    backgroundColor: "purple",
                   }}
                 />
               </View>

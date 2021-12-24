@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import React, { useEffect, useState } from "react";
 import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
@@ -9,25 +9,23 @@ import { BalanceInfo, Chart, IconTextButton } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getAccountRequested } from "../store/account/slice";
-import { getHoldingsRequested, resetHoldings } from "../store/market/slice";
+import { resetHoldings } from "../store/market/slice";
 
 import MainLayout from "./MainLayout";
 
 const PortfolioScreen = () => {
   const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
-  const [ether, setEther] = useState("");
 
   const { holdings, loadingGetHoldings } = useAppSelector((state) => state.market);
-  const { account } = useAppSelector((state) => state.account);
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const connector = useWalletConnect();
 
-  const provider = new Web3.providers.HttpProvider(
-    "https://mainnet.infura.io/v3/7b9909b1c3ed4958a172e2ad2e6c66a3"
-  );
-  const web3: Web3 = new Web3(provider);
+  // const provider = new Web3.providers.HttpProvider(
+  //   "https://mainnet.infura.io/v3/7b9909b1c3ed4958a172e2ad2e6c66a3"
+  // );
+  // const web3: Web3 = new Web3(provider);
 
   useEffect(() => {
     navigation.setOptions({
@@ -45,8 +43,7 @@ const PortfolioScreen = () => {
       if (!connector.connected) {
         await connector.connect();
       } else {
-        Alert.alert("You're wallet is already connected!", "", [
-          { text: "Nevermind" },
+        Alert.alert("Your wallet is already connected!", "", [
           {
             text: "Disconnect",
             onPress: () => {
@@ -54,6 +51,7 @@ const PortfolioScreen = () => {
               dispatch(resetHoldings());
             },
           },
+          { text: "Nevermind" },
         ]);
       }
     } catch (e) {
@@ -148,7 +146,7 @@ const PortfolioScreen = () => {
         <FlatList
           data={holdings}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ marginTop: SIZES.padding, paddingHorizontal: SIZES.padding }}
+          contentContainerStyle={{ marginTop: SIZES.padding }}
           refreshControl={
             <RefreshControl
               refreshing={loadingGetHoldings}
@@ -157,7 +155,7 @@ const PortfolioScreen = () => {
             />
           }
           ListHeaderComponent={
-            <View>
+            <View style={{ paddingHorizontal: SIZES.padding }}>
               {/* Section Title */}
               <Text style={[FONTS.h2, { color: COLORS.white }]}>{"Your Assets"}</Text>
               {/* Header Label */}
@@ -179,9 +177,15 @@ const PortfolioScreen = () => {
                 : item.priceChangePercentageInCurrency7d > 0
                 ? COLORS.lightGreen
                 : COLORS.red;
+            const backgroundColor = item?.id === selectedCoin?.id ? COLORS.gray : COLORS.black;
             return (
               <TouchableOpacity
-                style={{ flexDirection: "row", height: 55 }}
+                style={{
+                  flexDirection: "row",
+                  height: 55,
+                  paddingHorizontal: SIZES.padding,
+                  backgroundColor,
+                }}
                 onPress={() => setSelectedCoin(item)}
               >
                 {/* Asset */}
@@ -232,7 +236,7 @@ const PortfolioScreen = () => {
                       FONTS.body5,
                       { textAlign: "right", color: COLORS.lightGray3, lineHeight: 15 },
                     ]}
-                  >{`${item.qty} ${item.symbol}`}</Text>
+                  >{`${item.qty.toFixed(6)} ${item.symbol}`}</Text>
                 </View>
               </TouchableOpacity>
             );

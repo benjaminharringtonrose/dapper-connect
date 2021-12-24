@@ -1,25 +1,20 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import React, { useCallback, useEffect, useState } from "react";
 import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
-import Web3 from "web3";
 
 import { Chart } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { getCoinMarketRequested, resetHoldings } from "../store/market/slice";
+import { getCoinMarketRequested } from "../store/market/slice";
 import { Coin } from "../types";
 
 import MainLayout from "./MainLayout";
 
 const HomeScreen = () => {
   const [selectedCoin, setSelectedCoin] = useState<Coin | undefined>(undefined);
-  const {
-    coins,
-    loadingGetCoinMarket,
-    // errorGetCoinMarket,
-  } = useAppSelector((state) => state.market);
+  const { coins, loadingGetCoinMarket, errorGetCoinMarket } = useAppSelector(
+    (state) => state.market
+  );
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
@@ -29,6 +24,12 @@ const HomeScreen = () => {
       title: "DapperWallet",
     });
   });
+
+  useEffect(() => {
+    if (errorGetCoinMarket) {
+      Alert.alert("An error occurred", "Please try again");
+    }
+  }, [errorGetCoinMarket]);
 
   useFocusEffect(
     useCallback(() => {
@@ -69,7 +70,6 @@ const HomeScreen = () => {
               tintColor={COLORS.white}
             />
           }
-          ListHeaderComponent={<></>}
           renderItem={({ item }) => {
             const priceColor =
               item.price_change_percentage_7d_in_currency === 0
