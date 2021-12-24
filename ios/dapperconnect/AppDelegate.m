@@ -6,6 +6,8 @@
 #import <React/RCTLinkingManager.h>
 #import <React/RCTConvert.h>
 
+#import <Firebase.h>
+
 #if defined(FB_SONARKIT_ENABLED) && __has_include(<FlipperKit/FlipperClient.h>)
 #import <FlipperKit/FlipperClient.h>
 #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
@@ -25,6 +27,7 @@ static void InitializeFlipper(UIApplication *application) {
 }
 #endif
 
+@import Firebase;
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -50,6 +53,7 @@ static void InitializeFlipper(UIApplication *application) {
 
   [super application:application didFinishLaunchingWithOptions:launchOptions];
 
+  [FIRApp configure];
   return YES;
  }
 

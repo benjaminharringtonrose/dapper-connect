@@ -27,7 +27,7 @@ const TextButton = ({
         containerStyle,
       ]}
     >
-      <Text style={[FONTS.h3, { color: COLORS.white }]}>{label}</Text>
+      <Text style={[FONTS.h5, { color: COLORS.white }]}>{label}</Text>
     </TouchableOpacity>
   );
 };

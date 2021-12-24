@@ -17,6 +17,7 @@ const PortfolioScreen = () => {
   const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
 
   const { holdings, loadingGetHoldings } = useAppSelector((state) => state.market);
+  const { account } = useAppSelector((state) => state.account);
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
@@ -66,6 +67,8 @@ const PortfolioScreen = () => {
       })();
     }
   }, [connector.connected]);
+
+  console.log(account);
 
   const totalWallet = holdings?.reduce((a, b) => a + (b.total || 0), 0);
   const valueChange = holdings?.reduce((a, b) => a + (b.holdingValueChange7d || 0), 0);

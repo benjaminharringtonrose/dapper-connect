@@ -10,6 +10,9 @@
     ],
     "ios": {
       "bundleIdentifier": "com.benjaminrose.dapperconnect"
+    },
+    "android": {
+      "package": "com.benjaminrose.dapperconnect"
     }
   }
 }

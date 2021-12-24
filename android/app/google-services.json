@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "902942777063",
+    "project_id": "dapperconnect-f10a5",
+    "storage_bucket": "dapperconnect-f10a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902942777063:android:eaafd2464e599454d10c42",
+        "android_client_info": {
+          "package_name": "com.benjaminrose.dapperconnect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "902942777063-0ja97fpvb1cf6is8k5krh48lqtektu0s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfAb6kFklBu-mcanItFJ4JZgNVRcmgSTY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "902942777063-0ja97fpvb1cf6is8k5krh48lqtektu0s.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "902942777063-c3mgaf0cfglgrovmd4jg8drtoi4octav.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.benjaminrose.dapperconnect"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

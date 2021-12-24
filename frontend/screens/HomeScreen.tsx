@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useState } from "react";
 import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 
-import { Chart } from "../components";
+import { Chart, TextButton } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getCoinMarketRequested } from "../store/market/slice";
@@ -41,6 +42,24 @@ const HomeScreen = () => {
     dispatch(getCoinMarketRequested({}));
   };
 
+  const renderButtons = () => {
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: SIZES.radius,
+          marginHorizontal: SIZES.radius,
+        }}
+      >
+        <TextButton label={"1H"} onPress={() => {}} />
+        <TextButton label={"1D"} onPress={() => {}} />
+        <TextButton label={"1M"} onPress={() => {}} />
+        <TextButton label={"1Y"} onPress={() => {}} />
+      </View>
+    );
+  };
+
   return (
     <MainLayout>
       <View style={{ flex: 1, backgroundColor: COLORS.black }}>
@@ -52,10 +71,11 @@ const HomeScreen = () => {
               selectedCoin ? selectedCoin?.sparkline_in_7d?.price : coins[0]?.sparkline_in_7d.price
             }
           />
+          {renderButtons()}
         </View>
         <View style={{ marginVertical: SIZES.radius }}>
           <Text style={[FONTS.h3, { fontSize: 18, color: COLORS.white }]}>
-            {"Top Cryptocurrency"}
+            {"Popular Cryptocurrency"}
           </Text>
         </View>
         {/* Top Cryptocurrency */}
