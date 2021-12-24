@@ -40,7 +40,7 @@ const BalanceInfo = ({
           alignItems: "flex-end",
         }}
       >
-        {changePercentage !== 0 && (
+        {changePercentage && changePercentage !== 0 && (
           <Image
             source={icons.upArrow}
             style={{
@@ -52,28 +52,33 @@ const BalanceInfo = ({
             }}
           />
         )}
-        <Text
-          style={[
-            FONTS.h4,
-            {
-              marginLeft: SIZES.base,
-              alignSelf: "flex-end",
-              color: changePercentage > 0 ? COLORS.lightGreen : COLORS.red,
-            },
-          ]}
-        >{`${changePercentage.toFixed(2)}%`}</Text>
-        <Text
-          style={[
-            FONTS.h5,
-            {
-              marginLeft: SIZES.radius,
-              alignSelf: "flex-end",
-              color: COLORS.lightGray3,
-            },
-          ]}
-        >
-          {"7d change"}
-        </Text>
+        {changePercentage && (
+          <>
+            <Text
+              style={[
+                FONTS.h4,
+                {
+                  marginLeft: SIZES.base,
+                  alignSelf: "flex-end",
+                  color: changePercentage > 0 ? COLORS.lightGreen : COLORS.red,
+                },
+              ]}
+            >{`${changePercentage.toFixed(2)}%`}</Text>
+
+            <Text
+              style={[
+                FONTS.h5,
+                {
+                  marginLeft: SIZES.radius,
+                  alignSelf: "flex-end",
+                  color: COLORS.lightGray3,
+                },
+              ]}
+            >
+              {"7d change"}
+            </Text>
+          </>
+        )}
       </View>
     </View>
   );

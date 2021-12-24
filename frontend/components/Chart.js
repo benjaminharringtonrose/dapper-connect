@@ -13,7 +13,6 @@ import { Text, View } from "react-native";
 import { COLORS, FONTS, SIZES } from "../constants";
 
 const Chart = ({ containerStyle, chartPrices }) => {
-  // Points
   const startUnixTimestamp = moment().subtract(7, "day").unix();
   const data = chartPrices
     ? chartPrices?.map((item, index) => {

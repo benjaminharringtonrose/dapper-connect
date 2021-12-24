@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import { call, put, takeLatest } from "redux-saga/effects";
 
@@ -30,7 +31,7 @@ function* getHoldingsSaga(action: GetHoldingsRequestedAction) {
     orderBy = "market_cap_desc",
     sparkline = true,
     priceChangePerc = "7d",
-    perPage = 10,
+    perPage = 50,
     page = 1,
   } = action.payload;
 
@@ -72,7 +73,7 @@ function* getCoinMarketSaga(action: GetCoinMarketRequestedAction) {
     orderBy = "market_cap_desc",
     sparkline = true,
     priceChangePerc = "7d",
-    perPage = 10,
+    perPage = 50,
     page = 1,
   } = action.payload;
 

@@ -15,7 +15,7 @@ import { setTradeModalVisibility } from "../store/tab/slice";
 const Tab = createBottomTabNavigator();
 
 const defaultNavigationOptions: BottomTabNavigationOptions = {
-  headerTitle: "DapperWallet",
+  headerTitle: "DapperConnect",
   headerTitleStyle: [FONTS.h2, { color: COLORS.white }],
   headerStyle: {
     backgroundColor: COLORS.black,
@@ -65,7 +65,7 @@ const Tabs = () => {
           headerShown: true,
           tabBarIcon: ({ focused }) =>
             !isTradeModalVisible && (
-              <TabIcon focused={focused} icon={icons.briefcase} label={"Watch"} />
+              <TabIcon focused={focused} icon={icons.briefcase} label={"Portfolio"} />
             ),
         }}
         listeners={{

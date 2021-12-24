@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { Coin, Holding } from "../../types";
@@ -58,6 +59,9 @@ const marketSlice = createSlice({
       state.loadingGetHoldings = false;
       state.errorGetHoldings = error;
     },
+    resetHoldings: (state, _: PayloadAction<undefined>) => {
+      state.holdings = [];
+    },
     getCoinMarketRequested: (state, _: GetCoinMarketRequestedAction) => {
       state.loadingGetCoinMarket = true;
     },
@@ -78,6 +82,7 @@ export const {
   getHoldingsRequested,
   getHoldingsSucceeded,
   getHoldingsFailed,
+  resetHoldings,
   getCoinMarketRequested,
   getCoinMarketSucceeded,
   getCoinMarketFailed,
