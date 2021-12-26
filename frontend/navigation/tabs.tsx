@@ -9,7 +9,7 @@ import { TouchableOpacity } from "react-native";
 import { TabIcon } from "../components";
 import { COLORS, FONTS, icons } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { Home, Market, Portfolio, Profile } from "../screens";
+import { Assets, Home, Market, Profile } from "../screens";
 import { setTradeModalVisibility } from "../store/tab/slice";
 
 const Tab = createBottomTabNavigator();
@@ -59,13 +59,13 @@ const Tabs = () => {
         }}
       />
       <Tab.Screen
-        name="Portfolio"
-        component={Portfolio}
+        name="Assets"
+        component={Assets}
         options={{
           headerShown: true,
           tabBarIcon: ({ focused }) =>
             !isTradeModalVisible && (
-              <TabIcon focused={focused} icon={icons.briefcase} label={"Portfolio"} />
+              <TabIcon focused={focused} icon={icons.briefcase} label={"Assets"} />
             ),
         }}
         listeners={{

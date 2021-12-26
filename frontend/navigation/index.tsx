@@ -17,7 +17,7 @@ export const AppStack = () => {
 export const StartupStack = () => {
   const Stack = createStackNavigator();
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={"MainLayout"}>
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={"StartupScreen"}>
       <Stack.Screen name="StartupScreen" component={StartupScreen} />
     </Stack.Navigator>
   );

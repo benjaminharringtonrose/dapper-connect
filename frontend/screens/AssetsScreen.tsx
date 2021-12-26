@@ -13,7 +13,7 @@ import { getSparklineRequested, resetHoldings } from "../store/market/slice";
 
 import RootView from "./RootView";
 
-const PortfolioScreen = () => {
+const AssetsScreen = () => {
   const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
 
   const { holdings, loadingGetHoldings, sparkline } = useAppSelector((state) => state.market);
@@ -30,7 +30,6 @@ const PortfolioScreen = () => {
 
   useEffect(() => {
     navigation.setOptions({
-      title: "DapperWallet",
       headerRight: () => (
         <TouchableOpacity>
           <Ionicons name={"wallet"} size={32} color={COLORS.white} onPress={() => connect()} />
@@ -106,24 +105,24 @@ const PortfolioScreen = () => {
           }}
         >
           <IconTextButton
-            label={"Transfer"}
+            label={"Send"}
             icon={icons.send}
             containerStyle={{
               flex: 1,
               height: 40,
               marginRight: SIZES.radius,
             }}
-            onPress={() => console.log("Transfer")}
+            onPress={() => console.log("Send")}
           />
           <IconTextButton
-            label={"Withdraw"}
+            label={"Receive"}
             icon={icons.withdraw}
             containerStyle={{
               flex: 1,
               height: 40,
               marginRight: SIZES.radius,
             }}
-            onPress={() => console.log("Widthdraw")}
+            onPress={() => console.log("Receive")}
           />
         </View>
       </View>
@@ -252,4 +251,4 @@ const PortfolioScreen = () => {
   );
 };
 
-export default PortfolioScreen;
+export default AssetsScreen;

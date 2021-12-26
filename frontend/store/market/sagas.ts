@@ -29,7 +29,7 @@ export interface ResponseGenerator {
   statusText?: string;
 }
 
-function* getHoldingsSaga(action: GetHoldingsRequestedAction) {
+export function* getHoldingsSaga(action: GetHoldingsRequestedAction) {
   const {
     holdings,
     currency = "usd",

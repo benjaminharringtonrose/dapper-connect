@@ -1,4 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 
@@ -18,18 +17,11 @@ const HomeScreen = () => {
     errorGetSparkline,
   } = useAppSelector((state) => state.market);
 
-  const navigation = useNavigation();
   const dispatch = useAppDispatch();
 
   const [selectedId, setSelectedId] = useState<string>("bitcoin");
   const [selectedNumDays, setSelectedNumDays] = useState<string>("1");
   const [selectedInterval, setSelectedInterval] = useState<string>("minutely");
-
-  useEffect(() => {
-    navigation.setOptions({
-      title: "DapperWallet",
-    });
-  }, []);
 
   useEffect(() => {
     if (errorGetCoinMarket || errorGetSparkline) {

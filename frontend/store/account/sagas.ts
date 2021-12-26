@@ -2,7 +2,7 @@ import axios from "axios";
 import { call, put, takeLatest } from "redux-saga/effects";
 
 import { Account } from "../../types";
-import { ResponseGenerator } from "../market/sagas";
+import { getHoldingsSaga, ResponseGenerator } from "../market/sagas";
 import { getHoldingsRequested } from "../market/slice";
 
 import {
@@ -30,7 +30,7 @@ function* getAccountSaga(action: GetAccountRequestedAction) {
 
     const allHoldings = holdings.concat(tokenHoldings);
 
-    yield put(getHoldingsRequested({ holdings: allHoldings }));
+    yield call(getHoldingsSaga, getHoldingsRequested({ holdings: allHoldings }));
 
     yield put(getAccountSucceeded({ account: { ...account, holdings: allHoldings } }));
   } catch (error) {
