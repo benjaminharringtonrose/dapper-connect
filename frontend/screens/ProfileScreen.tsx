@@ -4,7 +4,7 @@ import { Image, ScrollView, Switch, Text, TouchableOpacity, View } from "react-n
 import { HeaderBar } from "../components";
 import { COLORS, FONTS, icons, mockData, SIZES } from "../constants";
 
-import MainLayout from "./MainLayout";
+import RootView from "./RootView";
 
 const SectionTitle = ({ title }: { title: string }) => {
   return (
@@ -58,7 +58,7 @@ const Setting = ({
 const ProfileScreen = () => {
   const [faceID, setFaceID] = useState<boolean | undefined>(false);
   return (
-    <MainLayout>
+    <RootView>
       <View style={{ flex: 1, paddingHorizontal: SIZES.padding, backgroundColor: COLORS.black }}>
         {/* Header */}
         <HeaderBar title={"Profile"} />
@@ -134,7 +134,7 @@ const ProfileScreen = () => {
           />
         </ScrollView>
       </View>
-    </MainLayout>
+    </RootView>
   );
 };
 

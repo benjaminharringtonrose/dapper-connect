@@ -1,7 +1,7 @@
 import Home from "./HomeScreen";
-import MainLayout from "./MainLayout";
 import Market from "./MarketScreen";
 import Portfolio from "./PortfolioScreen";
 import Profile from "./ProfileScreen";
+import RootView from "./RootView";
 
-export { MainLayout, Home, Portfolio, Market, Profile };
+export { RootView, Home, Portfolio, Market, Profile };

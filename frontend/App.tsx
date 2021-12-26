@@ -1,20 +1,30 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import React from "react";
+import React, { useEffect } from "react";
 import { StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Host } from "react-native-portalize";
 import { Provider } from "react-redux";
 
-import { AppStack } from "./navigation";
+import { useAppDispatch, useAppSelector } from "./hooks";
+import { AppStack, StartupStack } from "./navigation";
 import { store } from "./store";
+import { frontloadAppRequested } from "./store/settings/slice";
 
 const Root = () => {
+  const { loadingFrontloadApp } = useAppSelector((state) => state.settings);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(frontloadAppRequested());
+  }, []);
+
   return (
     <>
       <StatusBar barStyle={"light-content"} />
       <NavigationContainer>
-        <AppStack />
+        {loadingFrontloadApp ? <StartupStack /> : <AppStack />}
       </NavigationContainer>
     </>
   );
@@ -46,13 +56,13 @@ const App = () => {
     return null;
   }
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Provider store={store}>
+    <Provider store={store}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
         <Host>
           <Root />
         </Host>
-      </Provider>
-    </GestureHandlerRootView>
+      </GestureHandlerRootView>
+    </Provider>
   );
 };
 

@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import { getAccountRequested } from "../store/account/slice";
 import { getSparklineRequested, resetHoldings } from "../store/market/slice";
 
-import MainLayout from "./MainLayout";
+import RootView from "./RootView";
 
 const PortfolioScreen = () => {
   const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
@@ -135,7 +135,7 @@ const PortfolioScreen = () => {
   };
 
   return (
-    <MainLayout>
+    <RootView>
       <View style={{ flex: 1, backgroundColor: COLORS.black }}>
         <View style={{ paddingBottom: SIZES.radius }}>
           {/* Header - Wallet Info */}
@@ -248,7 +248,7 @@ const PortfolioScreen = () => {
           ListFooterComponent={<View style={{ marginBottom: 50 }} />}
         />
       </View>
-    </MainLayout>
+    </RootView>
   );
 };
 

@@ -1,60 +1,47 @@
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import moment from "moment";
-import React, { useCallback, useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 
 import { Chart, TextButton } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getCoinMarketRequested, getSparklineRequested } from "../store/market/slice";
-import { Coin } from "../types";
 
-import MainLayout from "./MainLayout";
-
-// coinranking.com has very small sparkline arrays => https://developers.coinranking.com/api/documentation/coins
+import RootView from "./RootView";
 
 const HomeScreen = () => {
   const {
     coins,
-    sparkline,
-    loadingGetSparkline,
     loadingGetCoinMarket,
     errorGetCoinMarket,
+    sparkline,
+    errorGetSparkline,
   } = useAppSelector((state) => state.market);
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
 
-  const [selectedCoin, setSelectedCoin] = useState<Coin>(coins[0]);
+  const [selectedId, setSelectedId] = useState<string>("bitcoin");
   const [selectedNumDays, setSelectedNumDays] = useState<string>("1");
-  const [selectedInterval, setSelectedInterval] = useState<string>("hourly");
-
-  console.log(sparkline?.[0]?.[0]);
+  const [selectedInterval, setSelectedInterval] = useState<string>("minutely");
 
   useEffect(() => {
     navigation.setOptions({
       title: "DapperWallet",
     });
-  });
+  }, []);
 
   useEffect(() => {
-    if (errorGetCoinMarket) {
+    if (errorGetCoinMarket || errorGetSparkline) {
       Alert.alert("An error occurred", "Please try again");
     }
   }, [errorGetCoinMarket]);
-
-  useFocusEffect(
-    useCallback(() => {
-      dispatch(getCoinMarketRequested({}));
-      dispatch(getSparklineRequested({ id: "bitcoin", days: "7", interval: "hourly" }));
-    }, [])
-  );
 
   const onRefresh = () => {
     dispatch(getCoinMarketRequested({}));
     dispatch(
       getSparklineRequested({
-        id: selectedCoin?.id,
+        id: selectedId,
         days: selectedNumDays,
         interval: selectedInterval,
       })
@@ -76,9 +63,7 @@ const HomeScreen = () => {
           onPress={() => {
             setSelectedNumDays("1");
             setSelectedInterval("minutely");
-            dispatch(
-              getSparklineRequested({ id: selectedCoin?.id, days: "1", interval: "minutely" })
-            );
+            dispatch(getSparklineRequested({ id: selectedId, days: "1", interval: "minutely" }));
           }}
           containerStyle={{
             backgroundColor: selectedNumDays === "1" ? COLORS.lightGray : COLORS.gray1,
@@ -89,9 +74,7 @@ const HomeScreen = () => {
           onPress={() => {
             setSelectedNumDays("7");
             setSelectedInterval("hourly");
-            dispatch(
-              getSparklineRequested({ id: selectedCoin?.id, days: "7", interval: "hourly" })
-            );
+            dispatch(getSparklineRequested({ id: selectedId, days: "7", interval: "hourly" }));
           }}
           containerStyle={{
             backgroundColor: selectedNumDays === "7" ? COLORS.lightGray : COLORS.gray1,
@@ -102,9 +85,7 @@ const HomeScreen = () => {
           onPress={() => {
             setSelectedNumDays("30");
             setSelectedInterval("hourly");
-            dispatch(
-              getSparklineRequested({ id: selectedCoin?.id, days: "30", interval: "hourly" })
-            );
+            dispatch(getSparklineRequested({ id: selectedId, days: "30", interval: "hourly" }));
           }}
           containerStyle={{
             backgroundColor: selectedNumDays === "30" ? COLORS.lightGray : COLORS.gray1,
@@ -115,9 +96,7 @@ const HomeScreen = () => {
           onPress={() => {
             setSelectedNumDays("365");
             setSelectedInterval("hourly");
-            dispatch(
-              getSparklineRequested({ id: selectedCoin?.id, days: "365", interval: "hourly" })
-            );
+            dispatch(getSparklineRequested({ id: selectedId, days: "365", interval: "hourly" }));
           }}
           containerStyle={{
             backgroundColor: selectedNumDays === "365" ? COLORS.lightGray : COLORS.gray1,
@@ -128,7 +107,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <MainLayout>
+    <RootView>
       <View style={{ flex: 1, backgroundColor: COLORS.black }}>
         <View style={{ paddingBottom: SIZES.radius }}>
           {/* Chart */}
@@ -159,7 +138,7 @@ const HomeScreen = () => {
                 : item.price_change_percentage_7d_in_currency > 0
                 ? COLORS.lightGreen
                 : COLORS.red;
-            const backgroundColor = item?.id === selectedCoin?.id ? COLORS.gray : COLORS.black;
+            const backgroundColor = item?.id === selectedId ? COLORS.gray : COLORS.black;
             return (
               <TouchableOpacity
                 style={{
@@ -171,7 +150,7 @@ const HomeScreen = () => {
                   paddingHorizontal: SIZES.padding,
                 }}
                 onPress={() => {
-                  setSelectedCoin(item);
+                  setSelectedId(item.id);
                   dispatch(
                     getSparklineRequested({
                       id: item.id,
@@ -226,7 +205,7 @@ const HomeScreen = () => {
           ListFooterComponent={<View style={{ marginBottom: 50 }} />}
         />
       </View>
-    </MainLayout>
+    </RootView>
   );
 };
 

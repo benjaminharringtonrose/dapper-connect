@@ -18,7 +18,7 @@ export interface MarketState {
   coins: Coin[];
   loadingGetCoinMarket: boolean;
   errorGetCoinMarket?: Error;
-  sparkline?: any[];
+  sparkline: any[];
   loadingGetSparkline: boolean;
   errorGetSparkline?: Error;
 }

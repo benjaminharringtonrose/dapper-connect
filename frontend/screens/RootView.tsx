@@ -5,7 +5,7 @@ import { IconTextButton } from "../components";
 import { COLORS, icons, SIZES } from "../constants";
 import { useAppSelector } from "../hooks";
 
-const MainLayout = ({ children }: { children: JSX.Element }) => {
+const RootView = ({ children }: { children: JSX.Element }) => {
   const modalAnimatedValue = useRef(new Animated.Value(0)).current;
   const { isTradeModalVisible } = useAppSelector((state) => state.tabs);
 
@@ -75,4 +75,4 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
   );
 };
 
-export default MainLayout;
+export default RootView;

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, FlatList, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Animated, FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 
 import { HeaderBar, TextButton } from "../components";
@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import { getCoinMarketRequested } from "../store/market/slice";
 import { MeasureLayout } from "../types";
 
-import MainLayout from "./MainLayout";
+import RootView from "./RootView";
 
 const marketTabs = constants.marketTabs.map((marketTab) => ({
   ...marketTab,
@@ -258,7 +258,7 @@ const MarketScreen = () => {
   };
 
   return (
-    <MainLayout>
+    <RootView>
       <View style={{ flex: 1, backgroundColor: COLORS.black }}>
         {/* Header */}
         <HeaderBar title={"Market"} />
@@ -269,7 +269,7 @@ const MarketScreen = () => {
         {/* Market List */}
         {renderList()}
       </View>
-    </MainLayout>
+    </RootView>
   );
 };
 

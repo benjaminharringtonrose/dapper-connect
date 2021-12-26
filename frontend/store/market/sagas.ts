@@ -72,7 +72,7 @@ function* getHoldingsSaga(action: GetHoldingsRequestedAction) {
   }
 }
 
-function* getCoinMarketSaga(action: GetCoinMarketRequestedAction) {
+export function* getCoinMarketSaga(action: GetCoinMarketRequestedAction) {
   const {
     currency = "usd",
     orderBy = "market_cap_desc",
@@ -94,7 +94,7 @@ function* getCoinMarketSaga(action: GetCoinMarketRequestedAction) {
   }
 }
 
-function* getSparklineSaga(action: GetSparklineRequestedAction) {
+export function* getSparklineSaga(action: GetSparklineRequestedAction) {
   try {
     const { id, currency = "usd", days, interval } = action.payload;
 
