@@ -3,6 +3,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { Coin, Holding } from "../../types";
 
+export enum PriceChangePerc {
+  oneHour = "1h",
+  oneDay = "24h",
+  oneWeek = "7d",
+  oneMonth = "30d",
+  oneYear = "1y",
+}
+
 export interface MarketState {
   holdings: Holding[];
   loadingGetHoldings: boolean;
@@ -10,6 +18,9 @@ export interface MarketState {
   coins: Coin[];
   loadingGetCoinMarket: boolean;
   errorGetCoinMarket?: Error;
+  sparkline?: any[];
+  loadingGetSparkline: boolean;
+  errorGetSparkline?: Error;
 }
 
 const initialState: MarketState = {
@@ -19,6 +30,9 @@ const initialState: MarketState = {
   coins: [],
   loadingGetCoinMarket: false,
   errorGetCoinMarket: undefined,
+  sparkline: [],
+  loadingGetSparkline: false,
+  errorGetSparkline: undefined,
 };
 
 type ErrorAction = PayloadAction<{ error: Error }>;
@@ -28,7 +42,7 @@ export type GetHoldingsRequestedAction = PayloadAction<{
   currency?: string;
   orderBy?: string;
   sparkline?: boolean;
-  priceChangePerc?: string;
+  priceChangePerc?: PriceChangePerc;
   perPage?: number;
   page?: number;
 }>;
@@ -37,9 +51,16 @@ export type GetCoinMarketRequestedAction = PayloadAction<{
   currency?: string;
   orderBy?: string;
   sparkline?: boolean;
-  priceChangePerc?: string;
+  priceChangePerc?: PriceChangePerc;
   perPage?: number;
   page?: number;
+}>;
+
+export type GetSparklineRequestedAction = PayloadAction<{
+  id: string;
+  currency?: string;
+  days: string;
+  interval: string;
 }>;
 
 const marketSlice = createSlice({
@@ -75,6 +96,19 @@ const marketSlice = createSlice({
       state.loadingGetCoinMarket = false;
       state.errorGetCoinMarket = error;
     },
+    getSparklineRequested: (state, _: GetSparklineRequestedAction) => {
+      state.loadingGetSparkline = true;
+    },
+    getSparklineSucceeded: (state, action: PayloadAction<{ sparkline: any[] }>) => {
+      const { sparkline } = action.payload;
+      state.loadingGetSparkline = false;
+      state.sparkline = sparkline;
+    },
+    getSparklineFailed: (state, action: ErrorAction) => {
+      const { error } = action.payload;
+      state.loadingGetSparkline = false;
+      state.errorGetSparkline = error;
+    },
   },
 });
 
@@ -86,6 +120,9 @@ export const {
   getCoinMarketRequested,
   getCoinMarketSucceeded,
   getCoinMarketFailed,
+  getSparklineRequested,
+  getSparklineSucceeded,
+  getSparklineFailed,
 } = marketSlice.actions;
 
 export default marketSlice.reducer;

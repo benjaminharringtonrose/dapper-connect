@@ -13,6 +13,11 @@ import {
   getHoldingsRequested,
   GetHoldingsRequestedAction,
   getHoldingsSucceeded,
+  getSparklineFailed,
+  getSparklineRequested,
+  GetSparklineRequestedAction,
+  getSparklineSucceeded,
+  PriceChangePerc,
 } from "./slice";
 
 export interface ResponseGenerator {
@@ -89,9 +94,23 @@ function* getCoinMarketSaga(action: GetCoinMarketRequestedAction) {
   }
 }
 
+function* getSparklineSaga(action: GetSparklineRequestedAction) {
+  try {
+    const { id, currency = "usd", days, interval } = action.payload;
+
+    const apiUrl = `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=${currency}&days=${days}&interval=${interval}`;
+
+    const response: ResponseGenerator = yield call([axios, axios.get], apiUrl);
+    yield put(getSparklineSucceeded({ sparkline: response.data.prices }));
+  } catch (error) {
+    yield put(getSparklineFailed({ error }));
+  }
+}
+
 function* marketSaga() {
   yield takeLatest(getHoldingsRequested.type, getHoldingsSaga);
   yield takeLatest(getCoinMarketRequested.type, getCoinMarketSaga);
+  yield takeLatest(getSparklineRequested.type, getSparklineSaga);
 }
 
 export default marketSaga;

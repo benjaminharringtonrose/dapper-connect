@@ -32,7 +32,7 @@ function* getAccountSaga(action: GetAccountRequestedAction) {
 
     yield put(getHoldingsRequested({ holdings: allHoldings }));
 
-    yield put(getAccountSucceeded({ account }));
+    yield put(getAccountSucceeded({ account: { ...account, holdings: allHoldings } }));
   } catch (error) {
     console.log(error);
     yield put(getAccountFailed({ error }));

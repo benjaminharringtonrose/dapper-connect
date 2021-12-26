@@ -14,6 +14,7 @@ const TextButton = ({
 }) => {
   return (
     <TouchableOpacity
+      onPress={onPress}
       style={[
         {
           alignItems: "center",
@@ -22,7 +23,7 @@ const TextButton = ({
           paddingHorizontal: 18,
           borderRadius: 15,
           backgroundColor: COLORS.gray1,
-          minWidth: 70,
+          minWidth: 30,
         },
         containerStyle,
       ]}

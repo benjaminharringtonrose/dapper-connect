@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import Web3 from "web3";
 
@@ -9,15 +9,15 @@ import { BalanceInfo, Chart, IconTextButton } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getAccountRequested } from "../store/account/slice";
-import { resetHoldings } from "../store/market/slice";
+import { getSparklineRequested, resetHoldings } from "../store/market/slice";
 
 import MainLayout from "./MainLayout";
 
 const PortfolioScreen = () => {
   const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
 
-  const { holdings, loadingGetHoldings } = useAppSelector((state) => state.market);
-  const { account } = useAppSelector((state) => state.account);
+  const { holdings, loadingGetHoldings, sparkline } = useAppSelector((state) => state.market);
+  const { account, loadingGetAccount } = useAppSelector((state) => state.account);
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
@@ -60,15 +60,17 @@ const PortfolioScreen = () => {
     }
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(getSparklineRequested({ id: holdings[0]?.id, days: "7", interval: "hourly" }));
+    }, [])
+  );
+
   useEffect(() => {
     if (connector.connected) {
-      (async () => {
-        dispatch(getAccountRequested({ address: connector.accounts[0] }));
-      })();
+      dispatch(getAccountRequested({ address: connector.accounts[0] }));
     }
   }, [connector.connected]);
-
-  console.log(account);
 
   const totalWallet = holdings?.reduce((a, b) => a + (b.total || 0), 0);
   const valueChange = holdings?.reduce((a, b) => a + (b.holdingValueChange7d || 0), 0);
@@ -132,10 +134,6 @@ const PortfolioScreen = () => {
     dispatch(getAccountRequested({ address: connector.accounts[0] }));
   };
 
-  const chartPrices = selectedCoin
-    ? selectedCoin?.sparklineIn7d?.value
-    : holdings[0]?.sparklineIn7d?.value;
-
   return (
     <MainLayout>
       <View style={{ flex: 1, backgroundColor: COLORS.black }}>
@@ -144,7 +142,7 @@ const PortfolioScreen = () => {
           {renderWalletInfoSection()}
         </View>
         {/* Chart */}
-        <Chart containerStyle={{ marginTop: SIZES.radius }} chartPrices={chartPrices} />
+        <Chart containerStyle={{ marginTop: SIZES.radius }} chartPrices={sparkline} />
         {/* Assets */}
         <FlatList
           data={holdings}
@@ -152,7 +150,7 @@ const PortfolioScreen = () => {
           contentContainerStyle={{ marginTop: SIZES.padding }}
           refreshControl={
             <RefreshControl
-              refreshing={loadingGetHoldings}
+              refreshing={loadingGetAccount || loadingGetHoldings}
               onRefresh={onRefresh}
               tintColor={COLORS.white}
             />
@@ -189,7 +187,10 @@ const PortfolioScreen = () => {
                   paddingHorizontal: SIZES.padding,
                   backgroundColor,
                 }}
-                onPress={() => setSelectedCoin(item)}
+                onPress={() => {
+                  dispatch(getSparklineRequested({ id: item?.id, days: "7", interval: "hourly" }));
+                  setSelectedCoin(item);
+                }}
               >
                 {/* Asset */}
                 <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>

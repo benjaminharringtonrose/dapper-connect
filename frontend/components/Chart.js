@@ -13,17 +13,17 @@ import { Text, View } from "react-native";
 
 import { COLORS, FONTS, SIZES } from "../constants";
 
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 const Chart = ({ containerStyle, chartPrices }) => {
-  const startUnixTimestamp = moment().subtract(7, "day").unix();
   const data = chartPrices
-    ? chartPrices?.map((item, index) => {
+    ? chartPrices?.map((item) => {
         return {
-          x: startUnixTimestamp + (index + 1) * 3600,
-          y: item,
+          x: item[0],
+          y: item[1],
         };
       })
     : [];
-  const points = monotoneCubicInterpolation({ data, range: 40 });
 
   const formatUSD = (value) => {
     "worklet";
@@ -38,10 +38,15 @@ const Chart = ({ containerStyle, chartPrices }) => {
     if (value === "") {
       return "";
     }
-    var selectedDate = new Date(value * 1000);
-    const date = `0${selectedDate.getDate()}`.slice(-2);
-    const month = `0${selectedDate.getMonth() + 1}`.slice(-2);
-    return `${month}/${date}`;
+    const selectedDate = new Date(Number(value));
+
+    const month = MONTHS[selectedDate.getMonth()];
+    let day = selectedDate.getDate();
+    if (day < 10) {
+      day = `0${day}`;
+    }
+    const year = selectedDate.getFullYear();
+    return `${month} ${day}, ${year}`;
   };
 
   const formatNumber = (value, roundingPoint) => {
@@ -58,8 +63,9 @@ const Chart = ({ containerStyle, chartPrices }) => {
 
   const getYAxisLabelValues = () => {
     if (chartPrices !== undefined) {
-      const minValue = Math.min(...chartPrices);
-      const maxValue = Math.max(...chartPrices);
+      const y = chartPrices?.map((price) => price[1]);
+      const minValue = Math.min(...y);
+      const maxValue = Math.max(...y);
       const midValue = (minValue + maxValue) / 2;
       const higherMidValue = (maxValue + midValue) / 2;
       const lowerMidValue = (midValue + minValue) / 2;
@@ -109,8 +115,8 @@ const Chart = ({ containerStyle, chartPrices }) => {
       </View>
       {/* Chart */}
       {data.length > 0 && (
-        <ChartPathProvider data={{ points, smoothingStrategy: "bezier" }}>
-          <ChartPath height={150} width={SIZES.width} stroke={"purple"} strokeWidth={2} />
+        <ChartPathProvider data={{ points: data, smoothingStrategy: "bezier" }}>
+          <ChartPath height={150} width={SIZES.width} stroke={"blue"} strokeWidth={2} />
           <ChartDot>
             <View
               style={{
@@ -137,7 +143,7 @@ const Chart = ({ containerStyle, chartPrices }) => {
                     width: 15,
                     height: 15,
                     borderRadius: 10,
-                    backgroundColor: "purple",
+                    backgroundColor: "blue",
                   }}
                 />
               </View>
