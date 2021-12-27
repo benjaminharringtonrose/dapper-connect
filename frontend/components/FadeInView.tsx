@@ -1,14 +1,19 @@
 import React, { useEffect, useRef } from "react";
-import { Animated } from "react-native";
-export const FadeInView = ({ children }: { children: React.ReactNode }) => {
+import { Animated, ViewStyle } from "react-native";
+export const FadeInView = ({
+  style,
+  children,
+}: {
+  style: ViewStyle;
+  children: React.ReactNode;
+}) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     fadeIn();
-  }, []);
+  });
 
   const fadeIn = () => {
-    // Will change fadeAnim value to 1 in 5 seconds
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 500,
@@ -16,5 +21,5 @@ export const FadeInView = ({ children }: { children: React.ReactNode }) => {
     }).start();
   };
 
-  return <Animated.View style={{ flex: 1, opacity: fadeAnim }}>{children}</Animated.View>;
+  return <Animated.View style={[{ flex: 1, opacity: fadeAnim }, style]}>{children}</Animated.View>;
 };

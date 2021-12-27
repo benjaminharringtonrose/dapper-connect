@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import React, { useState } from "react";
 import { FlatList, Image, RefreshControl, Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 
-import { HeaderBar, TextButton } from "../components";
+import { HeaderBar } from "../components";
 import { FadeInView } from "../components/FadeInView";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
@@ -26,21 +25,15 @@ const MarketScreen = () => {
     dispatch(getExchangesRequested());
   };
 
-  const renderButtons = () => {
-    return (
-      <View
-        style={{ flexDirection: "row", marginTop: SIZES.radius, marginHorizontal: SIZES.radius }}
-      >
-        <TextButton label={"USD"} onPress={() => {}} />
-        <TextButton containerStyle={{ marginLeft: SIZES.base }} label={"% 7d"} onPress={() => {}} />
-        <TextButton containerStyle={{ marginLeft: SIZES.base }} label={"Top"} onPress={() => {}} />
-      </View>
-    );
-  };
-
   const renderCryptoList = () => {
     return (
-      <View style={{ flex: 1, width: SIZES.width }}>
+      <FadeInView style={{ flex: 1, width: SIZES.width }}>
+        <View style={{ flexDirection: "row", paddingVertical: SIZES.radius }}>
+          <Text style={{ flex: 3.5, color: COLORS.lightGray3, paddingLeft: SIZES.padding }}>
+            {"Name"}
+          </Text>
+          <Text style={{ flex: 1, color: COLORS.lightGray3 }}>{"Price"}</Text>
+        </View>
         <FlatList
           data={coins}
           keyExtractor={(item) => item.id}
@@ -132,13 +125,16 @@ const MarketScreen = () => {
             );
           }}
         />
-      </View>
+      </FadeInView>
     );
   };
 
   const renderExchangesList = () => {
     return (
-      <View style={{ flex: 1, width: SIZES.width }}>
+      <FadeInView style={{ flex: 1, width: SIZES.width }}>
+        <View style={{ flexDirection: "row", paddingVertical: SIZES.radius }}>
+          <Text style={{ color: COLORS.lightGray3, paddingLeft: SIZES.padding }}>{"Name"}</Text>
+        </View>
         <FlatList
           data={exchanges}
           keyExtractor={(item) => item.id}
@@ -170,7 +166,7 @@ const MarketScreen = () => {
             );
           }}
         />
-      </View>
+      </FadeInView>
     );
   };
 
@@ -182,7 +178,7 @@ const MarketScreen = () => {
           <HeaderBar title={"Market"} />
           {/* Tab Bar */}
           <SegmentedControl
-            values={["Cyptocurrencies", "Exchanges"]}
+            values={["Cyptocurrency", "Exchanges"]}
             selectedIndex={selectedIndex}
             onChange={(event) => {
               onRefresh();
@@ -194,10 +190,10 @@ const MarketScreen = () => {
             fontStyle={{ color: COLORS.white }}
           />
           {/* Buttons */}
-          {renderButtons()}
+          {/* {renderButtons()} */}
         </View>
         {/* Market List */}
-        <FadeInView>{selectedIndex === 0 ? renderCryptoList() : renderExchangesList()}</FadeInView>
+        {selectedIndex === 0 ? renderCryptoList() : renderExchangesList()}
       </View>
     </RootView>
   );
