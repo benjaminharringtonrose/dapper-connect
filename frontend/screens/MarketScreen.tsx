@@ -105,6 +105,9 @@ const MarketScreen = () => {
   const marketTabScrollViewRef = useRef<FlatList>(null);
 
   const { coins } = useAppSelector((state) => state.market);
+  const { exchanges } = useAppSelector((state) => state.exchange);
+
+  console.log(exchanges);
 
   const dispatch = useAppDispatch();
 

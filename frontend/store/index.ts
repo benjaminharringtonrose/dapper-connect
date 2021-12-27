@@ -4,6 +4,8 @@ import { fork } from "redux-saga/effects";
 
 import accountSaga from "./account/sagas";
 import accountReducer from "./account/slice";
+import exchangeSaga from "./exchange/sagas";
+import exchangeReducer from "./exchange/slice";
 import marketSaga from "./market/sagas";
 import marketReducer from "./market/slice";
 import settingsSaga from "./settings/sagas";
@@ -12,19 +14,21 @@ import tabSaga from "./tab/sagas";
 import tabReducer from "./tab/slice";
 
 function* rootSaga() {
-  yield fork(tabSaga);
-  yield fork(marketSaga);
   yield fork(accountSaga);
+  yield fork(exchangeSaga);
+  yield fork(marketSaga);
   yield fork(settingsSaga);
+  yield fork(tabSaga);
 }
 
 const sagaMiddleware = createSagaMiddleware();
 
 const reducer = combineReducers({
-  tabs: tabReducer,
-  market: marketReducer,
   account: accountReducer,
+  exchange: exchangeReducer,
+  market: marketReducer,
   settings: settingsReducer,
+  tabs: tabReducer,
 });
 
 export const store = createStore(reducer, applyMiddleware(sagaMiddleware));

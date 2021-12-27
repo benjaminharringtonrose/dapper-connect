@@ -1,11 +1,16 @@
-import { call, delay, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest } from "redux-saga/effects";
 
+import { getExchangesSaga } from "../exchange/sagas";
+import { getExchangesRequested } from "../exchange/slice";
 import { getCoinMarketSaga, getSparklineSaga } from "../market/sagas";
 import { getCoinMarketRequested, getSparklineRequested } from "../market/slice";
 
 import { frontloadAppFailed, frontloadAppRequested, frontloadAppSucceeded } from "./slice";
 
 function* frontloadAppSaga() {
+  // we use `call` instead of `put` because `call` waits for the saga to be executed,
+  // while `put` is non-blocking. We don't want to begin loading the app until
+  // these network requests are done.
   try {
     yield call(getCoinMarketSaga, getCoinMarketRequested({}));
     yield call(
@@ -16,6 +21,7 @@ function* frontloadAppSaga() {
         interval: "minutely",
       })
     );
+    yield call(getExchangesSaga, getExchangesRequested());
     yield put(frontloadAppSucceeded());
   } catch (error) {
     yield put(frontloadAppFailed({ error }));
