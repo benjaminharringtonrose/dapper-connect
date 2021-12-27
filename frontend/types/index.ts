@@ -49,6 +49,7 @@ export interface MeasureLayout {
   y: number;
   width: number;
   height: number;
+  list?: "coins" | "exchanges";
 }
 
 export interface Token {

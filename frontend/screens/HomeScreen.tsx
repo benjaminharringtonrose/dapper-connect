@@ -103,7 +103,7 @@ const HomeScreen = () => {
       <View style={{ flex: 1, backgroundColor: COLORS.black }}>
         <View style={{ paddingBottom: SIZES.radius }}>
           {/* Chart */}
-          <Chart containerStyle={{ marginTop: SIZES.padding * 2 }} chartPrices={sparkline} />
+          <Chart containerStyle={{}} chartPrices={sparkline} />
           {renderButtons()}
         </View>
         <View style={{ marginVertical: SIZES.radius }}>

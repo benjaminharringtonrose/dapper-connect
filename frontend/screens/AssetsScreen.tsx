@@ -34,7 +34,7 @@ const AssetsScreen = () => {
   const modalRef = useRef<Modalize>(null);
   const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
 
-  const { holdings, loadingGetHoldings, sparkline } = useAppSelector((state) => state.market);
+  const { holdings, sparkline } = useAppSelector((state) => state.market);
   const { account, loadingGetAccount } = useAppSelector((state) => state.account);
 
   const navigation = useNavigation();
@@ -163,7 +163,7 @@ const AssetsScreen = () => {
             contentContainerStyle={{ marginTop: SIZES.padding }}
             refreshControl={
               <RefreshControl
-                refreshing={loadingGetAccount || loadingGetHoldings}
+                refreshing={loadingGetAccount}
                 onRefresh={onRefresh}
                 tintColor={COLORS.white}
               />
@@ -191,7 +191,13 @@ const AssetsScreen = () => {
                   : item.priceChangePercentageInCurrency7d > 0
                   ? COLORS.lightGreen
                   : COLORS.red;
-              const backgroundColor = item?.id === selectedCoin?.id ? COLORS.gray : COLORS.black;
+              const backgroundColor = selectedCoin?.id
+                ? item?.id === selectedCoin?.id
+                  ? COLORS.gray
+                  : COLORS.black
+                : item?.id === holdings?.[0]?.id
+                ? COLORS.gray
+                : COLORS.black;
               return (
                 <TouchableOpacity
                   style={{
