@@ -3,6 +3,7 @@ import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
+import { StackNavigationOptions } from "@react-navigation/stack";
 import React from "react";
 import { TouchableOpacity } from "react-native";
 
@@ -14,7 +15,7 @@ import { setTradeModalVisibility } from "../store/tab/slice";
 
 const Tab = createBottomTabNavigator();
 
-const defaultNavigationOptions: BottomTabNavigationOptions = {
+export const defaultNavigationOptions: BottomTabNavigationOptions & StackNavigationOptions = {
   headerTitle: "DapperConnect",
   headerTitleStyle: [FONTS.h2, { color: COLORS.white }],
   headerStyle: {

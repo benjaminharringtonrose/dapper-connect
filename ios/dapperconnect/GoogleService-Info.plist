@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>902942777063-c3mgaf0cfglgrovmd4jg8drtoi4octav.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.902942777063-c3mgaf0cfglgrovmd4jg8drtoi4octav</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDd14YfyJFAzm0zEyafvLprD9GVHXkSIbk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>902942777063</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.benjaminrose.dapperconnect</string>
+	<key>PROJECT_ID</key>
+	<string>dapperconnect-f10a5</string>
+	<key>STORAGE_BUCKET</key>
+	<string>dapperconnect-f10a5.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:902942777063:ios:d3f68c2902c69e49d10c42</string>
+</dict>
+</plist>

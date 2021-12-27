@@ -1,3 +1,5 @@
+import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
+
 export interface Holding {
   id: string;
   symbol: string;
@@ -129,4 +131,34 @@ export interface Exchange {
   trust_score_rank: number;
   trade_volume_24h_btc: number;
   trade_volume_24h_btc_normalized: number;
+}
+
+export interface AuthUser {
+  emailVerified?: boolean;
+  uid: string;
+  providerId?: string;
+  providerData: Array<any>;
+  displayName?: string;
+  email?: string;
+  isAnonymous?: boolean;
+  photoURL?: string;
+  metadata: { creationTime?: string; lastSignInTime?: string };
+}
+
+export interface FirebaseUser {
+  uid: string;
+  email: string;
+  createdOn?: FirebaseFirestoreTypes.Timestamp;
+  providers?: string[];
+  messagingTokens?: string[];
+}
+
+export interface User {
+  uid: string;
+  email: string;
+  createdOn: string;
+  chatRooms?: string[];
+  providers?: string[];
+  messagingTokens?: string[];
+  state: "approved" | "pending" | "rejected";
 }
