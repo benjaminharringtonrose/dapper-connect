@@ -1,23 +1,16 @@
+import { MAINNET_API, RINKEBY_API } from "@env";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Alert,
-  AsyncStorage,
-  FlatList,
-  Image,
-  RefreshControl,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import Web3 from "web3";
 
 import { BalanceInfo, Chart, IconTextButton } from "../components";
 import { Button } from "../components/Button";
+import { FadeInView } from "../components/FadeInView";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getAccountRequested } from "../store/account/slice";
@@ -25,9 +18,7 @@ import { getSparklineRequested, resetHoldings } from "../store/market/slice";
 
 import RootView from "./RootView";
 
-const provider = new Web3.providers.HttpProvider(
-  "https://mainnet.infura.io/v3/7b9909b1c3ed4958a172e2ad2e6c66a3"
-);
+const provider = new Web3.providers.HttpProvider(RINKEBY_API);
 export const web3: Web3 = new Web3(provider);
 
 const AssetsScreen = () => {
@@ -44,9 +35,11 @@ const AssetsScreen = () => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={() => modalRef.current?.open()}>
-          <Ionicons name={"wallet"} size={32} color={COLORS.white} />
-        </TouchableOpacity>
+        <FadeInView>
+          <TouchableOpacity onPress={() => modalRef.current?.open()}>
+            <Ionicons name={"wallet"} size={32} color={COLORS.white} />
+          </TouchableOpacity>
+        </FadeInView>
       ),
     });
   });
@@ -70,6 +63,7 @@ const AssetsScreen = () => {
     } catch (e) {
       console.log(e);
     }
+    modalRef.current?.close();
   }
 
   useFocusEffect(
@@ -80,6 +74,7 @@ const AssetsScreen = () => {
 
   useEffect(() => {
     if (connector.connected) {
+      console.log(connector.accounts);
       dispatch(getAccountRequested({ address: connector.accounts[0] }));
     }
   }, [connector.connected]);
@@ -276,18 +271,23 @@ const AssetsScreen = () => {
           />
         </View>
         <Portal>
-          <Modalize ref={modalRef} adjustToContentHeight={true}>
+          <Modalize ref={modalRef} adjustToContentHeight={true} useNativeDriver={false}>
             <View style={{ minHeight: 200, backgroundColor: COLORS.black }}>
               <Button
                 label={"Create new wallet"}
-                onPress={() => {
-                  const account = web3.eth.accounts.create(web3.utils.randomHex(32));
-                  const wallet = web3.eth.accounts.wallet.add(account);
-                  const password = web3.utils.randomHex(32);
-                  const keystore = wallet.encrypt(password);
-                  console.log("account: ", account);
-                  console.log("wallet: ", wallet);
-                  console.log("keystore: ", keystore);
+                onPress={async () => {
+                  try {
+                    modalRef.current?.close();
+                    const account = await web3.eth.accounts.create(web3.utils.randomHex(32));
+                    const wallet = await web3.eth.accounts.wallet.add(account);
+                    // const password = await web3.utils.randomHex(32);
+                    // const keystore = await wallet.encrypt(password);
+                    console.log("account: ", account);
+                    console.log("wallet: ", wallet);
+                    // console.log("keystore: ", keystore);
+                  } catch (error) {
+                    console.warn(error);
+                  }
                 }}
                 style={{ marginTop: SIZES.padding, marginHorizontal: SIZES.padding }}
               />

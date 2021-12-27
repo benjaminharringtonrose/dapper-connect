@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import * as React from "react";
 import {
   StyleProp,
@@ -16,6 +17,7 @@ export interface InputProps extends TextInputProps {
   style?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
   footnote?: string;
+  icon?: "search";
 }
 export const Input = React.forwardRef<TextInput, InputProps>((props: InputProps, ref) => {
   return (

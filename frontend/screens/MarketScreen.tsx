@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import React, { useState } from "react";
 import { FlatList, Image, RefreshControl, Text, View } from "react-native";
@@ -5,6 +6,7 @@ import { LineChart } from "react-native-chart-kit";
 
 import { HeaderBar } from "../components";
 import { FadeInView } from "../components/FadeInView";
+import { Input } from "../components/Input";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getExchangesRequested } from "../store/exchange/slice";
@@ -174,8 +176,31 @@ const MarketScreen = () => {
     <RootView>
       <View style={{ flex: 1, backgroundColor: COLORS.black }}>
         <View style={{ marginHorizontal: SIZES.padding }}>
-          {/* Header */}
-          <HeaderBar title={"Market"} />
+          {/* Search Bar */}
+          <View
+            style={{
+              flexDirection: "row",
+              backgroundColor: COLORS.white,
+              borderRadius: SIZES.radius,
+              marginBottom: SIZES.radius,
+            }}
+          >
+            <Ionicons
+              name={"search"}
+              size={28}
+              color={COLORS.black}
+              style={{ justifyContent: "center", padding: 5 }}
+            />
+            <Input
+              icon={"search"}
+              inputStyle={{ color: COLORS.black, paddingLeft: 5 }}
+              style={{
+                flex: 1,
+                backgroundColor: COLORS.white,
+                borderRadius: SIZES.radius,
+              }}
+            />
+          </View>
           {/* Tab Bar */}
           <SegmentedControl
             values={["Cyptocurrency", "Exchanges"]}
@@ -189,6 +214,7 @@ const MarketScreen = () => {
             activeFontStyle={{ color: COLORS.black }}
             fontStyle={{ color: COLORS.white }}
           />
+
           {/* Buttons */}
           {/* {renderButtons()} */}
         </View>

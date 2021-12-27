@@ -4,7 +4,7 @@ export const FadeInView = ({
   style,
   children,
 }: {
-  style: ViewStyle;
+  style?: ViewStyle;
   children: React.ReactNode;
 }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -16,7 +16,7 @@ export const FadeInView = ({
   const fadeIn = () => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 500,
+      duration: 4,
       useNativeDriver: true,
     }).start();
   };

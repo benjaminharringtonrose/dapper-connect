@@ -25,14 +25,14 @@ export type ButtonProps = TouchableOpacityProps & {
 
 export const Button = (props: ButtonProps) => {
   const { type = "contained", textColor } = props;
-  const contentColor = textColor ? textColor : type === "contained" ? "white" : COLORS.primary;
+  const contentColor = textColor ? textColor : type === "contained" ? COLORS.black : COLORS.primary;
   return (
     <TouchableOpacity
       {...props}
       disabled={props.loading || props.disabled}
       style={[
         {
-          backgroundColor: type === "contained" ? COLORS.lightGray : undefined,
+          backgroundColor: type === "contained" ? COLORS.white : undefined,
           paddingHorizontal: type !== "text" ? 10 : 0,
           paddingVertical: 5,
           justifyContent: "center",
