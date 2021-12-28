@@ -145,10 +145,35 @@ export interface AuthUser {
   metadata: { creationTime?: string; lastSignInTime?: string };
 }
 
+export interface Keystore {
+  address: string;
+  crypto: {
+    cipher: string;
+    cipherparams: {
+      iv: string;
+    };
+    ciphertext: string;
+    kdf: string;
+    kdfparams: any;
+    mac: string;
+  };
+  id: string;
+  version: number;
+}
+
+export interface Wallet {
+  address?: string;
+  keystore?: Keystore;
+  password?: string;
+  privateKey?: string;
+  provider?: "walletconnect" | "local";
+}
+
 export interface User {
   walletProvider?: string;
   walletAddress?: string;
   walletPrivateKey?: string;
+  wallets?: Wallet[];
   uid: string;
   email: string;
   createdOn: string;

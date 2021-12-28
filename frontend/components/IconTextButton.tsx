@@ -12,12 +12,19 @@ import { COLORS, FONTS, SIZES } from "../constants";
 
 interface IconTextButtonProps {
   label: string;
-  icon: ImageSourcePropType;
+  icon?: ImageSourcePropType;
+  customIcon?: () => JSX.Element;
   onPress: () => void;
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-const IconTextButton = ({ label, icon, containerStyle, onPress }: IconTextButtonProps) => {
+const IconTextButton = ({
+  label,
+  icon,
+  customIcon,
+  containerStyle,
+  onPress,
+}: IconTextButtonProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -28,13 +35,13 @@ const IconTextButton = ({ label, icon, containerStyle, onPress }: IconTextButton
           justifyContent: "center",
           height: 50,
           borderRadius: SIZES.radius,
-          backgroundColor: COLORS.white,
+          backgroundColor: COLORS.gray,
         },
         containerStyle,
       ]}
     >
-      <Image source={icon} style={{ width: 20, height: 20 }} />
-      <Text style={[FONTS.h3, { marginLeft: SIZES.base }]}>{label}</Text>
+      {customIcon ? customIcon() : <Image source={icon} style={{ width: 20, height: 20 }} />}
+      <Text style={[FONTS.h3, { marginLeft: SIZES.base, color: COLORS.white }]}>{label}</Text>
     </TouchableOpacity>
   );
 };

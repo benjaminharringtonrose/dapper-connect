@@ -1,5 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import Clipboard from "@react-native-clipboard/clipboard";
+import firestore from "@react-native-firebase/firestore";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import * as Haptics from "expo-haptics";
 import { Formik, FormikProps } from "formik";
@@ -15,19 +16,18 @@ import { Button } from "../components/Button";
 import { FormInput } from "../components/FormInput";
 import { COLORS, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
+import { getAccountRequested } from "../store/account/slice";
 
 interface FormProps {
-  amount?: string;
-  address?: string;
+  name?: string;
 }
 
-export const SendModal = forwardRef(
+export const CreateWalletModal = forwardRef(
   ({ onPress, web3 }: { onPress: () => void; web3: Web3 }, ref: Ref<Modalize>) => {
     const formRef = React.useRef<FormikProps<FormProps>>(null);
 
     const ProfileSchema = Yup.object().shape({
-      amount: Yup.string().required("Required"),
-      address: Yup.string().required("Required"),
+      name: Yup.string().required("Required"),
     });
 
     const { user } = useAppSelector((state) => state.account);
@@ -36,35 +36,54 @@ export const SendModal = forwardRef(
     const insets = useSafeAreaInsets();
 
     const [loading, setLoading] = useState<boolean>(false);
-    const [address, setAddress] = useState<string>("");
 
     const onSubmit = async (values: FormProps) => {
-      if (!values.amount || !values.address) {
+      if (!values.name) {
         return;
       }
       try {
         setLoading(true);
-        // send transaction logic goes here
-        if (user.walletProvider === "walletconnect") {
-          if (connector.connected) {
-            const wei = web3.utils.toWei(values.amount, "ether");
-            await connector.sendTransaction({
-              data: "0x",
-              from: user?.walletAddress,
-              to: values.address,
-              value: web3.utils.numberToHex(Number(wei)),
-            });
-            console.log("success");
-          }
-        } else if (user.walletProvider === "local") {
-          //
-        }
+        create(values);
         setLoading(false);
       } catch (error) {
         setLoading(false);
         console.warn(error.message);
       }
       onPress();
+    };
+
+    const create = async (values: FormProps) => {
+      try {
+        onPress();
+        if (connector.connected) {
+          await connector.killSession();
+        }
+        const account = web3.eth.accounts.create(web3.utils.randomHex(32));
+        const wallet = web3.eth.accounts.wallet.add(account);
+        const password = web3.utils.randomHex(32);
+        const keystore = wallet.encrypt(password);
+        await firestore()
+          .collection("users")
+          .doc(user.uid)
+          .set(
+            {
+              wallets: {
+                [wallet.address]: {
+                  name: values.name,
+                  address: wallet.address,
+                  privateKey: wallet.privateKey,
+                  provider: "local",
+                  password: password,
+                  keystore: keystore,
+                },
+              },
+            },
+            { merge: true }
+          );
+        dispatch(getAccountRequested({ address: wallet.address }));
+      } catch (error) {
+        console.warn(error);
+      }
     };
 
     return (
@@ -75,27 +94,19 @@ export const SendModal = forwardRef(
           adjustToContentHeight={true}
           modalStyle={{
             backgroundColor: COLORS.black,
+            bottom: insets.bottom,
           }}
         >
-          <View style={{ height: Dimensions.get("screen").height / 2 }}>
+          <View>
             <Formik
               innerRef={formRef}
               initialValues={{
-                amount: undefined,
-                address: undefined,
+                name: undefined,
               }}
               validationSchema={ProfileSchema}
               onSubmit={onSubmit}
             >
-              {({
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                setFieldValue,
-                values,
-                touched,
-                errors,
-              }) => (
+              {({ handleChange, handleBlur, handleSubmit, values, touched, errors }) => (
                 <View style={{ margin: SIZES.padding }}>
                   <View
                     style={{
@@ -103,53 +114,25 @@ export const SendModal = forwardRef(
                       borderRadius: SIZES.radius,
                       borderWidth: 1,
                       borderColor: COLORS.lightGray,
-                      padding: SIZES.padding,
+                      padding: SIZES.radius,
                     }}
                   >
                     <FormInput
-                      label={"Amount"}
-                      placeholder={"ETH"}
-                      onChangeText={handleChange("amount")}
-                      onBlur={handleBlur("amount")}
-                      keyboardType={"decimal-pad"}
+                      label={"Name"}
+                      placeholder={"My Wallet, etc..."}
+                      onChangeText={handleChange("name")}
+                      onBlur={handleBlur("name")}
                       autoCorrect={true}
-                      value={values.amount}
-                      error={errors.amount}
-                      touched={touched.amount}
+                      value={values.name}
+                      error={errors.name}
+                      touched={touched.name}
                       inputStyle={{ flex: 1 }}
-                      noBorder
-                    />
-                    <View
-                      style={{ height: 2, backgroundColor: COLORS.lightGray, marginVertical: 10 }}
-                    />
-                    <FormInput
-                      label={"Address"}
-                      placeholder={"0xbc28Ea04101F03a....."}
-                      onChangeText={handleChange("address")}
-                      onBlur={handleBlur("address")}
-                      autoCorrect={true}
-                      value={values.address}
-                      error={errors.address}
-                      touched={touched.address}
-                      inputStyle={{ flex: 1 }}
-                      icon={() => (
-                        <TouchableOpacity
-                          style={{ padding: SIZES.radius }}
-                          onPress={async () => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                            const clipboard = await Clipboard.getString();
-                            formRef.current?.setFieldValue("address", clipboard);
-                          }}
-                        >
-                          <Feather name="clipboard" size={24} color={COLORS.lightGray3} />
-                        </TouchableOpacity>
-                      )}
                       noBorder
                     />
                   </View>
                   <Button
                     type={"bordered"}
-                    label={"Send"}
+                    label={"Create"}
                     loading={loading}
                     onPress={() => {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

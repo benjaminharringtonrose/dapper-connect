@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, View } from "react-native";
+import { Animated, SafeAreaView, View } from "react-native";
 
 import { IconTextButton } from "../components";
 import { COLORS, icons, SIZES } from "../constants";
@@ -31,7 +31,7 @@ const RootView = ({ children }: { children: JSX.Element }) => {
   });
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
       {children}
       {isTradeModalVisible && (
         <Animated.View
@@ -71,7 +71,7 @@ const RootView = ({ children }: { children: JSX.Element }) => {
           onPress={() => console.log("Withdraw")}
         />
       </Animated.View>
-    </View>
+    </SafeAreaView>
   );
 };
 

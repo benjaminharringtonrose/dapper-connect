@@ -1,11 +1,22 @@
 import { MAINNET_API, RINKEBY_API } from "@env";
+import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import firestore from "@react-native-firebase/firestore";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Dimensions,
+  FlatList,
+  Image,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Modalize } from "react-native-modalize";
+import Toast from "react-native-root-toast";
 import Web3 from "web3";
 
 import { BalanceInfo, Chart, IconTextButton } from "../components";
@@ -13,6 +24,8 @@ import { FadeInView } from "../components/FadeInView";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { ReceiveModal, SendModal, WalletModal } from "../modals";
+import { CreateWalletModal } from "../modals/CreateWalletModal";
+import { LoadWalletModal } from "../modals/LoadWalletModal";
 import { getAccountRequested } from "../store/account/slice";
 import { getSparklineRequested, resetHoldings } from "../store/market/slice";
 
@@ -25,6 +38,8 @@ const AssetsScreen = () => {
   const walletModalRef = useRef<Modalize>(null);
   const sendModalRef = useRef<Modalize>(null);
   const receiveModalRef = useRef<Modalize>(null);
+  const loadWalletModalRef = useRef<Modalize>(null);
+  const createWalletModalRef = useRef<Modalize>(null);
 
   const { holdings, sparkline } = useAppSelector((state) => state.market);
   const { account, loadingGetAccount } = useAppSelector((state) => state.account);
@@ -35,6 +50,11 @@ const AssetsScreen = () => {
   const connector = useWalletConnect();
 
   const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
+  const [selectedAddress, setSelectedAddress] = useState<string | undefined>(
+    user?.wallets?.[0]?.address
+  );
+
+  console.log(user?.wallets.length);
 
   useEffect(() => {
     navigation.setOptions({
@@ -77,6 +97,12 @@ const AssetsScreen = () => {
   );
 
   useEffect(() => {
+    if (!connector.connected && user.walletProvider === "local" && user.walletAddress) {
+      dispatch(getAccountRequested({ address: user.walletAddress }));
+    }
+  }, []);
+
+  useEffect(() => {
     if (connector.connected) {
       dispatch(getAccountRequested({ address: connector.accounts[0] }));
       (async () =>
@@ -98,33 +124,6 @@ const AssetsScreen = () => {
 
   const onRefresh = () => {
     dispatch(getAccountRequested({ address: connector.accounts[0] }));
-  };
-
-  const createNewWallet = async () => {
-    try {
-      walletModalRef.current?.close();
-      if (connector.connected) {
-        await connector.killSession();
-      }
-      const account = await web3.eth.accounts.create(web3.utils.randomHex(32));
-      const wallet = await web3.eth.accounts.wallet.add(account);
-      console.log("account: ", account);
-      console.log("wallet: ", wallet);
-      // const password = await web3.utils.randomHex(32);
-      // const keystore = await wallet.encrypt(password);
-      // console.log("keystore: ", keystore);
-      await firestore().collection("users").doc(user.uid).set(
-        {
-          walletAddress: wallet.address,
-          walletPrivateKey: wallet.privateKey,
-          walletProvider: "local",
-        },
-        { merge: true }
-      );
-      dispatch(getAccountRequested({ address: wallet.address }));
-    } catch (error) {
-      console.warn(error);
-    }
   };
 
   function renderWalletInfoSection() {
@@ -156,21 +155,25 @@ const AssetsScreen = () => {
         >
           <IconTextButton
             label={"Send"}
-            icon={icons.send}
+            customIcon={() => <Feather name="download" size={24} color="white" />}
             containerStyle={{
               flex: 1,
               height: 40,
               marginRight: SIZES.radius,
+              borderColor: COLORS.lightGray,
+              borderWidth: 1,
             }}
             onPress={() => sendModalRef.current?.open()}
           />
           <IconTextButton
             label={"Receive"}
-            icon={icons.withdraw}
+            customIcon={() => <Feather name="upload" size={24} color="white" />}
             containerStyle={{
               flex: 1,
               height: 40,
               marginRight: SIZES.radius,
+              borderColor: COLORS.lightGray,
+              borderWidth: 1,
             }}
             onPress={() => receiveModalRef.current?.open()}
           />
@@ -308,9 +311,44 @@ const AssetsScreen = () => {
             ListFooterComponent={<View style={{ marginBottom: 50 }} />}
           />
         </View>
-        <WalletModal ref={walletModalRef} create={createNewWallet} connect={connect} />
-        <SendModal ref={sendModalRef} onPress={() => sendModalRef.current?.close()} />
-        <ReceiveModal ref={receiveModalRef} onPress={() => receiveModalRef.current?.close()} />
+        <WalletModal
+          ref={walletModalRef}
+          create={() => {
+            walletModalRef.current?.close();
+            createWalletModalRef.current?.open();
+          }}
+          load={() => {
+            walletModalRef.current?.close();
+            loadWalletModalRef.current?.open();
+          }}
+          connect={connect}
+        />
+        <SendModal ref={sendModalRef} onPress={() => sendModalRef.current?.close()} web3={web3} />
+        <ReceiveModal
+          ref={receiveModalRef}
+          onPress={() => {
+            receiveModalRef.current?.close();
+            Toast.show("Address copied to clipboard", {
+              duration: Toast.durations.SHORT,
+              position: -Dimensions.get("screen").height + 150,
+              animation: true,
+            });
+          }}
+        />
+        <LoadWalletModal
+          ref={loadWalletModalRef}
+          user={user}
+          web3={web3}
+          onSelectWallet={(address) => {
+            loadWalletModalRef.current?.close();
+            dispatch(getAccountRequested({ address }));
+          }}
+        />
+        <CreateWalletModal
+          ref={createWalletModalRef}
+          onPress={() => createWalletModalRef.current?.close()}
+          web3={web3}
+        />
       </>
     </RootView>
   );

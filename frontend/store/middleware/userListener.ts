@@ -3,7 +3,7 @@ import firestore from "@react-native-firebase/firestore";
 import { Middleware } from "@reduxjs/toolkit";
 
 import { RootState } from "..";
-import { User } from "../../types";
+import { User, Wallet } from "../../types";
 import { errorGetCurrentUser, loadingGetCurrentUser, updateUser } from "../account/slice";
 
 let isListeningToUser = false;
@@ -22,7 +22,12 @@ export const userListener: Middleware<{}, any> = (store) => (next) => (action) =
       .onSnapshot(
         (doc) => {
           const firebaseUser = doc.data();
-          store.dispatch(updateUser({ user: firebaseUser as User }));
+          const mappedWallets: Wallet[] = [];
+          for (const [key, value] of Object.entries(firebaseUser.wallets)) {
+            mappedWallets?.push(value as Wallet);
+          }
+          const user = { ...firebaseUser, wallets: mappedWallets } as User;
+          store.dispatch(updateUser({ user }));
         },
         (error) => {
           store.dispatch(

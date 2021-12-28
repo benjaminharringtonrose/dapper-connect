@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { LogBox, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Host } from "react-native-portalize";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 
 import { useAppDispatch, useAppSelector } from "./hooks";
@@ -98,11 +99,13 @@ const App = () => {
   }
   return (
     <Provider store={store}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <Host>
-          <Root />
-        </Host>
-      </GestureHandlerRootView>
+      <SafeAreaProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <Host>
+            <Root />
+          </Host>
+        </GestureHandlerRootView>
+      </SafeAreaProvider>
     </Provider>
   );
 };

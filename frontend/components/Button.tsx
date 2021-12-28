@@ -25,14 +25,14 @@ export type ButtonProps = TouchableOpacityProps & {
 
 export const Button = (props: ButtonProps) => {
   const { type = "contained", textColor } = props;
-  const contentColor = textColor ? textColor : type === "contained" ? COLORS.black : COLORS.primary;
+  const contentColor = textColor ? textColor : COLORS.white;
   return (
     <TouchableOpacity
       {...props}
       disabled={props.loading || props.disabled}
       style={[
         {
-          backgroundColor: type === "contained" ? COLORS.white : undefined,
+          backgroundColor: COLORS.gray,
           paddingHorizontal: type !== "text" ? 10 : 0,
           paddingVertical: 5,
           justifyContent: "center",
@@ -40,14 +40,14 @@ export const Button = (props: ButtonProps) => {
           minHeight: 45,
           borderRadius: 10,
           opacity: props.disabled || props.loading ? 0.5 : 1.0,
-          borderColor: COLORS.primary,
+          borderColor: COLORS.lightGray,
           borderWidth: type === "bordered" ? 1 : 0,
         },
         props.style,
       ]}
     >
       {props.loading ? (
-        <ActivityIndicator color={type === "contained" ? COLORS.white : COLORS.white} />
+        <ActivityIndicator color={COLORS.white} />
       ) : (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {/* {!!props.prefixIcon && (

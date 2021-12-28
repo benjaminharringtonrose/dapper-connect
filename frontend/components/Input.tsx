@@ -10,14 +10,15 @@ import {
   ViewStyle,
 } from "react-native";
 
-import { COLORS } from "../constants";
+import { COLORS, icons } from "../constants";
 
 export interface InputProps extends TextInputProps {
   label?: string;
   style?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
   footnote?: string;
-  icon?: "search";
+  icon?: () => JSX.Element;
+  noBorder?: boolean;
 }
 export const Input = React.forwardRef<TextInput, InputProps>((props: InputProps, ref) => {
   return (
@@ -26,7 +27,7 @@ export const Input = React.forwardRef<TextInput, InputProps>((props: InputProps,
         {
           opacity: 0.8,
           borderColor: COLORS.white,
-          borderBottomWidth: 1,
+          borderBottomWidth: props?.noBorder ? 0 : 1,
         },
         props.style,
       ]}
@@ -41,21 +42,24 @@ export const Input = React.forwardRef<TextInput, InputProps>((props: InputProps,
           {props.label}
         </Text>
       )}
-      <TextInput
-        ref={ref}
-        placeholderTextColor={COLORS.white}
-        selectionColor={COLORS.white}
-        autoCapitalize={"none"}
-        {...props}
-        style={[
-          {
-            opacity: 0.8,
-            minHeight: 40,
-            color: COLORS.white,
-          },
-          props.inputStyle,
-        ]}
-      />
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <TextInput
+          ref={ref}
+          placeholderTextColor={COLORS.white}
+          selectionColor={COLORS.white}
+          autoCapitalize={"none"}
+          {...props}
+          style={[
+            {
+              opacity: 0.8,
+              minHeight: 40,
+              color: COLORS.white,
+            },
+            props.inputStyle,
+          ]}
+        />
+        {!!props?.icon && props?.icon()}
+      </View>
     </View>
   );
 });

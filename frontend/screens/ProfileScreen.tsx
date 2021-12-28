@@ -117,7 +117,12 @@ const ProfileScreen = () => {
             type={"button"}
             onPress={() => console.log("press")}
           />
-          <Button label={"Log Out"} style={{ marginVertical: SIZES.padding }} onPress={logOut} />
+          <Button
+            type={"bordered"}
+            label={"Log Out"}
+            style={{ marginVertical: SIZES.padding }}
+            onPress={logOut}
+          />
         </ScrollView>
       </View>
     </RootView>

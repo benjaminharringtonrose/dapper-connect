@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { FlatList, Image, RefreshControl, Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 
-import { HeaderBar } from "../components";
 import { FadeInView } from "../components/FadeInView";
 import { Input } from "../components/Input";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
@@ -192,7 +191,6 @@ const MarketScreen = () => {
               style={{ justifyContent: "center", padding: 5 }}
             />
             <Input
-              icon={"search"}
               inputStyle={{ color: COLORS.black, paddingLeft: 5 }}
               style={{
                 flex: 1,
