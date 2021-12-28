@@ -1,5 +1,5 @@
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { NavigationContainer } from "@react-navigation/native";
+import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import React, { useEffect, useState } from "react";
 import { LogBox, StatusBar } from "react-native";
@@ -64,7 +64,7 @@ const Root = () => {
   return (
     <>
       <StatusBar barStyle={"light-content"} />
-      <NavigationContainer>
+      <NavigationContainer theme={DarkTheme}>
         {loadingFrontloadApp ? <StartupStack /> : user ? <AppStack /> : <AuthStack />}
       </NavigationContainer>
     </>

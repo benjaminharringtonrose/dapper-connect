@@ -1,5 +1,6 @@
 import { MAINNET_API, RINKEBY_API } from "@env";
 import { Ionicons } from "@expo/vector-icons";
+import firestore from "@react-native-firebase/firestore";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -18,15 +19,17 @@ import { getSparklineRequested, resetHoldings } from "../store/market/slice";
 
 import RootView from "./RootView";
 
-const provider = new Web3.providers.HttpProvider(RINKEBY_API);
+const provider = new Web3.providers.HttpProvider(MAINNET_API);
 export const web3: Web3 = new Web3(provider);
 
 const AssetsScreen = () => {
   const modalRef = useRef<Modalize>(null);
   const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
+  const [walletProvider, setWalletProvider] = useState<string | undefined>();
 
   const { holdings, sparkline } = useAppSelector((state) => state.market);
   const { account, loadingGetAccount } = useAppSelector((state) => state.account);
+  const { user } = useAppSelector((state) => state.auth);
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
@@ -74,8 +77,15 @@ const AssetsScreen = () => {
 
   useEffect(() => {
     if (connector.connected) {
-      console.log(connector.accounts);
+      setWalletProvider("walletconnect");
       dispatch(getAccountRequested({ address: connector.accounts[0] }));
+      console.log(user.uid);
+      firestore().collection("users").doc(user.uid).set(
+        {
+          walletAddress: connector.accounts[0],
+        },
+        { merge: true }
+      );
     }
   }, [connector.connected]);
 

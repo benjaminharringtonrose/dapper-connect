@@ -1,6 +1,7 @@
 /* eslint-disable no-empty */
 /* eslint-disable require-yield */
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 import { call, put, takeLatest } from "redux-saga/effects";
 
 import { AuthUser, FirebaseUser } from "../../types";
@@ -67,6 +68,10 @@ function* signUpSaga(action: SignUpRequestedAction) {
       photoURL: firebaseUser.photoURL || undefined,
       metadata: firebaseUser.metadata,
     };
+    yield firestore()
+      .collection("users")
+      .doc(firebaseUser.uid)
+      .set({ uid: firebaseUser.uid, email });
     yield put(signUpSucceeded({ user: authUser }));
   } catch (error) {
     console.warn(error);
