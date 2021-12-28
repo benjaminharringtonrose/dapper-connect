@@ -21,7 +21,7 @@ function* getAccountSaga(action: GetAccountRequestedAction) {
 
     const holdings = [{ id: "ethereum", qty: account.ETH.balance }];
 
-    const tokenHoldings = account.tokens.map((token) => {
+    const tokenHoldings = account?.tokens?.map((token) => {
       return {
         id: token.tokenInfo.coingecko,
         qty: token.balance / 10 ** Number(token.tokenInfo.decimals),

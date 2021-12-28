@@ -4,7 +4,7 @@ import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { call, put, takeLatest } from "redux-saga/effects";
 
-import { AuthUser, FirebaseUser } from "../../types";
+import { AuthUser } from "../../types";
 import {
   signInFailed,
   signInRequested,
@@ -49,7 +49,6 @@ function* signUpSaga(action: SignUpRequestedAction) {
   const { email, password } = action.payload;
   try {
     const firebaseAuth = auth();
-    yield console.log("signup saga");
     const response: FirebaseAuthTypes.UserCredential = yield call(
       [firebaseAuth, firebaseAuth.createUserWithEmailAndPassword],
       email,

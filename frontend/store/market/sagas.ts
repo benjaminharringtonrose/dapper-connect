@@ -40,28 +40,28 @@ export function* getHoldingsSaga(action: GetHoldingsRequestedAction) {
     page = 1,
   } = action.payload;
 
-  const ids = holdings?.map((item) => item.id).join(",");
+  const ids = holdings?.map((item) => item?.id).join(",");
   const apiUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${currency}&order=${orderBy}&per_page=${perPage}&page=${page}&sparkline=${sparkline}&price_change_percentage=${priceChangePerc}&ids=${ids}`;
   try {
     const response: ResponseGenerator = yield call([axios, axios.get], apiUrl);
 
     const mappedHoldings = response.data.map((item: any) => {
-      const coin = holdings?.find((a) => a.id === item.id);
+      const coin = holdings?.find((a) => a.id === item?.id);
 
       const price7d = item.current_price / (1 + item.price_change_percentage_7d_in_currency * 0.01);
 
       return {
-        id: item.id,
-        symbol: item.symbol,
-        name: item.name,
-        image: item.image,
-        currentPrice: item.current_price,
+        id: item?.id,
+        symbol: item?.symbol,
+        name: item?.name,
+        image: item?.image,
+        currentPrice: item?.current_price,
         qty: coin.qty,
-        total: coin.qty * item.current_price,
-        priceChangePercentageInCurrency7d: item.price_change_percentage_7d_in_currency,
-        holdingValueChange7d: (item.current_price - price7d) * coin.qty,
+        total: coin.qty * item?.current_price,
+        priceChangePercentageInCurrency7d: item?.price_change_percentage_7d_in_currency,
+        holdingValueChange7d: (item?.current_price - price7d) * coin.qty,
         sparklineIn7d: {
-          value: item.sparkline_in_7d.price.map((price: number) => price * coin.qty),
+          value: item?.sparkline_in_7d?.price?.map((price: number) => price * coin.qty),
         },
       };
     });

@@ -145,20 +145,14 @@ export interface AuthUser {
   metadata: { creationTime?: string; lastSignInTime?: string };
 }
 
-export interface FirebaseUser {
-  uid: string;
-  email: string;
-  createdOn?: FirebaseFirestoreTypes.Timestamp;
-  providers?: string[];
-  messagingTokens?: string[];
-}
-
 export interface User {
+  walletProvider?: string;
+  walletAddress?: string;
+  walletPrivateKey?: string;
   uid: string;
   email: string;
   createdOn: string;
-  chatRooms?: string[];
   providers?: string[];
   messagingTokens?: string[];
-  state: "approved" | "pending" | "rejected";
+  state: "verified" | "unverified";
 }

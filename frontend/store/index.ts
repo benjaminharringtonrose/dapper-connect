@@ -10,6 +10,7 @@ import exchangeSaga from "./exchange/sagas";
 import exchangeReducer from "./exchange/slice";
 import marketSaga from "./market/sagas";
 import marketReducer from "./market/slice";
+import { userListener } from "./middleware/userListener";
 import settingsSaga from "./settings/sagas";
 import settingsReducer from "./settings/slice";
 import tabSaga from "./tab/sagas";
@@ -35,7 +36,7 @@ const reducer = combineReducers({
   tabs: tabReducer,
 });
 
-export const store = createStore(reducer, applyMiddleware(sagaMiddleware));
+export const store = createStore(reducer, applyMiddleware(sagaMiddleware, userListener));
 
 sagaMiddleware.run(rootSaga);
 

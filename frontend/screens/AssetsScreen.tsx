@@ -6,14 +6,13 @@ import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
-import { Portal } from "react-native-portalize";
 import Web3 from "web3";
 
 import { BalanceInfo, Chart, IconTextButton } from "../components";
-import { Button } from "../components/Button";
 import { FadeInView } from "../components/FadeInView";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
+import { ReceiveModal, SendModal, WalletModal } from "../modals";
 import { getAccountRequested } from "../store/account/slice";
 import { getSparklineRequested, resetHoldings } from "../store/market/slice";
 
@@ -23,23 +22,25 @@ const provider = new Web3.providers.HttpProvider(MAINNET_API);
 export const web3: Web3 = new Web3(provider);
 
 const AssetsScreen = () => {
-  const modalRef = useRef<Modalize>(null);
-  const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
-  const [walletProvider, setWalletProvider] = useState<string | undefined>();
+  const walletModalRef = useRef<Modalize>(null);
+  const sendModalRef = useRef<Modalize>(null);
+  const receiveModalRef = useRef<Modalize>(null);
 
   const { holdings, sparkline } = useAppSelector((state) => state.market);
   const { account, loadingGetAccount } = useAppSelector((state) => state.account);
-  const { user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.account);
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const connector = useWalletConnect();
 
+  const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <FadeInView>
-          <TouchableOpacity onPress={() => modalRef.current?.open()}>
+          <TouchableOpacity onPress={() => walletModalRef.current?.open()}>
             <Ionicons name={"wallet"} size={32} color={COLORS.white} />
           </TouchableOpacity>
         </FadeInView>
@@ -66,7 +67,7 @@ const AssetsScreen = () => {
     } catch (e) {
       console.log(e);
     }
-    modalRef.current?.close();
+    walletModalRef.current?.close();
   }
 
   useFocusEffect(
@@ -77,15 +78,15 @@ const AssetsScreen = () => {
 
   useEffect(() => {
     if (connector.connected) {
-      setWalletProvider("walletconnect");
       dispatch(getAccountRequested({ address: connector.accounts[0] }));
-      console.log(user.uid);
-      firestore().collection("users").doc(user.uid).set(
-        {
-          walletAddress: connector.accounts[0],
-        },
-        { merge: true }
-      );
+      (async () =>
+        await firestore().collection("users").doc(user.uid).set(
+          {
+            walletAddress: connector.accounts[0],
+            walletProvider: "walletconnect",
+          },
+          { merge: true }
+        ))();
     }
   }, [connector.connected]);
 
@@ -94,6 +95,37 @@ const AssetsScreen = () => {
   const percentageChange = valueChange
     ? (valueChange / (totalWallet - valueChange)) * 100
     : undefined;
+
+  const onRefresh = () => {
+    dispatch(getAccountRequested({ address: connector.accounts[0] }));
+  };
+
+  const createNewWallet = async () => {
+    try {
+      walletModalRef.current?.close();
+      if (connector.connected) {
+        await connector.killSession();
+      }
+      const account = await web3.eth.accounts.create(web3.utils.randomHex(32));
+      const wallet = await web3.eth.accounts.wallet.add(account);
+      console.log("account: ", account);
+      console.log("wallet: ", wallet);
+      // const password = await web3.utils.randomHex(32);
+      // const keystore = await wallet.encrypt(password);
+      // console.log("keystore: ", keystore);
+      await firestore().collection("users").doc(user.uid).set(
+        {
+          walletAddress: wallet.address,
+          walletPrivateKey: wallet.privateKey,
+          walletProvider: "local",
+        },
+        { merge: true }
+      );
+      dispatch(getAccountRequested({ address: wallet.address }));
+    } catch (error) {
+      console.warn(error);
+    }
+  };
 
   function renderWalletInfoSection() {
     return (
@@ -130,7 +162,7 @@ const AssetsScreen = () => {
               height: 40,
               marginRight: SIZES.radius,
             }}
-            onPress={() => console.log("Send")}
+            onPress={() => sendModalRef.current?.open()}
           />
           <IconTextButton
             label={"Receive"}
@@ -140,16 +172,12 @@ const AssetsScreen = () => {
               height: 40,
               marginRight: SIZES.radius,
             }}
-            onPress={() => console.log("Receive")}
+            onPress={() => receiveModalRef.current?.open()}
           />
         </View>
       </View>
     );
   }
-
-  const onRefresh = () => {
-    dispatch(getAccountRequested({ address: connector.accounts[0] }));
-  };
 
   return (
     <RootView>
@@ -164,7 +192,7 @@ const AssetsScreen = () => {
           {/* Assets */}
           <FlatList
             data={holdings}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item, index) => item?.id || `${index}-flatlist`}
             contentContainerStyle={{ marginTop: SIZES.padding }}
             refreshControl={
               <RefreshControl
@@ -191,9 +219,9 @@ const AssetsScreen = () => {
             }
             renderItem={({ item }) => {
               const priceColor =
-                item.priceChangePercentageInCurrency7d === 0
+                item?.priceChangePercentageInCurrency7d === 0
                   ? COLORS.lightGray3
-                  : item.priceChangePercentageInCurrency7d > 0
+                  : item?.priceChangePercentageInCurrency7d > 0
                   ? COLORS.lightGreen
                   : COLORS.red;
               const backgroundColor = selectedCoin?.id
@@ -220,9 +248,9 @@ const AssetsScreen = () => {
                 >
                   {/* Asset */}
                   <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-                    <Image source={{ uri: item.image }} style={{ width: 20, height: 20 }} />
+                    <Image source={{ uri: item?.image }} style={{ width: 20, height: 20 }} />
                     <Text style={[FONTS.h4, { marginLeft: SIZES.radius, color: COLORS.white }]}>
-                      {item.name}
+                      {item?.name}
                     </Text>
                   </View>
                   {/* Price */}
@@ -232,7 +260,7 @@ const AssetsScreen = () => {
                         FONTS.h4,
                         { textAlign: "right", color: COLORS.white, lineHeight: 15 },
                       ]}
-                    >{`$${item.currentPrice.toLocaleString()}`}</Text>
+                    >{`$${item?.currentPrice?.toLocaleString()}`}</Text>
                     <View
                       style={{
                         flexDirection: "row",
@@ -256,7 +284,7 @@ const AssetsScreen = () => {
                       )}
                       <Text
                         style={[FONTS.body5, { marginLeft: 5, color: priceColor, lineHeight: 15 }]}
-                      >{`${item.priceChangePercentageInCurrency7d.toFixed(2)} %`}</Text>
+                      >{`${item?.priceChangePercentageInCurrency7d?.toFixed(2)} %`}</Text>
                     </View>
                   </View>
                   {/* Holdings */}
@@ -266,13 +294,13 @@ const AssetsScreen = () => {
                         FONTS.h4,
                         { textAlign: "right", color: COLORS.white, lineHeight: 15 },
                       ]}
-                    >{`$ ${item.total.toLocaleString()}`}</Text>
+                    >{`$ ${item?.total?.toLocaleString()}`}</Text>
                     <Text
                       style={[
                         FONTS.body5,
                         { textAlign: "right", color: COLORS.lightGray3, lineHeight: 15 },
                       ]}
-                    >{`${item.qty.toFixed(6)} ${item.symbol}`}</Text>
+                    >{`${item?.qty?.toFixed(6)} ${item?.symbol}`}</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -280,35 +308,9 @@ const AssetsScreen = () => {
             ListFooterComponent={<View style={{ marginBottom: 50 }} />}
           />
         </View>
-        <Portal>
-          <Modalize ref={modalRef} adjustToContentHeight={true} useNativeDriver={false}>
-            <View style={{ minHeight: 200, backgroundColor: COLORS.black }}>
-              <Button
-                label={"Create new wallet"}
-                onPress={async () => {
-                  try {
-                    modalRef.current?.close();
-                    const account = await web3.eth.accounts.create(web3.utils.randomHex(32));
-                    const wallet = await web3.eth.accounts.wallet.add(account);
-                    // const password = await web3.utils.randomHex(32);
-                    // const keystore = await wallet.encrypt(password);
-                    console.log("account: ", account);
-                    console.log("wallet: ", wallet);
-                    // console.log("keystore: ", keystore);
-                  } catch (error) {
-                    console.warn(error);
-                  }
-                }}
-                style={{ marginTop: SIZES.padding, marginHorizontal: SIZES.padding }}
-              />
-              <Button
-                label={"Add existing wallet"}
-                onPress={() => connect()}
-                style={{ margin: SIZES.padding }}
-              />
-            </View>
-          </Modalize>
-        </Portal>
+        <WalletModal ref={walletModalRef} create={createNewWallet} connect={connect} />
+        <SendModal ref={sendModalRef} onPress={() => sendModalRef.current?.close()} />
+        <ReceiveModal ref={receiveModalRef} onPress={() => receiveModalRef.current?.close()} />
       </>
     </RootView>
   );
