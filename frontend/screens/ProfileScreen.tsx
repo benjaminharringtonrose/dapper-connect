@@ -1,8 +1,10 @@
+import auth from "@react-native-firebase/auth";
 import React, { useState } from "react";
 import { Image, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 
-import { HeaderBar } from "../components";
-import { COLORS, FONTS, icons, mockData, SIZES } from "../constants";
+import { Button } from "../components/Button";
+import { COLORS, FONTS, icons, SIZES } from "../constants";
+import { useAppSelector } from "../hooks";
 
 import RootView from "./RootView";
 
@@ -57,20 +59,29 @@ const Setting = ({
 
 const ProfileScreen = () => {
   const [faceID, setFaceID] = useState<boolean | undefined>(false);
+
+  const { user } = useAppSelector((state) => state.auth);
+
+  const logOut = async () => {
+    try {
+      await auth().signOut();
+    } catch (error) {
+      console.warn(error);
+    }
+  };
+
   return (
     <RootView>
-      <View style={{ flex: 1, paddingHorizontal: SIZES.padding, backgroundColor: COLORS.black }}>
-        {/* Header */}
-        <HeaderBar title={"Profile"} />
+      <View style={{ flex: 1 }}>
         {/* Details */}
-        <ScrollView>
+        <ScrollView style={{ paddingHorizontal: SIZES.padding, backgroundColor: COLORS.black }}>
           {/* Email & User ID Row */}
-          <View style={{ flexDirection: "row", marginTop: SIZES.radius }}>
+          <View style={{ flexDirection: "row", marginTop: SIZES.padding }}>
             <View style={{ flex: 1 }}>
-              <Text style={[FONTS.h3, { color: COLORS.white }]}>{mockData.mockProfile.email}</Text>
-              <Text
+              <Text style={[FONTS.h3, { color: COLORS.white }]}>{user?.email}</Text>
+              {/* <Text
                 style={[FONTS.body4, { color: COLORS.lightGray3 }]}
-              >{`ID: ${mockData.mockProfile.id}`}</Text>
+              >{`ID: ${mockData.mockProfile.id}`}</Text> */}
             </View>
             {/* Status */}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -81,28 +92,8 @@ const ProfileScreen = () => {
           {/* APP */}
           <SectionTitle title={"APP"} />
           <Setting
-            title={"Launch Screen"}
-            value={"Home"}
-            type={"button"}
-            onPress={() => console.log("press")}
-          />
-          <Setting
             title={"Appearance"}
             value={"Dark"}
-            type={"button"}
-            onPress={() => console.log("press")}
-          />
-          {/* ACCOUNT */}
-          <SectionTitle title={"ACCOUNT"} />
-          <Setting
-            title={"Payment Currency"}
-            value={"USD"}
-            type={"button"}
-            onPress={() => console.log("press")}
-          />
-          <Setting
-            title={"Language"}
-            value={"English"}
             type={"button"}
             onPress={() => console.log("press")}
           />
@@ -113,12 +104,6 @@ const ProfileScreen = () => {
             value={faceID}
             type={"switch"}
             onPress={(value) => setFaceID(value)}
-          />
-          <Setting
-            title={"Password Settings"}
-            value={""}
-            type={"button"}
-            onPress={() => console.log("press")}
           />
           <Setting
             title={"Change Password"}
@@ -132,6 +117,7 @@ const ProfileScreen = () => {
             type={"button"}
             onPress={() => console.log("press")}
           />
+          <Button label={"Log Out"} style={{ marginVertical: SIZES.padding }} onPress={logOut} />
         </ScrollView>
       </View>
     </RootView>
