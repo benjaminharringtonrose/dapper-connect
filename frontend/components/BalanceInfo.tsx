@@ -3,6 +3,8 @@ import { Image, StyleProp, Text, View, ViewStyle } from "react-native";
 
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 
+import { FadeInView } from "./FadeInView";
+
 type BalanceInfoProps = {
   readonly title: string;
   readonly displayAmount: number;
@@ -19,7 +21,9 @@ const BalanceInfo = ({
   return (
     <View style={[{}, containerStyle]}>
       {/* Title */}
-      <Text style={[FONTS.h3, { color: COLORS.lightGray3 }]}>{title}</Text>
+      <FadeInView>
+        <Text style={[FONTS.h3, { color: COLORS.lightGray3 }]}>{title}</Text>
+      </FadeInView>
       {/* Figures */}
       <View
         style={{
@@ -34,7 +38,7 @@ const BalanceInfo = ({
         <Text style={[FONTS.h3, { color: COLORS.lightGray3 }]}>{" USD"}</Text>
       </View>
       {/* Change Precentage */}
-      <View
+      <FadeInView
         style={{
           flexDirection: "row",
           alignItems: "flex-end",
@@ -79,7 +83,7 @@ const BalanceInfo = ({
             </Text>
           </>
         )}
-      </View>
+      </FadeInView>
     </View>
   );
 };

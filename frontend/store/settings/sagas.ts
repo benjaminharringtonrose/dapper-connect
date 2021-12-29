@@ -1,4 +1,4 @@
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, delay, put, takeLatest } from "redux-saga/effects";
 
 import { getExchangesSaga } from "../exchange/sagas";
 import { getExchangesRequested } from "../exchange/slice";
@@ -22,6 +22,7 @@ function* frontloadAppSaga() {
       })
     );
     yield call(getExchangesSaga, getExchangesRequested());
+    yield delay(2000);
     yield put(frontloadAppSucceeded());
   } catch (error) {
     yield put(frontloadAppFailed({ error }));

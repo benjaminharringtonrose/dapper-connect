@@ -5,20 +5,11 @@ import firestore from "@react-native-firebase/firestore";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Alert,
-  Dimensions,
-  FlatList,
-  Image,
-  RefreshControl,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import Web3 from "web3";
 
-import { BalanceInfo, Chart, IconTextButton } from "../components";
+import { BalanceInfo, IconTextButton } from "../components";
 import { FadeInView } from "../components/FadeInView";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
@@ -41,7 +32,7 @@ const AssetsScreen = () => {
   const loadWalletModalRef = useRef<Modalize>(null);
   const createWalletModalRef = useRef<Modalize>(null);
 
-  const { holdings, sparkline } = useAppSelector((state) => state.market);
+  const { holdings } = useAppSelector((state) => state.market);
   const { loadingGetAccount } = useAppSelector((state) => state.account);
   const { user } = useAppSelector((state) => state.account);
   const { toastMessages } = useAppSelector((state) => state.settings);
@@ -91,7 +82,7 @@ const AssetsScreen = () => {
             {
               wallets: {
                 [connector.accounts[0]]: {
-                  name: connector.bridge,
+                  name: connector.clientMeta.name,
                   address: connector.accounts[0],
                   provider: "walletconnect",
                 },
@@ -113,6 +104,13 @@ const AssetsScreen = () => {
             onPress: () => {
               connector.killSession();
               dispatch(resetHoldings());
+              const wcWallet = user?.wallets?.find((wallet) => wallet.provider === "walletconnect");
+              firestore()
+                .collection("users")
+                .doc(`${user.uid}`)
+                .update({
+                  [`wallets.${wcWallet?.address}`]: firestore.FieldValue.delete(),
+                });
             },
           },
           { text: "Nevermind" },
@@ -148,7 +146,7 @@ const AssetsScreen = () => {
       >
         {/* Balance Info */}
         <BalanceInfo
-          title={"Your Wallet"}
+          title={wallet?.name || "Your Wallet"}
           displayAmount={totalWallet}
           changePercentage={percentageChange}
         />
@@ -198,8 +196,6 @@ const AssetsScreen = () => {
             {/* Header - Wallet Info */}
             {renderWalletInfoSection()}
           </View>
-          {/* Chart */}
-          <Chart containerStyle={{ marginTop: SIZES.radius }} chartPrices={sparkline} />
           {/* Assets */}
           <FlatList
             data={holdings}

@@ -162,6 +162,7 @@ export interface Keystore {
 }
 
 export interface Wallet {
+  name?: string;
   address?: string;
   keystore?: Keystore;
   password?: string;

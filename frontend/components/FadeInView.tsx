@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, ViewStyle } from "react-native";
+import { Animated, StyleProp, ViewStyle } from "react-native";
 export const FadeInView = ({
   style,
   children,
 }: {
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   children: React.ReactNode;
 }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -16,10 +16,10 @@ export const FadeInView = ({
   const fadeIn = () => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 4,
+      duration: 400,
       useNativeDriver: true,
     }).start();
   };
 
-  return <Animated.View style={[{ flex: 1, opacity: fadeAnim }, style]}>{children}</Animated.View>;
+  return <Animated.View style={[{ opacity: fadeAnim }, style]}>{children}</Animated.View>;
 };
