@@ -2,12 +2,8 @@
   "expo": {
     "name": "dapper-connect",
     "slug": "dapper-connect",
-    "version": "1.0.0",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "version": "1.0.3",
+    "platforms": ["ios", "android", "web"],
     "ios": {
       "bundleIdentifier": "com.benjaminrose.dapperconnect"
     },

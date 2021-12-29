@@ -60,12 +60,6 @@ const AssetsScreen = () => {
     });
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      dispatch(getSparklineRequested({ id: holdings[0]?.id, days: "7", interval: "hourly" }));
-    }, [])
-  );
-
   useEffect(() => {
     dispatch(getAccountRequested({ address: selectedAddress }));
   }, []);
@@ -101,16 +95,18 @@ const AssetsScreen = () => {
         Alert.alert("Your wallet is already connected!", "", [
           {
             text: "Disconnect",
-            onPress: () => {
+            onPress: async () => {
               connector.killSession();
               dispatch(resetHoldings());
               const wcWallet = user?.wallets?.find((wallet) => wallet.provider === "walletconnect");
-              firestore()
+              await firestore()
                 .collection("users")
                 .doc(`${user.uid}`)
                 .update({
                   [`wallets.${wcWallet?.address}`]: firestore.FieldValue.delete(),
                 });
+              setSelectedAddress(user?.wallets?.[0]?.address);
+              dispatch(getAccountRequested({ address: user?.wallets?.[0]?.address }));
             },
           },
           { text: "Nevermind" },

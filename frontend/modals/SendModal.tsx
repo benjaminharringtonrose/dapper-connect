@@ -58,12 +58,11 @@ export const SendModal = forwardRef(
 
     const calculateTransactionFee = async (values: FormProps) => {
       const wallet = user.wallets.find((wallet) => wallet.address === address);
-      const gasPrice = await web3.eth.getGasPrice();
       const tx = {
         from: wallet.address,
         to: values.address,
-        gasPrice: gasPrice,
       };
+      const gasPrice = await web3.eth.getGasPrice();
       const gasLimit = await web3.eth.estimateGas(tx);
       const transactionFee = Number(
         web3.utils.fromWei(
@@ -91,7 +90,7 @@ export const SendModal = forwardRef(
         setUsdAmount(usdAmount);
         setReviewVisible(true);
       } catch (e) {
-        Alert.alert(e);
+        Alert.alert(e.message);
         console.log(e);
       }
     };

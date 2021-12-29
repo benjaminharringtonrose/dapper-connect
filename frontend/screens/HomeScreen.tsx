@@ -25,10 +25,10 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (errorGetCoinMarket || errorGetSparkline) {
-      Alert.alert("An error occurred", errorGetCoinMarket.message);
+      Alert.alert(`Error:`, errorGetCoinMarket?.message);
     }
     if (errorGetSparkline) {
-      Alert.alert("An error occurred", errorGetSparkline.message);
+      Alert.alert(`Error:`, errorGetSparkline?.message);
     }
   }, [errorGetCoinMarket, errorGetSparkline]);
 
