@@ -1,4 +1,4 @@
-import { MAINNET_API } from "@env";
+import { MAINNET_API, MAINNET_WSS } from "@env";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import firestore from "@react-native-firebase/firestore";
@@ -22,8 +22,10 @@ import { setToastMessages } from "../store/settings/slice";
 
 import RootView from "./RootView";
 
-const provider = new Web3.providers.HttpProvider(MAINNET_API);
+// const provider = new Web3.providers.HttpProvider(MAINNET_API);
+const provider = new Web3.providers.WebsocketProvider(MAINNET_WSS);
 export const web3: Web3 = new Web3(provider);
+web3.currentProvider;
 
 const AssetsScreen = () => {
   const walletModalRef = useRef<Modalize>(null);

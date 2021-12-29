@@ -4,4 +4,5 @@ declare module "@env" {
   export const HARDHAT_PRIVATE_KEY: string;
   export const MAINNET_API: string;
   export const RINKEBY_API: string;
+  export const MAINNET_WSS: string;
 }
