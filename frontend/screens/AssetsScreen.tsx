@@ -246,12 +246,7 @@ const AssetsScreen = () => {
                     paddingHorizontal: SIZES.padding,
                     backgroundColor,
                   }}
-                  onPress={() => {
-                    dispatch(
-                      getSparklineRequested({ id: item?.id, days: "7", interval: "hourly" })
-                    );
-                    setSelectedCoin(item);
-                  }}
+                  onPress={() => setSelectedCoin(item)}
                 >
                   {/* Asset */}
                   <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
