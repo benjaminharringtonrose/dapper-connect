@@ -1,4 +1,4 @@
-import { MAINNET_API, RINKEBY_API } from "@env";
+import { MAINNET_API } from "@env";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import firestore from "@react-native-firebase/firestore";
@@ -16,7 +16,6 @@ import {
   View,
 } from "react-native";
 import { Modalize } from "react-native-modalize";
-import Toast from "react-native-root-toast";
 import Web3 from "web3";
 
 import { BalanceInfo, Chart, IconTextButton } from "../components";
@@ -28,6 +27,7 @@ import { CreateWalletModal } from "../modals/CreateWalletModal";
 import { LoadWalletModal } from "../modals/LoadWalletModal";
 import { getAccountRequested } from "../store/account/slice";
 import { getSparklineRequested, resetHoldings } from "../store/market/slice";
+import { setToastMessages } from "../store/settings/slice";
 
 import RootView from "./RootView";
 
@@ -42,8 +42,9 @@ const AssetsScreen = () => {
   const createWalletModalRef = useRef<Modalize>(null);
 
   const { holdings, sparkline } = useAppSelector((state) => state.market);
-  const { account, loadingGetAccount } = useAppSelector((state) => state.account);
+  const { loadingGetAccount } = useAppSelector((state) => state.account);
   const { user } = useAppSelector((state) => state.account);
+  const { toastMessages } = useAppSelector((state) => state.settings);
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
@@ -54,7 +55,7 @@ const AssetsScreen = () => {
     user?.wallets?.[0]?.address
   );
 
-  console.log(user?.wallets.length);
+  const wallet = user?.wallets?.find((wallet) => wallet.address === selectedAddress);
 
   useEffect(() => {
     navigation.setOptions({
@@ -67,6 +68,39 @@ const AssetsScreen = () => {
       ),
     });
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(getSparklineRequested({ id: holdings[0]?.id, days: "7", interval: "hourly" }));
+    }, [])
+  );
+
+  useEffect(() => {
+    dispatch(getAccountRequested({ address: selectedAddress }));
+  }, []);
+
+  useEffect(() => {
+    if (connector.connected) {
+      setSelectedAddress(connector.accounts[0]);
+      dispatch(getAccountRequested({ address: connector.accounts[0] }));
+      (async () =>
+        await firestore()
+          .collection("users")
+          .doc(user.uid)
+          .set(
+            {
+              wallets: {
+                [connector.accounts[0]]: {
+                  name: connector.bridge,
+                  address: connector.accounts[0],
+                  provider: "walletconnect",
+                },
+              },
+            },
+            { merge: true }
+          ))();
+    }
+  }, [connector.connected]);
 
   async function connect() {
     try {
@@ -90,41 +124,15 @@ const AssetsScreen = () => {
     walletModalRef.current?.close();
   }
 
-  useFocusEffect(
-    useCallback(() => {
-      dispatch(getSparklineRequested({ id: holdings[0]?.id, days: "7", interval: "hourly" }));
-    }, [])
-  );
-
-  useEffect(() => {
-    if (!connector.connected && user.walletProvider === "local" && user.walletAddress) {
-      dispatch(getAccountRequested({ address: user.walletAddress }));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (connector.connected) {
-      dispatch(getAccountRequested({ address: connector.accounts[0] }));
-      (async () =>
-        await firestore().collection("users").doc(user.uid).set(
-          {
-            walletAddress: connector.accounts[0],
-            walletProvider: "walletconnect",
-          },
-          { merge: true }
-        ))();
-    }
-  }, [connector.connected]);
+  const onRefresh = () => {
+    dispatch(getAccountRequested({ address: selectedAddress }));
+  };
 
   const totalWallet = holdings?.reduce((a, b) => a + (b.total || 0), 0);
   const valueChange = holdings?.reduce((a, b) => a + (b.holdingValueChange7d || 0), 0);
   const percentageChange = valueChange
     ? (valueChange / (totalWallet - valueChange)) * 100
     : undefined;
-
-  const onRefresh = () => {
-    dispatch(getAccountRequested({ address: connector.accounts[0] }));
-  };
 
   function renderWalletInfoSection() {
     return (
@@ -323,16 +331,20 @@ const AssetsScreen = () => {
           }}
           connect={connect}
         />
-        <SendModal ref={sendModalRef} onPress={() => sendModalRef.current?.close()} web3={web3} />
+        <SendModal
+          ref={sendModalRef}
+          onPress={() => sendModalRef.current?.close()}
+          web3={web3}
+          address={selectedAddress}
+        />
         <ReceiveModal
           ref={receiveModalRef}
+          address={selectedAddress}
           onPress={() => {
             receiveModalRef.current?.close();
-            Toast.show("Address copied to clipboard", {
-              duration: Toast.durations.SHORT,
-              position: -Dimensions.get("screen").height + 150,
-              animation: true,
-            });
+            dispatch(
+              setToastMessages({ toastMessages: [...toastMessages, "Address copied to clipboard"] })
+            );
           }}
         />
         <LoadWalletModal
@@ -341,6 +353,7 @@ const AssetsScreen = () => {
           web3={web3}
           onSelectWallet={(address) => {
             loadWalletModalRef.current?.close();
+            setSelectedAddress(address);
             dispatch(getAccountRequested({ address }));
           }}
         />

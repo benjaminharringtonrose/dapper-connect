@@ -4,11 +4,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export interface SettingsState {
   loadingFrontloadApp: boolean;
   errorFrontloadApp?: Error;
+  toastMessages: string[];
 }
 
 const initialState: SettingsState = {
   loadingFrontloadApp: true, // must start with true
   errorFrontloadApp: undefined,
+  toastMessages: [],
 };
 
 type ErrorAction = PayloadAction<{ error: Error }>;
@@ -28,6 +30,10 @@ const settingsSlice = createSlice({
       state.loadingFrontloadApp = false;
       state.errorFrontloadApp = error;
     },
+    setToastMessages: (state, action: PayloadAction<{ toastMessages: string[] }>) => {
+      const { toastMessages } = action.payload;
+      state.toastMessages = toastMessages;
+    },
   },
 });
 
@@ -35,6 +41,7 @@ export const {
   frontloadAppRequested,
   frontloadAppSucceeded,
   frontloadAppFailed,
+  setToastMessages,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

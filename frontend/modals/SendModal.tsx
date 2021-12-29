@@ -4,7 +4,7 @@ import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import * as Haptics from "expo-haptics";
 import { Formik, FormikProps } from "formik";
 import React, { forwardRef, Ref, useState } from "react";
-import { Dimensions, TouchableOpacity, View } from "react-native";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,6 +15,7 @@ import { Button } from "../components/Button";
 import { FormInput } from "../components/FormInput";
 import { COLORS, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
+import { setToastMessages } from "../store/settings/slice";
 
 interface FormProps {
   amount?: string;
@@ -22,7 +23,10 @@ interface FormProps {
 }
 
 export const SendModal = forwardRef(
-  ({ onPress, web3 }: { onPress: () => void; web3: Web3 }, ref: Ref<Modalize>) => {
+  (
+    { onPress, web3, address }: { onPress: () => void; web3: Web3; address: string },
+    ref: Ref<Modalize>
+  ) => {
     const formRef = React.useRef<FormikProps<FormProps>>(null);
 
     const ProfileSchema = Yup.object().shape({
@@ -30,13 +34,59 @@ export const SendModal = forwardRef(
       address: Yup.string().required("Required"),
     });
 
-    const { user } = useAppSelector((state) => state.account);
+    const { account, user } = useAppSelector((state) => state.account);
     const dispatch = useAppDispatch();
     const connector = useWalletConnect();
     const insets = useSafeAreaInsets();
+    const { toastMessages } = useAppSelector((state) => state.settings);
+    const { holdings } = useAppSelector((state) => state.market);
 
     const [loading, setLoading] = useState<boolean>(false);
-    const [address, setAddress] = useState<string>("");
+    const [reviewVisible, setReviewVisible] = useState<boolean>(false);
+    const [formData, setFormData] = useState<FormProps>();
+    const [transactionFee, setTransactionFee] = useState<string | undefined>();
+    const [maxTotal, setMaxTotal] = useState<string | undefined>();
+
+    const calculateTransactionFee = async (values: FormProps) => {
+      const wallet = user.wallets.find((wallet) => wallet.address === address);
+      const wei = web3.utils.toWei(values.amount, "ether");
+      const tx = {
+        data: "0x",
+        from: wallet.address,
+        to: values.address,
+        value: web3.utils.numberToHex(Number(wei)),
+      };
+      const gasPrice = await web3.eth.getGasPrice();
+      const gasLimit = await web3.eth.estimateGas(tx);
+      const currentEtherPrice = holdings.find((holding) => holding.id === "ethereum").currentPrice;
+      const transactionFee = web3.utils.fromWei(
+        (Number(gasPrice) * gasLimit * currentEtherPrice).toString(),
+        "ether"
+      );
+      console.log(transactionFee);
+      const maxTotal = (
+        Number(transactionFee) +
+        Number(values.amount) * currentEtherPrice
+      ).toString();
+      return {
+        transactionFee,
+        maxTotal,
+      };
+    };
+
+    const onReview = async () => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      const formData = formRef.current?.values;
+      try {
+        const { transactionFee, maxTotal } = await calculateTransactionFee(formData);
+        setTransactionFee(transactionFee);
+        setMaxTotal(maxTotal);
+        setFormData(formData);
+        setReviewVisible(true);
+      } catch (e) {
+        console.log(e);
+      }
+    };
 
     const onSubmit = async (values: FormProps) => {
       if (!values.amount || !values.address) {
@@ -45,20 +95,47 @@ export const SendModal = forwardRef(
       try {
         setLoading(true);
         // send transaction logic goes here
-        if (user.walletProvider === "walletconnect") {
+        const wallet = user.wallets.find((wallet) => wallet.address === address);
+        console.log(wallet.provider);
+        const wei = web3.utils.toWei(values.amount, "ether");
+        if (wallet.provider === "walletconnect") {
           if (connector.connected) {
-            const wei = web3.utils.toWei(values.amount, "ether");
-            await connector.sendTransaction({
-              data: "0x",
-              from: user?.walletAddress,
-              to: values.address,
-              value: web3.utils.numberToHex(Number(wei)),
-            });
-            console.log("success");
+            try {
+              await connector.sendTransaction({
+                data: "0x",
+                from: wallet?.address,
+                to: values.address,
+                value: web3.utils.numberToHex(Number(wei)),
+              });
+              console.log("success");
+            } catch (error) {
+              console.log(error);
+            }
           }
-        } else if (user.walletProvider === "local") {
-          //
+        } else if (wallet.provider === "local") {
+          const tx = {
+            data: "0x",
+            from: wallet?.address,
+            to: values.address,
+            value: web3.utils.numberToHex(Number(wei)),
+          };
+          const gasLimit = await web3.eth.estimateGas(tx);
+          const signedTx = await web3.eth.accounts.signTransaction(
+            {
+              ...tx,
+              gas: gasLimit,
+            },
+            wallet.privateKey
+          );
+          web3.eth.sendSignedTransaction(signedTx.rawTransaction, function (error, hash) {
+            if (!error) {
+              console.log("🎉 The hash of your transaction is: ", hash);
+            } else {
+              console.log("❗Something went wrong while submitting your transaction:", error);
+            }
+          });
         }
+
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -87,15 +164,7 @@ export const SendModal = forwardRef(
               validationSchema={ProfileSchema}
               onSubmit={onSubmit}
             >
-              {({
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                setFieldValue,
-                values,
-                touched,
-                errors,
-              }) => (
+              {({ handleChange, handleBlur, handleSubmit, values, touched, errors }) => (
                 <View style={{ margin: SIZES.padding }}>
                   <View
                     style={{
@@ -147,6 +216,20 @@ export const SendModal = forwardRef(
                       noBorder
                     />
                   </View>
+                  {reviewVisible && (
+                    <View>
+                      <Text style={{ color: COLORS.white }}>{transactionFee}</Text>
+                      <Text style={{ color: COLORS.white }}>{maxTotal}</Text>
+                    </View>
+                  )}
+
+                  <Button
+                    type={"bordered"}
+                    label={"Review"}
+                    loading={loading}
+                    onPress={onReview}
+                    style={{ marginTop: SIZES.padding }}
+                  />
                   <Button
                     type={"bordered"}
                     label={"Send"}

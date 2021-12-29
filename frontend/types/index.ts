@@ -170,9 +170,6 @@ export interface Wallet {
 }
 
 export interface User {
-  walletProvider?: string;
-  walletAddress?: string;
-  walletPrivateKey?: string;
   wallets?: Wallet[];
   uid: string;
   email: string;

@@ -1,5 +1,5 @@
 import React, { forwardRef, Ref } from "react";
-import { Dimensions, View } from "react-native";
+import { View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

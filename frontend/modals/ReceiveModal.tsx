@@ -12,7 +12,7 @@ import { COLORS, FONTS, SIZES } from "../constants";
 import { useAppSelector } from "../hooks";
 
 export const ReceiveModal = forwardRef(
-  ({ onPress }: { onPress: () => void }, ref: Ref<Modalize>) => {
+  ({ onPress, address }: { onPress: () => void; address: string }, ref: Ref<Modalize>) => {
     const { user } = useAppSelector((state) => state.account);
     const insets = useSafeAreaInsets();
 
@@ -33,18 +33,18 @@ export const ReceiveModal = forwardRef(
               height: Dimensions.get("screen").height / 2,
             }}
           >
-            <QRCode value={user.walletAddress} size={200} />
+            <QRCode value={address} size={200} />
             <View style={{ paddingVertical: SIZES.padding }}>
               <Text
                 style={[FONTS.h4, { color: COLORS.lightGray3, width: 200, textAlign: "center" }]}
               >
-                {user.walletAddress}
+                {address}
               </Text>
             </View>
             <TouchableOpacity
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                Clipboard.setString(user.walletAddress);
+                Clipboard.setString(address);
                 onPress();
               }}
               style={{

@@ -55,9 +55,6 @@ export const CreateWalletModal = forwardRef(
     const create = async (values: FormProps) => {
       try {
         onPress();
-        if (connector.connected) {
-          await connector.killSession();
-        }
         const account = web3.eth.accounts.create(web3.utils.randomHex(32));
         const wallet = web3.eth.accounts.wallet.add(account);
         const password = web3.utils.randomHex(32);

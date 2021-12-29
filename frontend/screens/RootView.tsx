@@ -2,12 +2,17 @@ import React, { useEffect, useRef } from "react";
 import { Animated, SafeAreaView, View } from "react-native";
 
 import { IconTextButton } from "../components";
+import { Toast } from "../components/Toast";
 import { COLORS, icons, SIZES } from "../constants";
-import { useAppSelector } from "../hooks";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { setToastMessages } from "../store/settings/slice";
 
 const RootView = ({ children }: { children: JSX.Element }) => {
   const modalAnimatedValue = useRef(new Animated.Value(0)).current;
   const { isTradeModalVisible } = useAppSelector((state) => state.tabs);
+  const { toastMessages } = useAppSelector((state) => state.settings);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (isTradeModalVisible) {
@@ -33,6 +38,25 @@ const RootView = ({ children }: { children: JSX.Element }) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {children}
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+        }}
+      >
+        {toastMessages.map((message) => (
+          <Toast
+            key={message}
+            message={message}
+            onHide={() => {
+              const messages = toastMessages.filter((currentMessage) => currentMessage !== message);
+              dispatch(setToastMessages({ toastMessages: messages }));
+            }}
+          />
+        ))}
+      </View>
       {isTradeModalVisible && (
         <Animated.View
           style={{
