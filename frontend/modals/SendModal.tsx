@@ -5,7 +5,7 @@ import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import * as Haptics from "expo-haptics";
 import { Formik, FormikProps } from "formik";
 import React, { forwardRef, Ref, useState } from "react";
-import { Dimensions, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -91,6 +91,7 @@ export const SendModal = forwardRef(
         setUsdAmount(usdAmount);
         setReviewVisible(true);
       } catch (e) {
+        Alert.alert(e);
         console.log(e);
       }
     };

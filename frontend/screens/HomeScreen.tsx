@@ -25,9 +25,12 @@ const HomeScreen = () => {
 
   useEffect(() => {
     if (errorGetCoinMarket || errorGetSparkline) {
-      Alert.alert("An error occurred", "Please try again");
+      Alert.alert("An error occurred", errorGetCoinMarket.message);
     }
-  }, [errorGetCoinMarket]);
+    if (errorGetSparkline) {
+      Alert.alert("An error occurred", errorGetSparkline.message);
+    }
+  }, [errorGetCoinMarket, errorGetSparkline]);
 
   const onRefresh = () => {
     dispatch(getCoinMarketRequested({}));
