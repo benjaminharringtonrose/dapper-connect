@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-color-literals */
 import { Feather } from "@expo/vector-icons";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
@@ -13,9 +14,14 @@ import * as Yup from "yup";
 
 import { Button } from "../components/Button";
 import { FormInput } from "../components/FormInput";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, FONTS, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { setToastMessages } from "../store/settings/slice";
+
+const formatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
 
 interface FormProps {
   amount?: string;
@@ -40,12 +46,13 @@ export const SendModal = forwardRef(
     const insets = useSafeAreaInsets();
     const { toastMessages } = useAppSelector((state) => state.settings);
     const { holdings } = useAppSelector((state) => state.market);
+    const holding = holdings.find((holding) => holding.id === "ethereum");
 
     const [loading, setLoading] = useState<boolean>(false);
     const [reviewVisible, setReviewVisible] = useState<boolean>(false);
-    const [formData, setFormData] = useState<FormProps>();
-    const [transactionFee, setTransactionFee] = useState<string | undefined>();
-    const [maxTotal, setMaxTotal] = useState<string | undefined>();
+    const [transactionFee, setTransactionFee] = useState<number | undefined>();
+    const [maxTotal, setMaxTotal] = useState<number | undefined>();
+    const [usdAmount, setUsdAmount] = useState<number | undefined>();
 
     const calculateTransactionFee = async (values: FormProps) => {
       const wallet = user.wallets.find((wallet) => wallet.address === address);
@@ -58,30 +65,31 @@ export const SendModal = forwardRef(
       };
       const gasPrice = await web3.eth.getGasPrice();
       const gasLimit = await web3.eth.estimateGas(tx);
-      const currentEtherPrice = holdings.find((holding) => holding.id === "ethereum").currentPrice;
-      const transactionFee = web3.utils.fromWei(
-        (Number(gasPrice) * gasLimit * currentEtherPrice).toString(),
-        "ether"
+
+      const transactionFee = Number(
+        web3.utils.fromWei(
+          (Number(gasPrice) * gasLimit * holding?.currentPrice).toString(),
+          "ether"
+        )
       );
-      console.log(transactionFee);
-      const maxTotal = (
-        Number(transactionFee) +
-        Number(values.amount) * currentEtherPrice
-      ).toString();
+      const usdAmount = Number(values.amount) * holding?.currentPrice;
+      const maxTotal = transactionFee + usdAmount;
       return {
         transactionFee,
         maxTotal,
+        usdAmount,
       };
     };
 
     const onReview = async () => {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      const formData = formRef.current?.values;
       try {
-        const { transactionFee, maxTotal } = await calculateTransactionFee(formData);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        const formData = formRef.current?.values;
+        formRef.current?.setTouched({ amount: true, address: true });
+        const { transactionFee, maxTotal, usdAmount } = await calculateTransactionFee(formData);
         setTransactionFee(transactionFee);
         setMaxTotal(maxTotal);
-        setFormData(formData);
+        setUsdAmount(usdAmount);
         setReviewVisible(true);
       } catch (e) {
         console.log(e);
@@ -135,7 +143,6 @@ export const SendModal = forwardRef(
             }
           });
         }
-
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -152,9 +159,10 @@ export const SendModal = forwardRef(
           adjustToContentHeight={true}
           modalStyle={{
             backgroundColor: COLORS.black,
+            bottom: insets.bottom,
           }}
         >
-          <View style={{ height: Dimensions.get("screen").height / 2 }}>
+          <View style={{}}>
             <Formik
               innerRef={formRef}
               initialValues={{
@@ -217,19 +225,90 @@ export const SendModal = forwardRef(
                     />
                   </View>
                   {reviewVisible && (
-                    <View>
-                      <Text style={{ color: COLORS.white }}>{transactionFee}</Text>
-                      <Text style={{ color: COLORS.white }}>{maxTotal}</Text>
+                    <View
+                      style={{
+                        backgroundColor: COLORS.gray,
+                        padding: SIZES.padding,
+                        borderRadius: SIZES.radius,
+                        borderWidth: 1,
+                        borderColor: COLORS.lightGray,
+                        marginTop: SIZES.padding,
+                      }}
+                    >
+                      <View style={{ flexDirection: "row" }}>
+                        <Text style={{ flex: 1, color: COLORS.white }}>{"Asset"}</Text>
+                        <Text style={{ flex: 1, color: COLORS.white }}>{"Ethereum (ETH)"}</Text>
+                      </View>
+                      <View
+                        style={{ height: 2, backgroundColor: COLORS.lightGray, marginVertical: 10 }}
+                      />
+                      <View style={{ flexDirection: "row" }}>
+                        <Text style={{ flex: 1, color: COLORS.white }}>{"Amount"}</Text>
+                        <Text style={{ flex: 1, color: COLORS.white }}>{`≈ ${formatter.format(
+                          usdAmount
+                        )}`}</Text>
+                      </View>
+                      <View
+                        style={{ height: 2, backgroundColor: COLORS.lightGray, marginVertical: 10 }}
+                      />
+                      <View style={{ flexDirection: "row" }}>
+                        <Text style={{ flex: 1, color: COLORS.white }}>{"Transaction Fee"}</Text>
+                        <Text style={{ flex: 1, color: COLORS.white }}>
+                          {`≈ ${formatter.format(transactionFee)}`}
+                        </Text>
+                      </View>
+                      <View
+                        style={{ height: 2, backgroundColor: COLORS.lightGray, marginVertical: 10 }}
+                      />
+                      <View style={{ flexDirection: "row" }}>
+                        <Text style={{ flex: 1, color: COLORS.white }}>{"Max Total"}</Text>
+                        <Text style={{ flex: 1, color: COLORS.white }}>
+                          {`≈ ${formatter.format(maxTotal)}`}
+                        </Text>
+                      </View>
                     </View>
                   )}
-
-                  <Button
-                    type={"bordered"}
-                    label={"Review"}
-                    loading={loading}
-                    onPress={onReview}
-                    style={{ marginTop: SIZES.padding }}
-                  />
+                  {maxTotal > holding.total && (
+                    <View
+                      style={{
+                        padding: SIZES.radius,
+                        backgroundColor: "#560319",
+                        borderRadius: SIZES.radius,
+                        borderColor: COLORS.red,
+                        borderWidth: 1,
+                        marginTop: SIZES.padding,
+                        opacity: 0.7,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={[FONTS.h3, { color: COLORS.red }]}>
+                        {"You don't have enough ETH to cover the fees."}
+                      </Text>
+                    </View>
+                  )}
+                  {reviewVisible ? (
+                    <Button
+                      type={"bordered"}
+                      label={"Reset"}
+                      onPress={() => {
+                        setReviewVisible(false);
+                        formRef.current?.resetForm();
+                        setTransactionFee(undefined);
+                        setUsdAmount(undefined);
+                        setMaxTotal(undefined);
+                      }}
+                      style={{ marginTop: SIZES.padding }}
+                    />
+                  ) : (
+                    <Button
+                      type={"bordered"}
+                      label={"Review"}
+                      loading={loading}
+                      onPress={onReview}
+                      style={{ marginTop: SIZES.padding }}
+                    />
+                  )}
                   <Button
                     type={"bordered"}
                     label={"Send"}
@@ -238,6 +317,7 @@ export const SendModal = forwardRef(
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                       handleSubmit();
                     }}
+                    disabled={maxTotal > holding.total || !reviewVisible}
                     style={{ marginTop: SIZES.padding }}
                   />
                 </View>
