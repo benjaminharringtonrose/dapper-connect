@@ -6,6 +6,7 @@ import { LogBox, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Host } from "react-native-portalize";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import SplashScreen from "react-native-splash-screen";
 import { Provider } from "react-redux";
 
 import { useAppDispatch, useAppSelector } from "./hooks";
@@ -29,6 +30,7 @@ const Root = () => {
   const [user, setUser] = useState<AuthUser | undefined>(undefined);
 
   useEffect(() => {
+    SplashScreen.hide();
     dispatch(frontloadAppRequested());
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;

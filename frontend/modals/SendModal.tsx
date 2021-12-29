@@ -151,6 +151,8 @@ export const SendModal = forwardRef(
       onPress();
     };
 
+    console.log(reviewVisible);
+
     return (
       <Portal>
         <Modalize
