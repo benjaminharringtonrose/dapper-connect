@@ -54,18 +54,17 @@ export const SendModal = forwardRef(
     const [maxTotal, setMaxTotal] = useState<number | undefined>();
     const [usdAmount, setUsdAmount] = useState<number | undefined>();
 
+    console.log(address);
+
     const calculateTransactionFee = async (values: FormProps) => {
       const wallet = user.wallets.find((wallet) => wallet.address === address);
-      const wei = web3.utils.toWei(values.amount, "ether");
+      const gasPrice = await web3.eth.getGasPrice();
       const tx = {
-        data: "0x",
         from: wallet.address,
         to: values.address,
-        value: web3.utils.numberToHex(Number(wei)),
+        gasPrice: gasPrice,
       };
-      const gasPrice = await web3.eth.getGasPrice();
       const gasLimit = await web3.eth.estimateGas(tx);
-
       const transactionFee = Number(
         web3.utils.fromWei(
           (Number(gasPrice) * gasLimit * holding?.currentPrice).toString(),
