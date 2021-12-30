@@ -5,7 +5,7 @@ import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import * as Haptics from "expo-haptics";
 import { Formik, FormikProps } from "formik";
 import React, { forwardRef, Ref, useState } from "react";
-import { Alert, Dimensions, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -137,6 +137,15 @@ export const SendModal = forwardRef(
           web3.eth.sendSignedTransaction(signedTx.rawTransaction, function (error, hash) {
             if (!error) {
               console.log("🎉 The hash of your transaction is: ", hash);
+              Clipboard.setString(hash);
+              dispatch(
+                setToastMessages({
+                  toastMessages: [
+                    ...toastMessages,
+                    "The hash of your transaction is copied to your clipboard",
+                  ],
+                })
+              );
             } else {
               console.log("❗Something went wrong while submitting your transaction:", error);
             }

@@ -1,10 +1,10 @@
-import { MAINNET_API, MAINNET_WSS } from "@env";
+import { MAINNET_API } from "@env";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import firestore from "@react-native-firebase/firestore";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import Web3 from "web3";
@@ -17,7 +17,7 @@ import { ReceiveModal, SendModal, WalletModal } from "../modals";
 import { CreateWalletModal } from "../modals/CreateWalletModal";
 import { LoadWalletModal } from "../modals/LoadWalletModal";
 import { getAccountRequested } from "../store/account/slice";
-import { getSparklineRequested, resetHoldings } from "../store/market/slice";
+import { resetHoldings } from "../store/market/slice";
 import { setToastMessages } from "../store/settings/slice";
 
 import RootView from "./RootView";
@@ -49,6 +49,12 @@ const AssetsScreen = () => {
 
   const wallet = user?.wallets?.find((wallet) => wallet.address === selectedAddress);
 
+  const totalWallet = holdings?.reduce((a, b) => a + (b.total || 0), 0);
+  const valueChange = holdings?.reduce((a, b) => a + (b.holdingValueChange7d || 0), 0);
+  const percentageChange = valueChange
+    ? (valueChange / (totalWallet - valueChange)) * 100
+    : undefined;
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -63,12 +69,6 @@ const AssetsScreen = () => {
 
   useEffect(() => {
     dispatch(getAccountRequested({ address: selectedAddress }));
-    if (web3.eth.net.isListening()) {
-      Alert.alert("web3 is listening.");
-    } else {
-      Alert.alert("web3 not connected.");
-    }
-    Alert.alert("MAINNET_API:", MAINNET_API);
   }, []);
 
   useEffect(() => {
@@ -129,75 +129,63 @@ const AssetsScreen = () => {
     dispatch(getAccountRequested({ address: selectedAddress }));
   };
 
-  const totalWallet = holdings?.reduce((a, b) => a + (b.total || 0), 0);
-  const valueChange = holdings?.reduce((a, b) => a + (b.holdingValueChange7d || 0), 0);
-  const percentageChange = valueChange
-    ? (valueChange / (totalWallet - valueChange)) * 100
-    : undefined;
-
-  function renderWalletInfoSection() {
-    return (
-      <View
-        style={{
-          paddingTop: SIZES.padding,
-          paddingHorizontal: SIZES.padding,
-          borderRadius: 25,
-          borderWidth: 1,
-          borderColor: COLORS.gray,
-          backgroundColor: COLORS.black,
-        }}
-      >
-        {/* Balance Info */}
-        <BalanceInfo
-          title={wallet?.name || "Your Wallet"}
-          displayAmount={totalWallet}
-          changePercentage={percentageChange}
-        />
-        {/* Buttons */}
-        <View
-          style={{
-            flexDirection: "row",
-            marginTop: 30,
-            marginBottom: -15,
-            paddingHorizontal: SIZES.radius,
-          }}
-        >
-          <IconTextButton
-            label={"Send"}
-            customIcon={() => <Feather name="download" size={24} color="white" />}
-            containerStyle={{
-              flex: 1,
-              height: 40,
-              marginRight: SIZES.radius,
-              borderColor: COLORS.lightGray,
-              borderWidth: 1,
-            }}
-            onPress={() => sendModalRef.current?.open()}
-          />
-          <IconTextButton
-            label={"Receive"}
-            customIcon={() => <Feather name="upload" size={24} color="white" />}
-            containerStyle={{
-              flex: 1,
-              height: 40,
-              marginRight: SIZES.radius,
-              borderColor: COLORS.lightGray,
-              borderWidth: 1,
-            }}
-            onPress={() => receiveModalRef.current?.open()}
-          />
-        </View>
-      </View>
-    );
-  }
-
   return (
     <RootView>
       <>
         <View style={{ flex: 1, backgroundColor: COLORS.black }}>
           <View style={{ paddingBottom: SIZES.radius }}>
             {/* Header - Wallet Info */}
-            {renderWalletInfoSection()}
+            <View
+              style={{
+                paddingTop: SIZES.padding,
+                paddingHorizontal: SIZES.padding,
+                borderRadius: 25,
+                borderWidth: 1,
+                borderColor: COLORS.gray,
+                backgroundColor: COLORS.black,
+              }}
+            >
+              {/* Balance Info */}
+              <BalanceInfo
+                title={wallet?.name || "Your Wallet"}
+                displayAmount={totalWallet}
+                changePercentage={percentageChange}
+              />
+              {/* Buttons */}
+              <View
+                style={{
+                  flexDirection: "row",
+                  marginTop: 30,
+                  marginBottom: -15,
+                  paddingHorizontal: SIZES.radius,
+                }}
+              >
+                <IconTextButton
+                  label={"Send"}
+                  customIcon={() => <Feather name="download" size={24} color="white" />}
+                  containerStyle={{
+                    flex: 1,
+                    height: 40,
+                    marginRight: SIZES.radius,
+                    borderColor: COLORS.lightGray,
+                    borderWidth: 1,
+                  }}
+                  onPress={() => sendModalRef.current?.open()}
+                />
+                <IconTextButton
+                  label={"Receive"}
+                  customIcon={() => <Feather name="upload" size={24} color="white" />}
+                  containerStyle={{
+                    flex: 1,
+                    height: 40,
+                    marginRight: SIZES.radius,
+                    borderColor: COLORS.lightGray,
+                    borderWidth: 1,
+                  }}
+                  onPress={() => receiveModalRef.current?.open()}
+                />
+              </View>
+            </View>
           </View>
           {/* Assets */}
           <FlatList
