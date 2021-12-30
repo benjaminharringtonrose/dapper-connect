@@ -23,7 +23,6 @@ import { setToastMessages } from "../store/settings/slice";
 import RootView from "./RootView";
 
 const provider = new Web3.providers.HttpProvider(MAINNET_API);
-// const provider = new Web3.providers.WebsocketProvider(MAINNET_WSS);
 export const web3: Web3 = new Web3(provider);
 
 const AssetsScreen = () => {

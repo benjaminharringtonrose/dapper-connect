@@ -59,6 +59,7 @@ export const CreateWalletModal = forwardRef(
         const wallet = web3.eth.accounts.wallet.add(account);
         const password = web3.utils.randomHex(32);
         const keystore = wallet.encrypt(password);
+
         await firestore()
           .collection("users")
           .doc(user.uid)
