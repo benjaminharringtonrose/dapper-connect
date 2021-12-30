@@ -108,7 +108,7 @@
     "pods": "cd ios && pod install && cd ..",
     "nuke": "rm -rf node_modules && npm i && npm run pods"
   },
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": true,
   "name": "dapper-connect",
   "homepage": "https://cawfree.github.io/create-react-native-dapp",
