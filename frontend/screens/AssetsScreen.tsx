@@ -68,6 +68,7 @@ const AssetsScreen = () => {
     } else {
       Alert.alert("web3 not connected.");
     }
+    Alert.alert("MAINNET_API:", MAINNET_API);
   }, []);
 
   useEffect(() => {
