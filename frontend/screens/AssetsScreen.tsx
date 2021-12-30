@@ -42,6 +42,12 @@ const AssetsScreen = () => {
   const dispatch = useAppDispatch();
   const connector = useWalletConnect();
 
+  if (web3.eth.net.isListening()) {
+    Alert.alert("web3 is listening.");
+  } else {
+    Alert.alert("web3 not connected.");
+  }
+
   const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(
     user?.wallets?.[0]?.address
