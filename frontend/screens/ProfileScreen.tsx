@@ -4,7 +4,7 @@ import { Image, ScrollView, Switch, Text, TouchableOpacity, View } from "react-n
 import { Button } from "../components/Button";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch } from "../hooks";
-import { resetWallet } from "../store/localStorage/wallets";
+import { resetWalletsInLocalStorage } from "../store/wallet/sagas";
 import { resetWallets } from "../store/wallet/slice";
 
 import RootView from "./RootView";
@@ -98,7 +98,7 @@ const ProfileScreen = () => {
             label={"Reset all wallets"}
             style={{ marginVertical: SIZES.padding }}
             onPress={async () => {
-              await resetWallet();
+              await resetWalletsInLocalStorage();
               dispatch(resetWallets());
             }}
           />

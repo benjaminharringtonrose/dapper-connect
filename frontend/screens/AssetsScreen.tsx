@@ -74,11 +74,8 @@ const AssetsScreen = () => {
 
   useEffect(() => {
     if (connector.connected) {
-      console.log("CONNECTOR USE EFFECT");
-      console.log("connector.accounts[0]:", connector.accounts[0]);
       setSelectedAddress(connector.accounts[0]);
       dispatch(getAccountRequested({ address: connector.accounts[0] }));
-      console.log("early useEffect assets screen - wallets", wallets);
       dispatch(
         addWalletRequested({
           wallet: {

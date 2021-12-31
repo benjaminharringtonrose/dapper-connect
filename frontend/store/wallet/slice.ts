@@ -24,6 +24,8 @@ const initialState: WalletState = {
 };
 
 export type GetWalletsRequestedAction = PayloadAction<undefined>;
+export type AddWalletRequestedAction = PayloadAction<{ wallet: Wallet }>;
+export type RemoveWalletRequestedAction = PayloadAction<{ address: string }>;
 
 type ErrorAction = PayloadAction<{ error: Error }>;
 
@@ -44,7 +46,7 @@ const walletSlice = createSlice({
       state.loadingGetWallets = false;
       state.errorGetWallets = error;
     },
-    addWalletRequested: (state, _: PayloadAction<{ wallet: Record<string, unknown> }>) => {
+    addWalletRequested: (state, _: AddWalletRequestedAction) => {
       state.loadingGetWallets = true;
     },
     addWalletSucceeded: (state, action: PayloadAction<{ wallets: Wallet[] }>) => {
@@ -57,7 +59,7 @@ const walletSlice = createSlice({
       state.loadingGetWallets = false;
       state.errorGetWallets = error;
     },
-    removeWalletRequested: (state, _: PayloadAction<{ address: string }>) => {
+    removeWalletRequested: (state, _: RemoveWalletRequestedAction) => {
       state.loadingGetWallets = true;
     },
     removeWalletSucceeded: (state, action: PayloadAction<{ wallets: Wallet[] }>) => {

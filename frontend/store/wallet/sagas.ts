@@ -1,11 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PayloadAction } from "@reduxjs/toolkit";
-import { call, put, select, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest } from "redux-saga/effects";
 
-import { RootState } from "..";
+import { store } from "..";
 import { Wallet } from "../../types";
-import { addWallet, getAllWallets } from "../localStorage/wallets";
-import { getWalletsFailed, getWalletsRequested, getWalletsSucceeded } from "../wallet/slice";
+import { loadString, remove, saveObject } from "../local";
+import {
+  AddWalletRequestedAction,
+  getWalletsFailed,
+  getWalletsRequested,
+  GetWalletsRequestedAction,
+  getWalletsSucceeded,
+  RemoveWalletRequestedAction,
+} from "../wallet/slice";
 
 import {
   addWalletFailed,
@@ -16,7 +22,56 @@ import {
   removeWalletSucceeded,
 } from "./slice";
 
-export function* getWalletsSaga(_: PayloadAction<undefined>) {
+export const ALL_WALLETS = "ALL_WALLETS";
+
+export const getAllWallets = async (): Promise<Wallet[]> => {
+  const allWallets = await loadString(ALL_WALLETS);
+  if (!allWallets) return [];
+  const walletsObject: Record<string, Wallet> = JSON.parse(allWallets);
+  const walletsArray: Wallet[] = [];
+  for (const [address, wallet] of Object.entries(walletsObject)) {
+    walletsArray.push({ ...wallet, address });
+  }
+  return walletsArray;
+};
+
+export const addWallet = async (wallet: Wallet): Promise<Wallet[]> => {
+  const { wallets } = store.getState().wallets;
+  let walletsObject = {};
+  wallets?.forEach((wallet) => {
+    walletsObject = {
+      ...walletsObject,
+      [wallet.address]: wallet,
+    };
+  });
+  walletsObject = {
+    ...walletsObject,
+    [wallet.address as string]: wallet,
+  };
+  await saveObject(ALL_WALLETS, walletsObject);
+  return await getAllWallets();
+};
+
+export const removeWallet = async (address: string): Promise<Wallet[]> => {
+  const { wallets } = store.getState().wallets;
+  let walletsObject = {};
+  wallets?.forEach((wallet) => {
+    if (wallet.address !== address) {
+      walletsObject = {
+        ...walletsObject,
+        [wallet.address]: wallet,
+      };
+    }
+  });
+  await saveObject(ALL_WALLETS, walletsObject);
+  return await getAllWallets();
+};
+
+export const resetWalletsInLocalStorage = async () => {
+  await remove(ALL_WALLETS);
+};
+
+export function* getWalletsSaga(_: GetWalletsRequestedAction) {
   try {
     const wallets: Wallet[] = yield call(getAllWallets);
     yield put(getWalletsSucceeded({ wallets }));
@@ -27,12 +82,10 @@ export function* getWalletsSaga(_: PayloadAction<undefined>) {
   }
 }
 
-export function* addWalletSaga(action: PayloadAction<{ wallet: any }>) {
+export function* addWalletSaga(action: AddWalletRequestedAction) {
   try {
     const { wallet } = action.payload;
-    const state: RootState = yield select();
-
-    const wallets = yield call(addWallet, { wallet, prevWallets: state.wallets.wallets });
+    const wallets = yield call(addWallet, wallet);
     yield put(addWalletSucceeded({ wallets }));
   } catch (error) {
     console.log(error.message);
@@ -41,13 +94,11 @@ export function* addWalletSaga(action: PayloadAction<{ wallet: any }>) {
   }
 }
 
-export function* removeWalletSaga(action: PayloadAction<{ address: string }>) {
+export function* removeWalletSaga(action: RemoveWalletRequestedAction) {
   try {
     const { address } = action.payload;
-    const wallets: Wallet[] = yield call(getAllWallets);
-
-    // const wallets = yield call(removeWallet, action.payload);
-    // yield put(removeWalletSucceeded({ wallets }));
+    const wallets = yield call(removeWallet, address);
+    yield put(removeWalletSucceeded({ wallets }));
   } catch (error) {
     console.log(error.message);
     console.warn(error.message);
