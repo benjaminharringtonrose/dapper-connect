@@ -19,7 +19,8 @@ export function* getExchangesSaga(_: GetExchangeRequestedAction) {
     const exchanges = response.data as Exchange[];
     yield put(getExchangesSucceeded({ exchanges }));
   } catch (error) {
-    console.warn(error);
+    console.log(error.message);
+    console.warn(error.message);
     yield put(getExchangesFailed({ error }));
   }
 }

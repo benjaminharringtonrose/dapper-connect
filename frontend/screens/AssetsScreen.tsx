@@ -1,7 +1,6 @@
 import { MAINNET_API } from "@env";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-import firestore from "@react-native-firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import React, { useEffect, useRef, useState } from "react";
@@ -19,6 +18,11 @@ import { LoadWalletModal } from "../modals/LoadWalletModal";
 import { getAccountRequested } from "../store/account/slice";
 import { resetHoldings } from "../store/market/slice";
 import { setToastMessages } from "../store/settings/slice";
+import {
+  addWalletRequested,
+  getWalletsRequested,
+  removeWalletRequested,
+} from "../store/wallet/slice";
 
 import RootView from "./RootView";
 
@@ -34,19 +38,17 @@ const AssetsScreen = () => {
 
   const { holdings } = useAppSelector((state) => state.market);
   const { loadingGetAccount } = useAppSelector((state) => state.account);
-  const { user } = useAppSelector((state) => state.account);
   const { toastMessages } = useAppSelector((state) => state.settings);
+  const { wallets } = useAppSelector((state) => state.wallets);
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const connector = useWalletConnect();
 
   const [selectedCoin, setSelectedCoin] = useState<any>(undefined);
-  const [selectedAddress, setSelectedAddress] = useState<string | undefined>(
-    user?.wallets?.[0]?.address
-  );
+  const [selectedAddress, setSelectedAddress] = useState<string | undefined>(wallets?.[0]?.address);
 
-  const wallet = user?.wallets?.find((wallet) => wallet.address === selectedAddress);
+  const wallet = wallets?.find((wallet) => wallet.address === selectedAddress);
 
   const totalWallet = holdings?.reduce((a, b) => a + (b.total || 0), 0);
   const valueChange = holdings?.reduce((a, b) => a + (b.holdingValueChange7d || 0), 0);
@@ -72,24 +74,20 @@ const AssetsScreen = () => {
 
   useEffect(() => {
     if (connector.connected) {
+      console.log("CONNECTOR USE EFFECT");
+      console.log("connector.accounts[0]:", connector.accounts[0]);
       setSelectedAddress(connector.accounts[0]);
       dispatch(getAccountRequested({ address: connector.accounts[0] }));
-      (async () =>
-        await firestore()
-          .collection("users")
-          .doc(user.uid)
-          .set(
-            {
-              wallets: {
-                [connector.accounts[0]]: {
-                  name: connector.clientMeta.name,
-                  address: connector.accounts[0],
-                  provider: "walletconnect",
-                },
-              },
-            },
-            { merge: true }
-          ))();
+      console.log("early useEffect assets screen - wallets", wallets);
+      dispatch(
+        addWalletRequested({
+          wallet: {
+            name: connector.clientMeta.name,
+            address: connector.accounts[0],
+            provider: "walletconnect",
+          },
+        })
+      );
     }
   }, [connector.connected]);
 
@@ -104,28 +102,24 @@ const AssetsScreen = () => {
             onPress: async () => {
               connector.killSession();
               dispatch(resetHoldings());
-              const wcWallet = user?.wallets?.find((wallet) => wallet.provider === "walletconnect");
-              await firestore()
-                .collection("users")
-                .doc(`${user.uid}`)
-                .update({
-                  [`wallets.${wcWallet?.address}`]: firestore.FieldValue.delete(),
-                });
-              setSelectedAddress(user?.wallets?.[0]?.address);
-              dispatch(getAccountRequested({ address: user?.wallets?.[0]?.address }));
+              const wcWallet = wallets?.find((wallet) => wallet.provider === "walletconnect");
+              dispatch(removeWalletRequested({ address: wcWallet.address }));
+              setSelectedAddress(wallets?.[0]?.address);
+              dispatch(getAccountRequested({ address: wallets?.[0]?.address }));
             },
           },
           { text: "Nevermind" },
         ]);
       }
     } catch (e) {
-      console.log(e);
+      console.log(e.message);
     }
     walletModalRef.current?.close();
   }
 
   const onRefresh = () => {
     dispatch(getAccountRequested({ address: selectedAddress }));
+    dispatch(getWalletsRequested());
   };
 
   return (
@@ -330,7 +324,6 @@ const AssetsScreen = () => {
         />
         <LoadWalletModal
           ref={loadWalletModalRef}
-          user={user}
           web3={web3}
           onSelectWallet={(address) => {
             loadWalletModalRef.current?.close();
@@ -340,7 +333,10 @@ const AssetsScreen = () => {
         />
         <CreateWalletModal
           ref={createWalletModalRef}
-          onPress={() => createWalletModalRef.current?.close()}
+          onPress={(address) => {
+            setSelectedAddress(address);
+            createWalletModalRef.current?.close();
+          }}
           web3={web3}
         />
       </>

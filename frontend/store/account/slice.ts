@@ -1,24 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Account, Coin, Holding, User } from "../../types";
+import { Account, Coin, Holding, Wallet } from "../../types";
 
 export interface AccountState {
   account?: Account;
   loadingGetAccount: boolean;
   errorGetAccount?: Error;
-  user?: User;
-  loadingGetUser: boolean;
-  errorGetUser?: Error;
 }
 
 const initialState: AccountState = {
   account: undefined,
   loadingGetAccount: false,
   errorGetAccount: undefined,
-  user: undefined,
-  loadingGetUser: false,
-  errorGetUser: undefined,
 };
 
 export type GetAccountRequestedAction = PayloadAction<{ address: string }>;
@@ -42,28 +36,9 @@ const accountSlice = createSlice({
       state.loadingGetAccount = false;
       state.errorGetAccount = error;
     },
-    loadingGetCurrentUser(state) {
-      state.loadingGetUser = true;
-      state.errorGetUser = undefined;
-    },
-    errorGetCurrentUser(state, action: PayloadAction<{ error: Error }>) {
-      state.loadingGetUser = false;
-      state.errorGetUser = action.payload.error;
-    },
-    updateUser: (state, action: PayloadAction<{ user: User }>) => {
-      const { user } = action.payload;
-      state.user = user;
-    },
   },
 });
 
-export const {
-  getAccountRequested,
-  getAccountSucceeded,
-  getAccountFailed,
-  loadingGetCurrentUser,
-  errorGetCurrentUser,
-  updateUser,
-} = accountSlice.actions;
+export const { getAccountRequested, getAccountSucceeded, getAccountFailed } = accountSlice.actions;
 
 export default accountSlice.reducer;

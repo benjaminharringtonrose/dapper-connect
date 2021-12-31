@@ -40,13 +40,13 @@ export const SendModal = forwardRef(
       address: Yup.string().required("Required"),
     });
 
-    const { account, user } = useAppSelector((state) => state.account);
     const dispatch = useAppDispatch();
     const connector = useWalletConnect();
     const insets = useSafeAreaInsets();
     const { toastMessages } = useAppSelector((state) => state.settings);
     const { holdings } = useAppSelector((state) => state.market);
     const holding = holdings.find((holding) => holding.id === "ethereum");
+    const { wallets } = useAppSelector((state) => state.wallets);
 
     const [loading, setLoading] = useState<boolean>(false);
     const [reviewVisible, setReviewVisible] = useState<boolean>(false);
@@ -54,10 +54,8 @@ export const SendModal = forwardRef(
     const [maxTotal, setMaxTotal] = useState<number | undefined>();
     const [usdAmount, setUsdAmount] = useState<number | undefined>();
 
-    console.log(address);
-
     const calculateTransactionFee = async (values: FormProps) => {
-      const wallet = user.wallets.find((wallet) => wallet.address === address);
+      const wallet = wallets.find((wallet) => wallet.address === address);
       const tx = {
         from: wallet.address,
         to: values.address,
@@ -91,7 +89,7 @@ export const SendModal = forwardRef(
         setReviewVisible(true);
       } catch (e) {
         Alert.alert(e.message);
-        console.log(e);
+        console.log(e.message);
       }
     };
 
@@ -101,9 +99,7 @@ export const SendModal = forwardRef(
       }
       try {
         setLoading(true);
-        // send transaction logic goes here
-        const wallet = user.wallets.find((wallet) => wallet.address === address);
-        console.log(wallet.provider);
+        const wallet = wallets.find((wallet) => wallet.address === address);
         const wei = web3.utils.toWei(values.amount, "ether");
         if (wallet.provider === "walletconnect") {
           if (connector.connected) {
@@ -116,7 +112,7 @@ export const SendModal = forwardRef(
               });
               console.log("success");
             } catch (error) {
-              console.log(error);
+              console.log(error.message);
             }
           }
         } else if (wallet.provider === "local") {
@@ -158,8 +154,6 @@ export const SendModal = forwardRef(
       }
       onPress();
     };
-
-    console.log(reviewVisible);
 
     return (
       <Portal>

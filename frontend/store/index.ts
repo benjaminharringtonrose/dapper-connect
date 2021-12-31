@@ -4,39 +4,38 @@ import { fork } from "redux-saga/effects";
 
 import accountSaga from "./account/sagas";
 import accountReducer from "./account/slice";
-import authSaga from "./auth/sagas";
-import authReducer from "./auth/slice";
 import exchangeSaga from "./exchange/sagas";
 import exchangeReducer from "./exchange/slice";
 import marketSaga from "./market/sagas";
 import marketReducer from "./market/slice";
-import { userListener } from "./middleware/userListener";
 import settingsSaga from "./settings/sagas";
 import settingsReducer from "./settings/slice";
 import tabSaga from "./tab/sagas";
 import tabReducer from "./tab/slice";
+import walletSaga from "./wallet/sagas";
+import walletReducer from "./wallet/slice";
 
 function* rootSaga() {
   yield fork(accountSaga);
-  yield fork(authSaga);
   yield fork(exchangeSaga);
   yield fork(marketSaga);
   yield fork(settingsSaga);
   yield fork(tabSaga);
+  yield fork(walletSaga);
 }
 
 const sagaMiddleware = createSagaMiddleware();
 
 const reducer = combineReducers({
   account: accountReducer,
-  auth: authReducer,
   exchange: exchangeReducer,
   market: marketReducer,
   settings: settingsReducer,
   tabs: tabReducer,
+  wallets: walletReducer,
 });
 
-export const store = createStore(reducer, applyMiddleware(sagaMiddleware, userListener));
+export const store = createStore(reducer, applyMiddleware(sagaMiddleware));
 
 sagaMiddleware.run(rootSaga);
 

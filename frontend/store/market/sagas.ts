@@ -17,7 +17,6 @@ import {
   getSparklineRequested,
   GetSparklineRequestedAction,
   getSparklineSucceeded,
-  PriceChangePerc,
 } from "./slice";
 
 export interface ResponseGenerator {
@@ -47,9 +46,7 @@ export function* getHoldingsSaga(action: GetHoldingsRequestedAction) {
 
     const mappedHoldings = response.data.map((item: any) => {
       const coin = holdings?.find((a) => a.id === item?.id);
-
       const price7d = item.current_price / (1 + item.price_change_percentage_7d_in_currency * 0.01);
-
       return {
         id: item?.id,
         symbol: item?.symbol,
@@ -67,7 +64,8 @@ export function* getHoldingsSaga(action: GetHoldingsRequestedAction) {
     });
     yield put(getHoldingsSucceeded({ holdings: mappedHoldings }));
   } catch (error) {
-    console.warn(error);
+    console.log(error.message);
+    console.warn(error.message);
     yield put(getHoldingsFailed({ error }));
   }
 }
@@ -89,7 +87,8 @@ export function* getCoinMarketSaga(action: GetCoinMarketRequestedAction) {
 
     yield put(getCoinMarketSucceeded({ coins: response.data as Coin[] }));
   } catch (error) {
-    console.warn(error);
+    console.log(error.message);
+    console.warn(error.message);
     yield put(getCoinMarketFailed({ error }));
   }
 }
@@ -103,6 +102,8 @@ export function* getSparklineSaga(action: GetSparklineRequestedAction) {
     const response: ResponseGenerator = yield call([axios, axios.get], apiUrl);
     yield put(getSparklineSucceeded({ sparkline: response.data.prices }));
   } catch (error) {
+    console.log(error.message);
+    console.warn(error.message);
     yield put(getSparklineFailed({ error }));
   }
 }

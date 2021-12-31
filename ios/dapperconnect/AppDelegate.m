@@ -6,7 +6,6 @@
 #import <React/RCTLinkingManager.h>
 #import <React/RCTConvert.h>
 
-#import <Firebase.h>
 #import "RNSplashScreen.h"
 
 #if defined(FB_SONARKIT_ENABLED) && __has_include(<FlipperKit/FlipperClient.h>)
@@ -28,7 +27,6 @@ static void InitializeFlipper(UIApplication *application) {
 }
 #endif
 
-@import Firebase;
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -53,7 +51,7 @@ static void InitializeFlipper(UIApplication *application) {
   [self.window makeKeyAndVisible];
 
   [super application:application didFinishLaunchingWithOptions:launchOptions];
-  [FIRApp configure];
+ 
   [RNSplashScreen show];
   return YES;
  }

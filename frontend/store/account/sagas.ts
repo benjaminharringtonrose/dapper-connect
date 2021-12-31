@@ -18,23 +18,19 @@ function* getAccountSaga(action: GetAccountRequestedAction) {
     const apiUrl = `https://api.ethplorer.io/getAddressInfo/${address}?apiKey=freekey`;
     const response: ResponseGenerator = yield call([axios, axios.get], apiUrl);
     const account = response.data as Account;
-
     const holdings = [{ id: "ethereum", qty: account.ETH.balance }];
-
     const tokenHoldings = account?.tokens?.map((token) => {
       return {
         id: token.tokenInfo.coingecko,
         qty: token.balance / 10 ** Number(token.tokenInfo.decimals),
       };
     });
-
     const allHoldings = holdings.concat(tokenHoldings);
-
     yield call(getHoldingsSaga, getHoldingsRequested({ holdings: allHoldings }));
-
     yield put(getAccountSucceeded({ account: { ...account, holdings: allHoldings } }));
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    console.warn(error.message);
     yield put(getAccountFailed({ error }));
   }
 }

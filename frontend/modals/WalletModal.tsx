@@ -7,19 +7,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "../components/Button";
 import { COLORS, SIZES } from "../constants";
 
+interface WalletModalProps {
+  create: () => void;
+  connect: () => void;
+  load: () => void;
+}
+
 export const WalletModal = forwardRef(
-  (
-    {
-      create,
-      connect,
-      load,
-    }: {
-      create: () => void;
-      connect: () => void;
-      load: () => void;
-    },
-    ref: Ref<Modalize>
-  ) => {
+  ({ create, connect, load }: WalletModalProps, ref: Ref<Modalize>) => {
     const insets = useSafeAreaInsets();
 
     return (

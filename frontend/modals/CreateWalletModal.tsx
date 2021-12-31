@@ -1,11 +1,7 @@
-import { Feather } from "@expo/vector-icons";
-import Clipboard from "@react-native-clipboard/clipboard";
-import firestore from "@react-native-firebase/firestore";
-import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import * as Haptics from "expo-haptics";
 import { Formik, FormikProps } from "formik";
 import React, { forwardRef, Ref, useState } from "react";
-import { Dimensions, TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,24 +11,23 @@ import * as Yup from "yup";
 import { Button } from "../components/Button";
 import { FormInput } from "../components/FormInput";
 import { COLORS, SIZES } from "../constants";
-import { useAppDispatch, useAppSelector } from "../hooks";
+import { useAppDispatch } from "../hooks";
 import { getAccountRequested } from "../store/account/slice";
+import { addWalletRequested } from "../store/wallet/slice";
 
 interface FormProps {
   name?: string;
 }
 
 export const CreateWalletModal = forwardRef(
-  ({ onPress, web3 }: { onPress: () => void; web3: Web3 }, ref: Ref<Modalize>) => {
+  ({ onPress, web3 }: { onPress: (address: string) => void; web3: Web3 }, ref: Ref<Modalize>) => {
     const formRef = React.useRef<FormikProps<FormProps>>(null);
 
     const ProfileSchema = Yup.object().shape({
       name: Yup.string().required("Required"),
     });
 
-    const { user } = useAppSelector((state) => state.account);
     const dispatch = useAppDispatch();
-    const connector = useWalletConnect();
     const insets = useSafeAreaInsets();
 
     const [loading, setLoading] = useState<boolean>(false);
@@ -43,44 +38,29 @@ export const CreateWalletModal = forwardRef(
       }
       try {
         setLoading(true);
-        create(values);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.warn(error.message);
-      }
-      onPress();
-    };
-
-    const create = async (values: FormProps) => {
-      try {
-        onPress();
         const account = web3.eth.accounts.create(web3.utils.randomHex(32));
         const wallet = web3.eth.accounts.wallet.add(account);
         const password = web3.utils.randomHex(32);
         const keystore = wallet.encrypt(password);
-
-        await firestore()
-          .collection("users")
-          .doc(user.uid)
-          .set(
-            {
-              wallets: {
-                [wallet.address]: {
-                  name: values.name,
-                  address: wallet.address,
-                  privateKey: wallet.privateKey,
-                  provider: "local",
-                  password: password,
-                  keystore: keystore,
-                },
-              },
+        dispatch(
+          addWalletRequested({
+            wallet: {
+              name: values.name,
+              address: wallet.address,
+              privateKey: wallet.privateKey,
+              provider: "local",
+              password: password,
+              keystore: keystore,
             },
-            { merge: true }
-          );
+          })
+        );
+        console.log("is it undefined here? ", wallet.address);
+        onPress(wallet.address);
         dispatch(getAccountRequested({ address: wallet.address }));
+        setLoading(false);
       } catch (error) {
-        console.warn(error);
+        setLoading(false);
+        console.warn(error.message);
       }
     };
 

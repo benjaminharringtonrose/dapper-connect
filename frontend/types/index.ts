@@ -1,5 +1,3 @@
-import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
-
 export interface Holding {
   id: string;
   symbol: string;
@@ -133,18 +131,6 @@ export interface Exchange {
   trade_volume_24h_btc_normalized: number;
 }
 
-export interface AuthUser {
-  emailVerified?: boolean;
-  uid: string;
-  providerId?: string;
-  providerData: Array<any>;
-  displayName?: string;
-  email?: string;
-  isAnonymous?: boolean;
-  photoURL?: string;
-  metadata: { creationTime?: string; lastSignInTime?: string };
-}
-
 export interface Keystore {
   address: string;
   crypto: {
@@ -168,14 +154,4 @@ export interface Wallet {
   password?: string;
   privateKey?: string;
   provider?: "walletconnect" | "local";
-}
-
-export interface User {
-  wallets?: Wallet[];
-  uid: string;
-  email: string;
-  createdOn: string;
-  providers?: string[];
-  messagingTokens?: string[];
-  state: "verified" | "unverified";
 }

@@ -6,16 +6,11 @@ import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import QRCode from "react-native-qrcode-svg";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { COLORS, FONTS, SIZES } from "../constants";
-import { useAppSelector } from "../hooks";
 
 export const ReceiveModal = forwardRef(
   ({ onPress, address }: { onPress: () => void; address: string }, ref: Ref<Modalize>) => {
-    const { user } = useAppSelector((state) => state.account);
-    const insets = useSafeAreaInsets();
-
     return (
       <Portal>
         <Modalize

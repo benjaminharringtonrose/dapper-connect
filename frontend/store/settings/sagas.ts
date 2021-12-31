@@ -4,13 +4,12 @@ import { getExchangesSaga } from "../exchange/sagas";
 import { getExchangesRequested } from "../exchange/slice";
 import { getCoinMarketSaga, getSparklineSaga } from "../market/sagas";
 import { getCoinMarketRequested, getSparklineRequested } from "../market/slice";
+import { getWalletsSaga } from "../wallet/sagas";
+import { getWalletsRequested } from "../wallet/slice";
 
 import { frontloadAppFailed, frontloadAppRequested, frontloadAppSucceeded } from "./slice";
 
 function* frontloadAppSaga() {
-  // we use `call` instead of `put` because `call` waits for the saga to be executed,
-  // while `put` is non-blocking. We don't want to begin loading the app until
-  // these network requests are done.
   try {
     yield call(getCoinMarketSaga, getCoinMarketRequested({}));
     yield call(
@@ -22,6 +21,7 @@ function* frontloadAppSaga() {
       })
     );
     yield call(getExchangesSaga, getExchangesRequested());
+    yield call(getWalletsSaga, getWalletsRequested());
     yield delay(2000);
     yield put(frontloadAppSucceeded());
   } catch (error) {

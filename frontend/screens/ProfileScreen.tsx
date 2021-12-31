@@ -1,10 +1,11 @@
-import auth from "@react-native-firebase/auth";
 import React, { useState } from "react";
 import { Image, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 
 import { Button } from "../components/Button";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
-import { useAppSelector } from "../hooks";
+import { useAppDispatch } from "../hooks";
+import { resetWallet } from "../store/localStorage/wallets";
+import { resetWallets } from "../store/wallet/slice";
 
 import RootView from "./RootView";
 
@@ -59,16 +60,7 @@ const Setting = ({
 
 const ProfileScreen = () => {
   const [faceID, setFaceID] = useState<boolean | undefined>(false);
-
-  const { user } = useAppSelector((state) => state.auth);
-
-  const logOut = async () => {
-    try {
-      await auth().signOut();
-    } catch (error) {
-      console.warn(error);
-    }
-  };
+  const dispatch = useAppDispatch();
 
   return (
     <RootView>
@@ -77,12 +69,6 @@ const ProfileScreen = () => {
         <ScrollView style={{ paddingHorizontal: SIZES.padding, backgroundColor: COLORS.black }}>
           {/* Email & User ID Row */}
           <View style={{ flexDirection: "row", marginTop: SIZES.padding }}>
-            <View style={{ flex: 1 }}>
-              <Text style={[FONTS.h3, { color: COLORS.white }]}>{user?.email}</Text>
-              {/* <Text
-                style={[FONTS.body4, { color: COLORS.lightGray3 }]}
-              >{`ID: ${mockData.mockProfile.id}`}</Text> */}
-            </View>
             {/* Status */}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Image source={icons.verified} style={{ width: 25, height: 25 }} />
@@ -91,12 +77,7 @@ const ProfileScreen = () => {
           </View>
           {/* APP */}
           <SectionTitle title={"APP"} />
-          <Setting
-            title={"Appearance"}
-            value={"Dark"}
-            type={"button"}
-            onPress={() => console.log("press")}
-          />
+          <Setting title={"Appearance"} value={"Dark"} type={"button"} onPress={() => "press"} />
           {/* SECURITY */}
           <SectionTitle title={"SECURITY"} />
           <Setting
@@ -105,23 +86,21 @@ const ProfileScreen = () => {
             type={"switch"}
             onPress={(value) => setFaceID(value)}
           />
-          <Setting
-            title={"Change Password"}
-            value={""}
-            type={"button"}
-            onPress={() => console.log("press")}
-          />
+          <Setting title={"Change Password"} value={""} type={"button"} onPress={() => "press"} />
           <Setting
             title={"Multi-Factor Authentication"}
             value={""}
             type={"button"}
-            onPress={() => console.log("press")}
+            onPress={() => "press"}
           />
           <Button
             type={"bordered"}
-            label={"Log Out"}
+            label={"Reset all wallets"}
             style={{ marginVertical: SIZES.padding }}
-            onPress={logOut}
+            onPress={async () => {
+              await resetWallet();
+              dispatch(resetWallets());
+            }}
           />
         </ScrollView>
       </View>

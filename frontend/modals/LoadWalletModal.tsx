@@ -1,22 +1,18 @@
 import React, { forwardRef, Ref } from "react";
-import { Dimensions, FlatList, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import Web3 from "web3";
 
-import { Button } from "../components/Button";
 import { COLORS, FONTS, SIZES } from "../constants";
-import { User } from "../types";
+import { useAppSelector } from "../hooks";
 
 export const LoadWalletModal = forwardRef(
   (
-    {
-      user,
-      web3,
-      onSelectWallet,
-    }: { user: User; web3: Web3; onSelectWallet: (address: string) => void },
+    { onSelectWallet }: { web3: Web3; onSelectWallet: (address: string) => void },
     ref: Ref<Modalize>
   ) => {
+    const { wallets } = useAppSelector((state) => state.wallets);
     return (
       <Portal>
         <Modalize
@@ -25,7 +21,7 @@ export const LoadWalletModal = forwardRef(
           useNativeDriver={false}
           flatListProps={{
             keyExtractor: (item) => item.address,
-            data: user?.wallets,
+            data: wallets,
             renderItem: ({ item }) => {
               return (
                 <TouchableOpacity

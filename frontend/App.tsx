@@ -1,7 +1,6 @@
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { LogBox, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Host } from "react-native-portalize";
@@ -10,11 +9,9 @@ import SplashScreen from "react-native-splash-screen";
 import { Provider } from "react-redux";
 
 import { useAppDispatch, useAppSelector } from "./hooks";
-import { AppStack, AuthStack, StartupStack } from "./navigation";
+import { AppStack, StartupStack } from "./navigation";
 import { store } from "./store";
-import { setAuthUser } from "./store/auth/slice";
 import { frontloadAppRequested } from "./store/settings/slice";
-import { AuthUser } from "./types";
 
 LogBox.ignoreLogs([
   "Warning: The provided value 'ms-stream' is not a valid 'responseType'.",
@@ -26,49 +23,16 @@ const Root = () => {
 
   const dispatch = useAppDispatch();
 
-  const [initializing, setInitializing] = useState<boolean>(true);
-  const [user, setUser] = useState<AuthUser | undefined>(undefined);
-
   useEffect(() => {
     SplashScreen.hide();
     dispatch(frontloadAppRequested());
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber;
   }, []);
-
-  const onAuthStateChanged = async (firebaseUser: FirebaseAuthTypes.User | null) => {
-    try {
-      let authUser: AuthUser | undefined = undefined;
-      if (firebaseUser) {
-        authUser = {
-          emailVerified: firebaseUser.emailVerified,
-          uid: firebaseUser.uid,
-          providerId: firebaseUser.providerId,
-          providerData: firebaseUser.providerData,
-          displayName: firebaseUser.displayName || undefined,
-          email: firebaseUser.email || undefined,
-          isAnonymous: firebaseUser.isAnonymous,
-          photoURL: firebaseUser.photoURL || undefined,
-          metadata: firebaseUser.metadata,
-        };
-        dispatch(setAuthUser({ user: authUser }));
-      }
-      setUser(authUser);
-      if (initializing) {
-        setInitializing(false);
-      }
-    } catch (e) {
-      console.warn(e);
-    }
-  };
-
-  if (initializing) return null;
 
   return (
     <>
       <StatusBar barStyle={"light-content"} />
       <NavigationContainer theme={DarkTheme}>
-        {loadingFrontloadApp ? <StartupStack /> : user ? <AppStack /> : <AuthStack />}
+        {loadingFrontloadApp ? <StartupStack /> : <AppStack />}
       </NavigationContainer>
     </>
   );
