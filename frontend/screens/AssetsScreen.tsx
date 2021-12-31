@@ -1,4 +1,4 @@
-import { MAINNET_API } from "@env";
+import { ENV, KOVAN_API, MAINNET_API } from "@env";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -26,8 +26,11 @@ import {
 
 import RootView from "./RootView";
 
-const provider = new Web3.providers.HttpProvider(MAINNET_API);
+const serverEndpoint = ENV === "production" ? MAINNET_API : KOVAN_API;
+const provider = new Web3.providers.HttpProvider(serverEndpoint);
 export const web3: Web3 = new Web3(provider);
+
+console.log("serverEndpoint", serverEndpoint);
 
 const AssetsScreen = () => {
   const walletModalRef = useRef<Modalize>(null);

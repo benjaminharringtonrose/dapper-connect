@@ -54,7 +54,6 @@ export const CreateWalletModal = forwardRef(
             },
           })
         );
-        console.log("is it undefined here? ", wallet.address);
         onPress(wallet.address);
         dispatch(getAccountRequested({ address: wallet.address }));
         setLoading(false);

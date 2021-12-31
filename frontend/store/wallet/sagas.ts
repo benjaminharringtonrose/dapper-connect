@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, select, takeLatest } from "redux-saga/effects";
 
 import { store } from "..";
 import { Wallet } from "../../types";
@@ -35,10 +35,9 @@ export const getAllWallets = async (): Promise<Wallet[]> => {
   return walletsArray;
 };
 
-export const addWallet = async (wallet: Wallet): Promise<Wallet[]> => {
-  const { wallets } = store.getState().wallets;
+export const addWallet = async (wallet: Wallet, prevWallets: Wallet[]): Promise<Wallet[]> => {
   let walletsObject = {};
-  wallets?.forEach((wallet) => {
+  prevWallets?.forEach((wallet) => {
     walletsObject = {
       ...walletsObject,
       [wallet.address]: wallet,
@@ -52,10 +51,9 @@ export const addWallet = async (wallet: Wallet): Promise<Wallet[]> => {
   return await getAllWallets();
 };
 
-export const removeWallet = async (address: string): Promise<Wallet[]> => {
-  const { wallets } = store.getState().wallets;
+export const removeWallet = async (address: string, prevWallets: Wallet[]): Promise<Wallet[]> => {
   let walletsObject = {};
-  wallets?.forEach((wallet) => {
+  prevWallets?.forEach((wallet) => {
     if (wallet.address !== address) {
       walletsObject = {
         ...walletsObject,
@@ -85,7 +83,8 @@ export function* getWalletsSaga(_: GetWalletsRequestedAction) {
 export function* addWalletSaga(action: AddWalletRequestedAction) {
   try {
     const { wallet } = action.payload;
-    const wallets = yield call(addWallet, wallet);
+    const prevWallets: Wallet[] = yield select((state) => state.wallets.wallets);
+    const wallets = yield call(addWallet, wallet, prevWallets);
     yield put(addWalletSucceeded({ wallets }));
   } catch (error) {
     console.log(error.message);
@@ -97,7 +96,8 @@ export function* addWalletSaga(action: AddWalletRequestedAction) {
 export function* removeWalletSaga(action: RemoveWalletRequestedAction) {
   try {
     const { address } = action.payload;
-    const wallets = yield call(removeWallet, address);
+    const prevWallets: Wallet[] = yield select((state) => state.wallets.wallets);
+    const wallets = yield call(removeWallet, address, prevWallets);
     yield put(removeWalletSucceeded({ wallets }));
   } catch (error) {
     console.log(error.message);

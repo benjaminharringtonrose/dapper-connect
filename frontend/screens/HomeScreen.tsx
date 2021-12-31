@@ -23,9 +23,6 @@ const HomeScreen = () => {
   const [selectedNumDays, setSelectedNumDays] = useState<string>("1");
   const [selectedInterval, setSelectedInterval] = useState<string>("minutely");
 
-  const wallets = useAppSelector((state) => state.wallets);
-  console.log("HomeScreen - wallets state:", wallets.wallets);
-
   useEffect(() => {
     if (errorGetCoinMarket || errorGetSparkline) {
       Alert.alert(`Error:`, errorGetCoinMarket?.message);
