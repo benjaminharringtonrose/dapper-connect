@@ -7,4 +7,5 @@ declare module "@env" {
   export const RINKEBY_API: string;
   export const KOVAN_API: string;
   export const ETHPLORER_API_KEY: string;
+  export const ETHERSCAN_API_KEY: string;
 }

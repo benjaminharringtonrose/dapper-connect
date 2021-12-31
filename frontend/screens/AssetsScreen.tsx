@@ -23,14 +23,9 @@ import {
   getWalletsRequested,
   removeWalletRequested,
 } from "../store/wallet/slice";
+import { web3 } from "../web3";
 
 import RootView from "./RootView";
-
-const serverEndpoint = ENV === "production" ? MAINNET_API : KOVAN_API;
-const provider = new Web3.providers.HttpProvider(serverEndpoint);
-export const web3: Web3 = new Web3(provider);
-
-console.log("serverEndpoint", serverEndpoint);
 
 const AssetsScreen = () => {
   const walletModalRef = useRef<Modalize>(null);
@@ -39,7 +34,7 @@ const AssetsScreen = () => {
   const loadWalletModalRef = useRef<Modalize>(null);
   const createWalletModalRef = useRef<Modalize>(null);
 
-  const { holdings } = useAppSelector((state) => state.market);
+  const { holdings, coins } = useAppSelector((state) => state.market);
   const { loadingGetAccount } = useAppSelector((state) => state.account);
   const { toastMessages } = useAppSelector((state) => state.settings);
   const { wallets } = useAppSelector((state) => state.wallets);
