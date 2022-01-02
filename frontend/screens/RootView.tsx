@@ -7,7 +7,7 @@ import { COLORS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { setToastMessages } from "../store/settings/slice";
 
-const RootView = ({ style, children }: { style: StyleProp<ViewStyle>; children: JSX.Element }) => {
+const RootView = ({ style, children }: { style?: StyleProp<ViewStyle>; children: JSX.Element }) => {
   const modalAnimatedValue = useRef(new Animated.Value(0)).current;
   const { isTradeModalVisible } = useAppSelector((state) => state.tabs);
   const { toastMessages } = useAppSelector((state) => state.settings);
