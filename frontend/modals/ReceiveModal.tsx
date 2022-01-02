@@ -1,6 +1,4 @@
 import { Feather } from "@expo/vector-icons";
-import Clipboard from "@react-native-clipboard/clipboard";
-import * as Haptics from "expo-haptics";
 import React, { forwardRef, Ref } from "react";
 import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
@@ -37,11 +35,7 @@ export const ReceiveModal = forwardRef(
               </Text>
             </View>
             <TouchableOpacity
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                Clipboard.setString(address);
-                onPress();
-              }}
+              onPress={onPress}
               style={{
                 backgroundColor: COLORS.gray,
                 padding: SIZES.radius,

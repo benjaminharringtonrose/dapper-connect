@@ -1,3 +1,24 @@
+export enum PriceChangePerc {
+  oneHour = "1h",
+  oneDay = "24h",
+  oneWeek = "7d",
+  oneMonth = "30d",
+  oneYear = "1y",
+}
+
+export enum Days {
+  one = "1",
+  seven = "7",
+  thirty = "30",
+  threeHundredAndSixtyFive = "365",
+}
+
+export enum Interval {
+  minutely = "minutely",
+  hourly = "hourly",
+  daily = "daily",
+}
+
 export interface Holding {
   id: string;
   symbol: string;
@@ -159,17 +180,4 @@ export interface Wallet {
   password?: string;
   privateKey?: string;
   provider?: "walletconnect" | "local";
-}
-
-export enum Days {
-  one = "1",
-  seven = "7",
-  thirty = "30",
-  threeHundredAndSixtyFive = "365",
-}
-
-export enum Interval {
-  minutely = "minutely",
-  hourly = "hourly",
-  daily = "daily",
 }

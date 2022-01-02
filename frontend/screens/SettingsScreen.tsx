@@ -1,20 +1,12 @@
 import React, { useState } from "react";
 import { Image, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 
-import { Button } from "../components";
+import { Button, SectionTitle } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch } from "../hooks";
 import { resetWallets, resetWalletsInLocalStorage } from "../store/wallet";
 
 import RootView from "./RootView";
-
-const SectionTitle = ({ title }: { title: string }) => {
-  return (
-    <View style={{ marginTop: SIZES.padding }}>
-      <Text style={[FONTS.h4, { color: COLORS.lightGray3 }]}>{title}</Text>
-    </View>
-  );
-};
 
 const Setting = ({
   title,

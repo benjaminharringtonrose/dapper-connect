@@ -5,9 +5,7 @@ import {
   ChartPathProvider,
   ChartXLabel,
   ChartYLabel,
-  monotoneCubicInterpolation,
 } from "@rainbow-me/animated-charts";
-import moment from "moment";
 import React from "react";
 import { Text, View } from "react-native";
 

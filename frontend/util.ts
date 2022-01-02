@@ -1,6 +1,5 @@
-import { COLORS } from "../constants";
-import { PriceChangePerc } from "../store/market/slice";
-import { Coin, Days } from "../types";
+import { COLORS } from "./constants";
+import { Coin, PriceChangePerc } from "./types";
 
 export const getError = (error: Error) => {
   return {

@@ -1,15 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Coin, Days, Holding, Interval } from "../../types";
-
-export enum PriceChangePerc {
-  oneHour = "1h",
-  oneDay = "24h",
-  oneWeek = "7d",
-  oneMonth = "30d",
-  oneYear = "1y",
-}
+import { Coin, Days, Holding, Interval, PriceChangePerc } from "../../types";
 
 export interface MarketState {
   holdings: Holding[];
@@ -53,7 +45,6 @@ export type GetCoinMarketRequestedAction = PayloadAction<{
   currency?: string;
   orderBy?: string;
   sparkline?: boolean;
-  priceChangePerc?: PriceChangePerc;
   perPage?: number;
   page?: number;
 }>;
@@ -69,7 +60,6 @@ export type RefreshHomeScreenRequestedAction = PayloadAction<{
   id: string;
   days: Days;
   interval: Interval;
-  priceChangePerc: PriceChangePerc;
 }>;
 
 const marketSlice = createSlice({

@@ -1,7 +1,9 @@
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import Clipboard from "@react-native-clipboard/clipboard";
 import { useNavigation } from "@react-navigation/native";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
+import * as Haptics from "expo-haptics";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
@@ -9,13 +11,7 @@ import { Modalize } from "react-native-modalize";
 import { BalanceInfo, FadeInView, IconTextButton } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import {
-  CreateWalletModal,
-  LoadWalletModal,
-  ReceiveModal,
-  SendModal,
-  WalletModal,
-} from "../modals";
+import { CreateWalletModal, ReceiveModal, SendModal, WalletModal } from "../modals";
 import { getAccountRequested } from "../store/account";
 import { resetHoldings } from "../store/market";
 import { setToastMessages } from "../store/settings";
@@ -30,7 +26,6 @@ const AssetsScreen = () => {
   const walletModalRef = useRef<Modalize>(null);
   const sendModalRef = useRef<Modalize>(null);
   const receiveModalRef = useRef<Modalize>(null);
-  const loadWalletModalRef = useRef<Modalize>(null);
   const createWalletModalRef = useRef<Modalize>(null);
 
   const { holdings } = useAppSelector((state) => state.market);
@@ -56,7 +51,12 @@ const AssetsScreen = () => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <FadeInView>
+        <FadeInView
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <TouchableOpacity onPress={() => walletModalRef.current?.open()}>
             <Ionicons name={"wallet"} size={32} color={COLORS.white} />
           </TouchableOpacity>
@@ -85,7 +85,7 @@ const AssetsScreen = () => {
     }
   }, [connector.connected]);
 
-  async function connect() {
+  const onWalletConnect = async () => {
     try {
       if (!connector.connected) {
         await connector.connect();
@@ -109,7 +109,7 @@ const AssetsScreen = () => {
       console.log(e.message);
     }
     walletModalRef.current?.close();
-  }
+  };
 
   const onRefresh = () => {
     dispatch(getAccountRequested({ address: selectedAddress }));
@@ -119,57 +119,58 @@ const AssetsScreen = () => {
   return (
     <RootView style={{ backgroundColor: COLORS.black }}>
       <>
-        {/* Header - Wallet Info */}
-        <View
-          style={{
-            paddingTop: SIZES.padding,
-            paddingHorizontal: SIZES.padding,
-            paddingBottom: SIZES.radius,
-            borderRadius: 25,
-            borderWidth: 1,
-            borderColor: COLORS.gray,
-            backgroundColor: COLORS.black,
-          }}
-        >
-          {/* Balance Info */}
-          <BalanceInfo
-            title={wallet?.name || "Your Wallet"}
-            displayAmount={totalWallet}
-            changePercentage={percentageChange}
-          />
-          {/* Buttons */}
+        <View style={{ paddingBottom: SIZES.padding }}>
+          {/* Header - Wallet Info */}
           <View
             style={{
-              flexDirection: "row",
-              marginTop: 30,
-              marginBottom: -15,
-              paddingHorizontal: SIZES.radius,
+              paddingTop: SIZES.padding,
+              paddingHorizontal: SIZES.padding,
+              borderRadius: 25,
+              borderWidth: 1,
+              borderColor: COLORS.lightGray,
+              backgroundColor: COLORS.black,
             }}
           >
-            <IconTextButton
-              label={"Send"}
-              customIcon={() => <Feather name="download" size={24} color="white" />}
-              containerStyle={{
-                flex: 1,
-                height: 40,
-                marginRight: SIZES.radius,
-                borderColor: COLORS.lightGray,
-                borderWidth: 1,
-              }}
-              onPress={() => sendModalRef.current?.open()}
+            {/* Balance Info */}
+            <BalanceInfo
+              title={wallet?.name || "Your Wallet"}
+              displayAmount={totalWallet}
+              changePercentage={percentageChange}
             />
-            <IconTextButton
-              label={"Receive"}
-              customIcon={() => <Feather name="upload" size={24} color="white" />}
-              containerStyle={{
-                flex: 1,
-                height: 40,
-                marginRight: SIZES.radius,
-                borderColor: COLORS.lightGray,
-                borderWidth: 1,
+            {/* Buttons */}
+            <View
+              style={{
+                flexDirection: "row",
+                marginTop: 30,
+                marginBottom: -15,
+                paddingHorizontal: SIZES.radius,
               }}
-              onPress={() => receiveModalRef.current?.open()}
-            />
+            >
+              <IconTextButton
+                label={"Send"}
+                customIcon={() => <Feather name={"upload"} size={24} color={COLORS.white} />}
+                containerStyle={{
+                  flex: 1,
+                  height: 40,
+                  marginRight: SIZES.radius,
+                  borderColor: COLORS.lightGray,
+                  borderWidth: 1,
+                }}
+                onPress={() => sendModalRef.current?.open()}
+              />
+              <IconTextButton
+                label={"Receive"}
+                customIcon={() => <Feather name={"download"} size={24} color={COLORS.white} />}
+                containerStyle={{
+                  flex: 1,
+                  height: 40,
+                  marginRight: SIZES.radius,
+                  borderColor: COLORS.lightGray,
+                  borderWidth: 1,
+                }}
+                onPress={() => receiveModalRef.current?.open()}
+              />
+            </View>
           </View>
         </View>
         {/* Assets */}
@@ -186,8 +187,6 @@ const AssetsScreen = () => {
           }
           ListHeaderComponent={
             <View style={{ paddingHorizontal: SIZES.padding }}>
-              {/* Section Title */}
-              <Text style={[FONTS.h2, { color: COLORS.white }]}>{"Your Assets"}</Text>
               {/* Header Label */}
               <View style={{ flexDirection: "row", marginTop: SIZES.radius }}>
                 <Text style={{ flex: 1, color: COLORS.lightGray3 }}>{"Asset"}</Text>
@@ -283,15 +282,17 @@ const AssetsScreen = () => {
         />
         <WalletModal
           ref={walletModalRef}
-          create={() => {
+          onCreate={() => {
             walletModalRef.current?.close();
             createWalletModalRef.current?.open();
           }}
-          load={() => {
+          onSelectWallet={(address) => {
             walletModalRef.current?.close();
-            loadWalletModalRef.current?.open();
+            setSelectedAddress(address);
+            dispatch(getAccountRequested({ address }));
           }}
-          connect={connect}
+          onWalletConnect={onWalletConnect}
+          address={selectedAddress}
         />
         <SendModal
           ref={sendModalRef}
@@ -303,19 +304,12 @@ const AssetsScreen = () => {
           ref={receiveModalRef}
           address={selectedAddress}
           onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            Clipboard.setString(selectedAddress);
             receiveModalRef.current?.close();
             dispatch(
               setToastMessages({ toastMessages: [...toastMessages, "Address copied to clipboard"] })
             );
-          }}
-        />
-        <LoadWalletModal
-          ref={loadWalletModalRef}
-          web3={web3}
-          onSelectWallet={(address) => {
-            loadWalletModalRef.current?.close();
-            setSelectedAddress(address);
-            dispatch(getAccountRequested({ address }));
           }}
         />
         <CreateWalletModal

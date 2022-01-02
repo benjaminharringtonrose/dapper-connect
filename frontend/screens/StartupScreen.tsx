@@ -75,7 +75,7 @@ export const StartupScreen = () => {
         {"DapperConnect"}
       </Animated.Text>
       <Animated.View style={{ opacity }}>
-        <ActivityIndicator />
+        <ActivityIndicator size={"large"} />
       </Animated.View>
     </View>
   );

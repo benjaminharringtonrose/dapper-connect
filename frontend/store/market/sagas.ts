@@ -3,7 +3,6 @@ import axios from "axios";
 import { call, put, takeLatest } from "redux-saga/effects";
 
 import { Coin } from "../../types";
-import { getPriceChangePercentage } from "../../util";
 
 import {
   getCoinMarketFailed,
@@ -18,7 +17,6 @@ import {
   getSparklineRequested,
   GetSparklineRequestedAction,
   getSparklineSucceeded,
-  PriceChangePerc,
   refreshHomeScreenRequested,
   RefreshHomeScreenRequestedAction,
   refreshHomeScreenSucceeded,
@@ -76,27 +74,16 @@ export function* getHoldingsSaga(action: GetHoldingsRequestedAction) {
 }
 
 export function* getCoinMarketSaga(action: GetCoinMarketRequestedAction) {
-  const {
-    currency = "usd",
-    orderBy = "market_cap_desc",
-    sparkline = false,
-    priceChangePerc = PriceChangePerc.oneWeek,
-    perPage = 50,
-    page = 1,
-  } = action.payload;
+  const { currency = "usd", orderBy = "market_cap_desc", perPage = 100, page = 1 } = action.payload;
 
-  const apiUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${currency}&order=${orderBy}&per_page=${perPage}&page=${page}&sparkline=${sparkline}&price_change_percentage=${priceChangePerc}`;
+  const priceChangePercs = "1h,24h,7d,30d,1y";
+
+  const apiUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${currency}&order=${orderBy}&per_page=${perPage}&page=${page}&sparkline=false&price_change_percentage=${priceChangePercs}`;
 
   try {
     const response: ResponseGenerator = yield call([axios, axios.get], apiUrl);
     const coins = response.data as Coin[];
-    const mappedCoins = coins.map((coin) => {
-      return {
-        ...coin,
-        priceChangePercentageInCurrency: getPriceChangePercentage(coin, priceChangePerc),
-      };
-    });
-    yield put(getCoinMarketSucceeded({ coins: mappedCoins }));
+    yield put(getCoinMarketSucceeded({ coins }));
   } catch (error) {
     console.log(error.message);
     console.warn(error.message);
@@ -120,9 +107,9 @@ export function* getSparklineSaga(action: GetSparklineRequestedAction) {
 }
 
 export function* refreshHomeScreenSaga(action: RefreshHomeScreenRequestedAction) {
-  const { id, days, interval, priceChangePerc } = action.payload;
+  const { id, days, interval } = action.payload;
   yield call(getSparklineSaga, getSparklineRequested({ id, days, interval }));
-  yield call(getCoinMarketSaga, getCoinMarketRequested({ priceChangePerc }));
+  yield call(getCoinMarketSaga, getCoinMarketRequested({}));
   yield put(refreshHomeScreenSucceeded());
 }
 

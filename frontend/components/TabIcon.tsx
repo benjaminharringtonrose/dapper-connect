@@ -1,16 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
+import { SimpleLineIcons } from "@expo/vector-icons";
 import React from "react";
-import {
-  Image,
-  ImageSourcePropType,
-  ImageStyle,
-  StyleProp,
-  Text,
-  View,
-  ViewStyle,
-} from "react-native";
+import { ImageStyle, StyleProp, Text, View, ViewStyle } from "react-native";
 
-import { COLORS, FONTS } from "../constants/theme";
+import { COLORS } from "../constants/theme";
 
 interface TabIconProps {
   focused: boolean;
@@ -20,50 +13,44 @@ interface TabIconProps {
   isTrade?: boolean;
 }
 
-const TabIcon = ({ focused, icon, iconStyle, label, isTrade }: TabIconProps) => {
-  if (isTrade) {
-    return (
-      <View
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          width: 60,
-          height: 60,
-          borderRadius: 30,
-          backgroundColor: COLORS.black,
-        }}
+const TabIcon = ({ focused, icon, iconStyle, label }: TabIconProps) => {
+  const getIcon = (icon: string) => {
+    switch (icon) {
+      case "graph":
+        return (
+          <SimpleLineIcons
+            name={"graph"}
+            size={20}
+            color={focused ? COLORS.white : COLORS.secondary}
+            style={iconStyle}
+          />
+        );
+      default:
+        return (
+          <Ionicons
+            name={icon as any}
+            color={focused ? COLORS.white : COLORS.secondary}
+            size={20}
+            style={iconStyle}
+          />
+        );
+    }
+  };
+  return (
+    <View style={{ alignItems: "center", justifyContent: "center" }}>
+      {getIcon(icon)}
+      <Text
+        style={[
+          {
+            color: focused ? COLORS.white : COLORS.secondary,
+          },
+          iconStyle,
+        ]}
       >
-        <Ionicons
-          name={icon as any}
-          style={iconStyle}
-          color={focused ? COLORS.white : COLORS.secondary}
-          size={30}
-        />
-        <Text style={{ color: COLORS.white, ...FONTS.h4 }}>{"Trade"}</Text>
-      </View>
-    );
-  } else {
-    return (
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Ionicons
-          name={icon as any}
-          style={iconStyle}
-          color={focused ? COLORS.white : COLORS.secondary}
-          size={20}
-        />
-        <Text
-          style={[
-            {
-              color: focused ? COLORS.white : COLORS.secondary,
-            },
-            iconStyle,
-          ]}
-        >
-          {label}
-        </Text>
-      </View>
-    );
-  }
+        {label}
+      </Text>
+    </View>
+  );
 };
 
 export default TabIcon;

@@ -5,68 +5,69 @@ import { Chart, TextButton } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { useErrors } from "../hooks";
-import { getCoinMarketRequested, getSparklineRequested } from "../store/market";
-import { PriceChangePerc, refreshHomeScreenRequested } from "../store/market/slice";
+import { getSparklineRequested } from "../store/market";
+import { refreshHomeScreenRequested } from "../store/market/slice";
 import { Days, Interval } from "../types";
-import { CurrencyFormatter, getPriceColor } from "../util";
+import { CurrencyFormatter, getPriceChangePercentageInCurrency, getPriceColor } from "../util";
 
 import RootView from "./RootView";
 
 const HomeScreen = () => {
   const {
     coins,
-    errorGetCoinMarket,
     sparkline,
+    errorGetCoinMarket,
     errorGetSparkline,
     refreshingHomeScreen,
   } = useAppSelector((state) => state.market);
 
   const dispatch = useAppDispatch();
 
-  const [selectedId, setSelectedId] = useState<string>("bitcoin");
+  const [selectedId, setSelectedId] = useState<string>(coins[0]?.id);
   const [selectedNumDays, setSelectedNumDays] = useState<Days>(Days.one);
   const [selectedInterval, setSelectedInterval] = useState<Interval>(Interval.minutely);
-  const [selectedPriceChangePerc, setSelectedPriceChangePerc] = useState<PriceChangePerc>(
-    PriceChangePerc.oneDay
-  );
 
   useErrors([errorGetCoinMarket, errorGetSparkline]);
 
   const onSelectOneDay = () => {
     setSelectedNumDays(Days.one);
     setSelectedInterval(Interval.minutely);
-    setSelectedPriceChangePerc(PriceChangePerc.oneDay);
-    dispatch(getCoinMarketRequested({ priceChangePerc: PriceChangePerc.oneDay }));
     dispatch(
-      getSparklineRequested({ id: selectedId, days: Days.one, interval: Interval.minutely })
+      getSparklineRequested({
+        id: selectedId,
+        days: Days.one,
+        interval: Interval.minutely,
+      })
     );
   };
 
   const onSelectOneWeek = () => {
     setSelectedNumDays(Days.seven);
     setSelectedInterval(Interval.hourly);
-    setSelectedPriceChangePerc(PriceChangePerc.oneWeek);
-    dispatch(getCoinMarketRequested({ priceChangePerc: PriceChangePerc.oneWeek }));
     dispatch(
-      getSparklineRequested({ id: selectedId, days: Days.seven, interval: Interval.hourly })
+      getSparklineRequested({
+        id: selectedId,
+        days: Days.seven,
+        interval: Interval.hourly,
+      })
     );
   };
 
   const onSelectOneMonth = () => {
     setSelectedNumDays(Days.thirty);
     setSelectedInterval(Interval.hourly);
-    setSelectedPriceChangePerc(PriceChangePerc.oneMonth);
-    dispatch(getCoinMarketRequested({ priceChangePerc: PriceChangePerc.oneMonth }));
     dispatch(
-      getSparklineRequested({ id: selectedId, days: Days.thirty, interval: Interval.hourly })
+      getSparklineRequested({
+        id: selectedId,
+        days: Days.thirty,
+        interval: Interval.hourly,
+      })
     );
   };
 
   const onSelectOneYear = () => {
     setSelectedNumDays(Days.threeHundredAndSixtyFive);
     setSelectedInterval(Interval.hourly);
-    setSelectedPriceChangePerc(PriceChangePerc.oneYear);
-    dispatch(getCoinMarketRequested({ priceChangePerc: PriceChangePerc.oneYear }));
     dispatch(
       getSparklineRequested({
         id: selectedId,
@@ -82,7 +83,6 @@ const HomeScreen = () => {
         id: selectedId,
         days: selectedNumDays,
         interval: selectedInterval,
-        priceChangePerc: selectedPriceChangePerc,
       })
     );
   };
@@ -151,7 +151,7 @@ const HomeScreen = () => {
             />
           }
           renderItem={({ item }) => {
-            const priceChangePercentage = item.priceChangePercentageInCurrency;
+            const priceChangePercentage = getPriceChangePercentageInCurrency(item, selectedNumDays);
             const priceColor = getPriceColor(priceChangePercentage);
             const backgroundColor = item?.id === selectedId ? COLORS.gray : COLORS.black;
             return (
