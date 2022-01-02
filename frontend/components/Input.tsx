@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import * as React from "react";
 import {
   StyleProp,
@@ -10,7 +9,7 @@ import {
   ViewStyle,
 } from "react-native";
 
-import { COLORS, icons } from "../constants";
+import { COLORS } from "../constants";
 
 export interface InputProps extends TextInputProps {
   label?: string;
@@ -20,7 +19,8 @@ export interface InputProps extends TextInputProps {
   icon?: () => JSX.Element;
   noBorder?: boolean;
 }
-export const Input = React.forwardRef<TextInput, InputProps>((props: InputProps, ref) => {
+
+const Input = React.forwardRef<TextInput, InputProps>((props: InputProps, ref) => {
   return (
     <View
       style={[
@@ -64,15 +64,4 @@ export const Input = React.forwardRef<TextInput, InputProps>((props: InputProps,
   );
 });
 
-export const EmailInput = React.forwardRef<TextInput, InputProps>((props: InputProps, ref) => (
-  <Input
-    ref={ref}
-    placeholder={"Email"}
-    textContentType="emailAddress"
-    autoCompleteType="email"
-    keyboardType="email-address"
-    autoCapitalize="none"
-    autoCorrect={false}
-    {...props}
-  />
-));
+export default Input;

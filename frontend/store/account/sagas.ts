@@ -3,6 +3,7 @@ import axios from "axios";
 import { call, put, takeLatest } from "redux-saga/effects";
 
 import { Account } from "../../types";
+import { getTokenIdBySymbol } from "../../util";
 import { web3 } from "../../web3";
 import { getHoldingsSaga, ResponseGenerator } from "../market/sagas";
 import { getHoldingsRequested } from "../market/slice";
@@ -14,7 +15,7 @@ import {
   getAccountSucceeded,
 } from "./slice";
 
-function* getAccountSaga(action: GetAccountRequestedAction) {
+export function* getAccountSaga(action: GetAccountRequestedAction) {
   const { address } = action.payload;
   try {
     const ethplorerBaseUrl =
@@ -28,11 +29,11 @@ function* getAccountSaga(action: GetAccountRequestedAction) {
     const etherscanApiUrl = `${etherscanBaseUrl}/api?module=account&action=balance&address=${address}&tag=latest&apikey=${ETHERSCAN_API_KEY}`;
     const etherscanResponse: ResponseGenerator = yield call([axios, axios.get], etherscanApiUrl);
     const etherBalance = Number(web3.utils.fromWei(etherscanResponse.data.result, "ether"));
-    const holdings = [{ id: "ethereum", qty: etherBalance }];
 
+    const holdings = [{ id: "ethereum", qty: etherBalance }];
     const tokenHoldings = ethplorerAccount?.tokens?.map((token) => {
       return {
-        id: token.tokenInfo.coingecko,
+        id: getTokenIdBySymbol(token.tokenInfo.symbol),
         qty: token.balance / 10 ** Number(token.tokenInfo.decimals),
       };
     });

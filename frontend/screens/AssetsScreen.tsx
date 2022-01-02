@@ -1,4 +1,3 @@
-import { ENV, KOVAN_API, MAINNET_API } from "@env";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -6,18 +5,20 @@ import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
-import Web3 from "web3";
 
-import { BalanceInfo, IconTextButton } from "../components";
-import { FadeInView } from "../components/FadeInView";
+import { BalanceInfo, FadeInView, IconTextButton } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { ReceiveModal, SendModal, WalletModal } from "../modals";
-import { CreateWalletModal } from "../modals/CreateWalletModal";
-import { LoadWalletModal } from "../modals/LoadWalletModal";
-import { getAccountRequested } from "../store/account/slice";
-import { resetHoldings } from "../store/market/slice";
-import { setToastMessages } from "../store/settings/slice";
+import {
+  CreateWalletModal,
+  LoadWalletModal,
+  ReceiveModal,
+  SendModal,
+  WalletModal,
+} from "../modals";
+import { getAccountRequested } from "../store/account";
+import { resetHoldings } from "../store/market";
+import { setToastMessages } from "../store/settings";
 import {
   addWalletRequested,
   getWalletsRequested,

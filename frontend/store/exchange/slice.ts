@@ -16,8 +16,8 @@ const initialState: ExchangeState = {
 };
 
 export type GetExchangeRequestedAction = PayloadAction<undefined>;
-
-type ErrorAction = PayloadAction<{ error: Error }>;
+export type GetExchangeSucceededAction = PayloadAction<{ exchanges: Exchange[] }>;
+type FailedAction = PayloadAction<{ error: Error }>;
 
 const exchangeSlice = createSlice({
   name: "exchange",
@@ -26,12 +26,12 @@ const exchangeSlice = createSlice({
     getExchangesRequested: (state, _: GetExchangeRequestedAction) => {
       state.loadingGetExchanges = true;
     },
-    getExchangesSucceeded: (state, action: PayloadAction<{ exchanges: Exchange[] }>) => {
+    getExchangesSucceeded: (state, action: GetExchangeSucceededAction) => {
       const { exchanges } = action.payload;
       state.loadingGetExchanges = false;
       state.exchanges = exchanges;
     },
-    getExchangesFailed: (state, action: ErrorAction) => {
+    getExchangesFailed: (state, action: FailedAction) => {
       const { error } = action.payload;
       state.loadingGetExchanges = false;
       state.errorGetExchanges = error;

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { call, put, select, takeLatest } from "redux-saga/effects";
 
-import { store } from "..";
 import { Wallet } from "../../types";
 import { loadString, remove, saveObject } from "../local";
 import {

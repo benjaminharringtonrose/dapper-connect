@@ -9,7 +9,7 @@ import { getWalletsRequested } from "../wallet/slice";
 
 import { frontloadAppFailed, frontloadAppRequested, frontloadAppSucceeded } from "./slice";
 
-function* frontloadAppSaga() {
+export function* frontloadAppSaga() {
   try {
     yield call(getCoinMarketSaga, getCoinMarketRequested({}));
     yield call(

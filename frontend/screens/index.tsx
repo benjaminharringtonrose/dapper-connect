@@ -1,7 +1,7 @@
-import Assets from "./AssetsScreen";
-import Home from "./HomeScreen";
-import Market from "./MarketScreen";
-import Profile from "./ProfileScreen";
+import AssetsScreen from "./AssetsScreen";
+import HomeScreen from "./HomeScreen";
+import MarketScreen from "./MarketScreen";
 import RootView from "./RootView";
+import SettingsScreen from "./SettingsScreen";
 
-export { RootView, Home, Assets, Market, Profile };
+export { RootView, HomeScreen, AssetsScreen, MarketScreen, SettingsScreen };

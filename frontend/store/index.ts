@@ -10,7 +10,6 @@ import marketSaga from "./market/sagas";
 import marketReducer from "./market/slice";
 import settingsSaga from "./settings/sagas";
 import settingsReducer from "./settings/slice";
-import tabSaga from "./tab/sagas";
 import tabReducer from "./tab/slice";
 import walletSaga from "./wallet/sagas";
 import walletReducer from "./wallet/slice";
@@ -20,7 +19,6 @@ function* rootSaga() {
   yield fork(exchangeSaga);
   yield fork(marketSaga);
   yield fork(settingsSaga);
-  yield fork(tabSaga);
   yield fork(walletSaga);
 }
 

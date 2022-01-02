@@ -23,7 +23,7 @@ export type ButtonProps = TouchableOpacityProps & {
   readonly textStyle?: StyleProp<TextStyle>;
 };
 
-export const Button = (props: ButtonProps) => {
+const Button = (props: ButtonProps) => {
   const { type = "contained", textColor } = props;
   const contentColor = textColor ? textColor : COLORS.white;
   return (
@@ -82,3 +82,5 @@ export const Button = (props: ButtonProps) => {
     </TouchableOpacity>
   );
 };
+
+export default Button;

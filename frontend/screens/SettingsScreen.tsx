@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Image, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 
-import { Button } from "../components/Button";
+import { Button } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch } from "../hooks";
-import { resetWalletsInLocalStorage } from "../store/wallet/sagas";
-import { resetWallets } from "../store/wallet/slice";
+import { resetWallets, resetWalletsInLocalStorage } from "../store/wallet";
 
 import RootView from "./RootView";
 
@@ -58,7 +57,7 @@ const Setting = ({
   }
 };
 
-const ProfileScreen = () => {
+const SettingsScreen = () => {
   const [faceID, setFaceID] = useState<boolean | undefined>(false);
   const dispatch = useAppDispatch();
 
@@ -67,17 +66,10 @@ const ProfileScreen = () => {
       <View style={{ flex: 1 }}>
         {/* Details */}
         <ScrollView style={{ paddingHorizontal: SIZES.padding, backgroundColor: COLORS.black }}>
-          {/* Email & User ID Row */}
-          <View style={{ flexDirection: "row", marginTop: SIZES.padding }}>
-            {/* Status */}
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Image source={icons.verified} style={{ width: 25, height: 25 }} />
-              <Text style={[FONTS.body4, { color: COLORS.lightGreen }]}>{"Verified"}</Text>
-            </View>
-          </View>
           {/* APP */}
           <SectionTitle title={"APP"} />
           <Setting title={"Appearance"} value={"Dark"} type={"button"} onPress={() => "press"} />
+          <Setting title={"Network"} value={"Mainnet"} type={"button"} onPress={() => "press"} />
           {/* SECURITY */}
           <SectionTitle title={"SECURITY"} />
           <Setting
@@ -108,4 +100,4 @@ const ProfileScreen = () => {
   );
 };
 
-export default ProfileScreen;
+export default SettingsScreen;

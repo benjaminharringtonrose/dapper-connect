@@ -10,7 +10,7 @@ import { TouchableOpacity } from "react-native";
 import { TabIcon } from "../components";
 import { COLORS, FONTS, icons } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { Assets, Home, Market, Profile } from "../screens";
+import { AssetsScreen, HomeScreen, MarketScreen, SettingsScreen } from "../screens";
 import { setTradeModalVisibility } from "../store/tab/slice";
 
 const Tab = createBottomTabNavigator();
@@ -44,8 +44,8 @@ const Tabs = () => {
       }}
     >
       <Tab.Screen
-        name="Home"
-        component={Home}
+        name="HomeScreen"
+        component={HomeScreen}
         options={{
           headerShown: true,
           tabBarIcon: ({ focused }) =>
@@ -60,8 +60,8 @@ const Tabs = () => {
         }}
       />
       <Tab.Screen
-        name="Assets"
-        component={Assets}
+        name="AssetsScreen"
+        component={AssetsScreen}
         options={{
           headerShown: true,
           tabBarIcon: ({ focused }) =>
@@ -107,8 +107,8 @@ const Tabs = () => {
         }}
       /> */}
       <Tab.Screen
-        name="Market"
-        component={Market}
+        name="MarketScreen"
+        component={MarketScreen}
         options={{
           headerShown: true,
           tabBarIcon: ({ focused }) =>
@@ -125,13 +125,13 @@ const Tabs = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={Profile}
+        name="SettingsScreen"
+        component={SettingsScreen}
         options={{
           headerShown: true,
           tabBarIcon: ({ focused }) =>
             !isTradeModalVisible && (
-              <TabIcon focused={focused} icon={icons.profile} label={"Profile"} />
+              <TabIcon focused={focused} icon={icons.profile} label={"Settings"} />
             ),
         }}
         listeners={{

@@ -9,7 +9,7 @@ export interface FormInputProps extends InputProps {
   error?: string;
   touched?: boolean;
 }
-export const FormInput = (props: FormInputProps) => {
+const FormInput = (props: FormInputProps) => {
   return (
     <>
       <Input {...props} />
@@ -26,3 +26,5 @@ export const FormInput = (props: FormInputProps) => {
     </>
   );
 };
+
+export default FormInput;

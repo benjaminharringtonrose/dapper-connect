@@ -12,11 +12,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Web3 from "web3";
 import * as Yup from "yup";
 
-import { Button } from "../components/Button";
-import { FormInput } from "../components/FormInput";
+import { Button, FormInput } from "../components";
 import { COLORS, FONTS, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { setToastMessages } from "../store/settings/slice";
+import { setToastMessages } from "../store/settings";
 
 const formatter = new Intl.NumberFormat("en-US", {
   style: "currency",

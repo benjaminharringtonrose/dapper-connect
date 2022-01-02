@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleProp, ViewStyle } from "react-native";
-export const FadeInView = ({
+
+const FadeInView = ({
   style,
   children,
 }: {
@@ -23,3 +24,5 @@ export const FadeInView = ({
 
   return <Animated.View style={[{ opacity: fadeAnim }, style]}>{children}</Animated.View>;
 };
+
+export default FadeInView;

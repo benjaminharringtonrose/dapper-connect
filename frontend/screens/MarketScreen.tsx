@@ -4,12 +4,11 @@ import React, { useState } from "react";
 import { FlatList, Image, RefreshControl, Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 
-import { FadeInView } from "../components/FadeInView";
-import { Input } from "../components/Input";
+import { FadeInView, Input } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { getExchangesRequested } from "../store/exchange/slice";
-import { getCoinMarketRequested } from "../store/market/slice";
+import { getExchangesRequested } from "../store/exchange";
+import { getCoinMarketRequested } from "../store/market";
 
 import RootView from "./RootView";
 

@@ -4,7 +4,7 @@ import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Button } from "../components/Button";
+import { Button } from "../components";
 import { COLORS, SIZES } from "../constants";
 
 interface WalletModalProps {

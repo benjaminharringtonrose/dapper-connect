@@ -4,7 +4,7 @@ import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } 
 import { Chart, TextButton } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { getCoinMarketRequested, getSparklineRequested } from "../store/market/slice";
+import { getCoinMarketRequested, getSparklineRequested } from "../store/market";
 
 import RootView from "./RootView";
 

@@ -8,12 +8,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Web3 from "web3";
 import * as Yup from "yup";
 
-import { Button } from "../components/Button";
-import { FormInput } from "../components/FormInput";
+import { Button, FormInput } from "../components";
 import { COLORS, SIZES } from "../constants";
 import { useAppDispatch } from "../hooks";
-import { getAccountRequested } from "../store/account/slice";
-import { addWalletRequested } from "../store/wallet/slice";
+import { getAccountRequested } from "../store/account";
+import { addWalletRequested } from "../store/wallet";
 
 interface FormProps {
   name?: string;
