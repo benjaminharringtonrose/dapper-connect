@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, SafeAreaView, View } from "react-native";
+import { Animated, SafeAreaView, StyleProp, View, ViewStyle } from "react-native";
 
 import { IconTextButton } from "../components";
 import { Toast } from "../components/Toast";
@@ -7,7 +7,7 @@ import { COLORS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { setToastMessages } from "../store/settings/slice";
 
-const RootView = ({ children }: { children: JSX.Element }) => {
+const RootView = ({ style, children }: { style: StyleProp<ViewStyle>; children: JSX.Element }) => {
   const modalAnimatedValue = useRef(new Animated.Value(0)).current;
   const { isTradeModalVisible } = useAppSelector((state) => state.tabs);
   const { toastMessages } = useAppSelector((state) => state.settings);
@@ -36,7 +36,7 @@ const RootView = ({ children }: { children: JSX.Element }) => {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={[{ flex: 1 }, style]}>
       {children}
       <View
         style={{

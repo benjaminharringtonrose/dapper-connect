@@ -9,6 +9,7 @@ import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getExchangesRequested } from "../store/exchange";
 import { getCoinMarketRequested } from "../store/market";
+import { getPriceChangePercentageInCurrency } from "../util";
 
 import RootView from "./RootView";
 
@@ -45,10 +46,11 @@ const MarketScreen = () => {
             />
           }
           renderItem={({ item }) => {
+            const priceChangePercentageInCurrency = getPriceChangePercentageInCurrency(item, "7");
             const priceColor =
-              item.price_change_percentage_7d_in_currency === 0
+              priceChangePercentageInCurrency === 0
                 ? COLORS.lightGray3
-                : item.price_change_percentage_7d_in_currency > 0
+                : priceChangePercentageInCurrency > 0
                 ? COLORS.lightGreen
                 : COLORS.red;
             return (
@@ -102,7 +104,7 @@ const MarketScreen = () => {
                       alignItems: "center",
                     }}
                   >
-                    {item.price_change_percentage_7d_in_currency !== 0 && (
+                    {priceChangePercentageInCurrency !== 0 && (
                       <Image
                         source={icons.upArrow}
                         style={{
@@ -110,14 +112,14 @@ const MarketScreen = () => {
                           width: 10,
                           tintColor: priceColor,
                           transform:
-                            item.price_change_percentage_7d_in_currency > 0
+                            priceChangePercentageInCurrency > 0
                               ? [{ rotate: "45deg" }]
                               : [{ rotate: "125deg" }],
                         }}
                       />
                     )}
                     <Text style={[FONTS.h3, { marginLeft: 5, color: priceColor }]}>
-                      {`${item.price_change_percentage_7d_in_currency.toFixed(2)}%`}
+                      {`${priceChangePercentageInCurrency?.toFixed(2)}%`}
                     </Text>
                   </View>
                 </View>

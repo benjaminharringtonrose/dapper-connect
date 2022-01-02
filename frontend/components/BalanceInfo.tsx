@@ -2,6 +2,7 @@ import React from "react";
 import { Image, StyleProp, Text, View, ViewStyle } from "react-native";
 
 import { COLORS, FONTS, icons, SIZES } from "../constants";
+import { CurrencyFormatter } from "../util";
 
 import FadeInView from "./FadeInView";
 
@@ -31,9 +32,8 @@ const BalanceInfo = ({
           flexDirection: "row",
         }}
       >
-        <Text style={[FONTS.h3, { color: COLORS.lightGray3 }]}>{"$"}</Text>
-        <Text style={[FONTS.h2, { marginLeft: SIZES.base, color: COLORS.white }]}>
-          {displayAmount.toLocaleString()}
+        <Text style={[FONTS.h2, { color: COLORS.white }]}>
+          {CurrencyFormatter.format(displayAmount)}
         </Text>
         <Text style={[FONTS.h3, { color: COLORS.lightGray3 }]}>{" USD"}</Text>
       </View>

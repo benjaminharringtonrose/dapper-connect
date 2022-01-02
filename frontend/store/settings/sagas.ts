@@ -3,7 +3,7 @@ import { call, delay, put, takeLatest } from "redux-saga/effects";
 import { getExchangesSaga } from "../exchange/sagas";
 import { getExchangesRequested } from "../exchange/slice";
 import { getCoinMarketSaga, getSparklineSaga } from "../market/sagas";
-import { getCoinMarketRequested, getSparklineRequested } from "../market/slice";
+import { getCoinMarketRequested, getSparklineRequested, PriceChangePerc } from "../market/slice";
 import { getWalletsSaga } from "../wallet/sagas";
 import { getWalletsRequested } from "../wallet/slice";
 
@@ -11,7 +11,10 @@ import { frontloadAppFailed, frontloadAppRequested, frontloadAppSucceeded } from
 
 export function* frontloadAppSaga() {
   try {
-    yield call(getCoinMarketSaga, getCoinMarketRequested({}));
+    yield call(
+      getCoinMarketSaga,
+      getCoinMarketRequested({ priceChangePerc: PriceChangePerc.oneDay })
+    );
     yield call(
       getSparklineSaga,
       getSparklineRequested({

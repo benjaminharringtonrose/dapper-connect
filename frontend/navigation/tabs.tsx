@@ -49,7 +49,7 @@ const Tabs = () => {
         options={{
           headerShown: true,
           tabBarIcon: ({ focused }) =>
-            !isTradeModalVisible && <TabIcon focused={focused} icon={icons.home} label={"Home"} />,
+            !isTradeModalVisible && <TabIcon focused={focused} icon={"home"} label={"Home"} />,
         }}
         listeners={{
           tabPress: (e) => {
@@ -66,7 +66,7 @@ const Tabs = () => {
           headerShown: true,
           tabBarIcon: ({ focused }) =>
             !isTradeModalVisible && (
-              <TabIcon focused={focused} icon={icons.briefcase} label={"Assets"} />
+              <TabIcon focused={focused} icon={"briefcase"} label={"Assets"} />
             ),
         }}
         listeners={{
@@ -106,15 +106,13 @@ const Tabs = () => {
           ),
         }}
       /> */}
-      <Tab.Screen
+      {/* <Tab.Screen
         name="MarketScreen"
         component={MarketScreen}
         options={{
           headerShown: true,
           tabBarIcon: ({ focused }) =>
-            !isTradeModalVisible && (
-              <TabIcon focused={focused} icon={icons.market} label={"Market"} />
-            ),
+            !isTradeModalVisible && <TabIcon focused={focused} icon={"market"} label={"Market"} />,
         }}
         listeners={{
           tabPress: (e) => {
@@ -123,7 +121,7 @@ const Tabs = () => {
             }
           },
         }}
-      />
+      /> */}
       <Tab.Screen
         name="SettingsScreen"
         component={SettingsScreen}
@@ -131,7 +129,7 @@ const Tabs = () => {
           headerShown: true,
           tabBarIcon: ({ focused }) =>
             !isTradeModalVisible && (
-              <TabIcon focused={focused} icon={icons.profile} label={"Settings"} />
+              <TabIcon focused={focused} icon={"settings"} label={"Settings"} />
             ),
         }}
         listeners={{

@@ -41,7 +41,12 @@ export interface Coin {
   roi: null;
   last_updated: string;
   sparkline_in_7d: { price: any[] };
-  price_change_percentage_7d_in_currency: number;
+  price_change_percentage_7d_in_currency?: number;
+  price_change_percentage_1h_in_currency?: number;
+  price_change_percentage_24h_in_currency?: number;
+  price_change_percentage_30d_in_currency?: number;
+  price_change_percentage_1y_in_currency?: number;
+  priceChangePercentageInCurrency?: number;
 }
 
 export interface MeasureLayout {
@@ -154,4 +159,17 @@ export interface Wallet {
   password?: string;
   privateKey?: string;
   provider?: "walletconnect" | "local";
+}
+
+export enum Days {
+  one = "1",
+  seven = "7",
+  thirty = "30",
+  threeHundredAndSixtyFive = "365",
+}
+
+export enum Interval {
+  minutely = "minutely",
+  hourly = "hourly",
+  daily = "daily",
 }

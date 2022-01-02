@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
   Image,
@@ -13,7 +14,7 @@ import { COLORS, FONTS } from "../constants/theme";
 
 interface TabIconProps {
   focused: boolean;
-  icon: ImageSourcePropType;
+  icon: string;
   iconStyle?: StyleProp<ViewStyle & ImageStyle>;
   label: string;
   isTrade?: boolean;
@@ -32,17 +33,11 @@ const TabIcon = ({ focused, icon, iconStyle, label, isTrade }: TabIconProps) => 
           backgroundColor: COLORS.black,
         }}
       >
-        <Image
-          source={icon}
-          resizeMode={"contain"}
-          style={[
-            {
-              width: 25,
-              height: 25,
-              tintColor: COLORS.white,
-            },
-            iconStyle,
-          ]}
+        <Ionicons
+          name={icon as any}
+          style={iconStyle}
+          color={focused ? COLORS.white : COLORS.secondary}
+          size={30}
         />
         <Text style={{ color: COLORS.white, ...FONTS.h4 }}>{"Trade"}</Text>
       </View>
@@ -50,17 +45,11 @@ const TabIcon = ({ focused, icon, iconStyle, label, isTrade }: TabIconProps) => 
   } else {
     return (
       <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Image
-          source={icon}
-          resizeMode={"contain"}
-          style={[
-            {
-              width: 25,
-              height: 25,
-              tintColor: focused ? COLORS.white : COLORS.secondary,
-            },
-            iconStyle,
-          ]}
+        <Ionicons
+          name={icon as any}
+          style={iconStyle}
+          color={focused ? COLORS.white : COLORS.secondary}
+          size={20}
         />
         <Text
           style={[

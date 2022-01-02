@@ -16,11 +16,7 @@ import { Button, FormInput } from "../components";
 import { COLORS, FONTS, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { setToastMessages } from "../store/settings";
-
-const formatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
+import { CurrencyFormatter } from "../util";
 
 interface FormProps {
   amount?: string;
@@ -247,9 +243,9 @@ export const SendModal = forwardRef(
                       />
                       <View style={{ flexDirection: "row" }}>
                         <Text style={{ flex: 1, color: COLORS.white }}>{"Amount"}</Text>
-                        <Text style={{ flex: 1, color: COLORS.white }}>{`≈ ${formatter.format(
-                          usdAmount
-                        )}`}</Text>
+                        <Text
+                          style={{ flex: 1, color: COLORS.white }}
+                        >{`≈ ${CurrencyFormatter.format(usdAmount)}`}</Text>
                       </View>
                       <View
                         style={{ height: 2, backgroundColor: COLORS.lightGray, marginVertical: 10 }}
@@ -257,7 +253,7 @@ export const SendModal = forwardRef(
                       <View style={{ flexDirection: "row" }}>
                         <Text style={{ flex: 1, color: COLORS.white }}>{"Transaction Fee"}</Text>
                         <Text style={{ flex: 1, color: COLORS.white }}>
-                          {`≈ ${formatter.format(transactionFee)}`}
+                          {`≈ ${CurrencyFormatter.format(transactionFee)}`}
                         </Text>
                       </View>
                       <View
@@ -266,7 +262,7 @@ export const SendModal = forwardRef(
                       <View style={{ flexDirection: "row" }}>
                         <Text style={{ flex: 1, color: COLORS.white }}>{"Max Total"}</Text>
                         <Text style={{ flex: 1, color: COLORS.white }}>
-                          {`≈ ${formatter.format(maxTotal)}`}
+                          {`≈ ${CurrencyFormatter.format(maxTotal)}`}
                         </Text>
                       </View>
                     </View>

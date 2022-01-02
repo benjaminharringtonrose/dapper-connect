@@ -18,7 +18,7 @@ export const Toast = (props) => {
         toValue: 0,
         useNativeDriver: true,
       }),
-      Animated.delay(1000),
+      Animated.delay(2000),
       Animated.spring(opacity, {
         toValue: 1,
         useNativeDriver: true,

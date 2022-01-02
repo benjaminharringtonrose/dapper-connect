@@ -1,3 +1,7 @@
+import { COLORS } from "../constants";
+import { PriceChangePerc } from "../store/market/slice";
+import { Coin, Days } from "../types";
+
 export const getError = (error: Error) => {
   return {
     name: error.name,
@@ -5,6 +9,11 @@ export const getError = (error: Error) => {
     message: error.message,
   };
 };
+
+export const CurrencyFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
 
 export const getTokenIdBySymbol = (symbol: string) => {
   // This function maps the token symbol from ethplorer api
@@ -57,3 +66,43 @@ export const getTokenIdBySymbol = (symbol: string) => {
 function caseInsensitiveEquals(a: string, b: string) {
   return a.localeCompare(b, undefined, { sensitivity: "accent" }) === 0;
 }
+
+export const getPriceChangePercentageInCurrency = (coin: Coin, selectedNumDays: string) => {
+  switch (selectedNumDays) {
+    case "1":
+      return coin?.price_change_percentage_24h_in_currency;
+    case "7":
+      return coin?.price_change_percentage_7d_in_currency;
+    case "30":
+      return coin?.price_change_percentage_30d_in_currency;
+    case "365":
+      return coin?.price_change_percentage_1y_in_currency;
+    default:
+      return undefined;
+  }
+};
+
+export const getPriceChangePercentage = (coin: Coin, priceChangePerc: PriceChangePerc) => {
+  switch (priceChangePerc) {
+    case PriceChangePerc.oneDay:
+      return coin?.price_change_percentage_24h_in_currency;
+    case PriceChangePerc.oneWeek:
+      return coin?.price_change_percentage_7d_in_currency;
+    case PriceChangePerc.oneMonth:
+      return coin?.price_change_percentage_30d_in_currency;
+    case PriceChangePerc.oneYear:
+      return coin?.price_change_percentage_1y_in_currency;
+    default:
+      return undefined;
+  }
+};
+
+export const getPriceColor = (priceChangePercentage: number) => {
+  if (priceChangePercentage === 0) {
+    return COLORS.lightGray3;
+  } else if (priceChangePercentage > 0) {
+    return COLORS.lightGreen;
+  } else {
+    return COLORS.red;
+  }
+};

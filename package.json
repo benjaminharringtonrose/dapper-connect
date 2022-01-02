@@ -104,7 +104,8 @@
     "test": "npx hardhat test && jest",
     "web:deploy": "expo build:web && gh-pages -d web-build",
     "pods": "cd ios && pod install && cd ..",
-    "nuke": "rm -rf node_modules && npm i && npm run pods"
+    "nuke": "rm -rf node_modules && npm i && npm run pods",
+    "compile": "./node_modules/.bin/tsc --skipLibCheck"
   },
   "version": "1.1.2",
   "private": true,

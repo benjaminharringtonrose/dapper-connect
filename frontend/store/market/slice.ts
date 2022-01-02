@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Coin, Holding } from "../../types";
+import { Coin, Days, Holding, Interval } from "../../types";
 
 export enum PriceChangePerc {
   oneHour = "1h",
@@ -18,9 +18,10 @@ export interface MarketState {
   coins: Coin[];
   loadingGetCoinMarket: boolean;
   errorGetCoinMarket?: Error;
-  sparkline: any[];
+  sparkline: number[][];
   loadingGetSparkline: boolean;
   errorGetSparkline?: Error;
+  refreshingHomeScreen: boolean;
 }
 
 const initialState: MarketState = {
@@ -33,6 +34,7 @@ const initialState: MarketState = {
   sparkline: [],
   loadingGetSparkline: false,
   errorGetSparkline: undefined,
+  refreshingHomeScreen: false,
 };
 
 type ErrorAction = PayloadAction<{ error: Error }>;
@@ -61,6 +63,13 @@ export type GetSparklineRequestedAction = PayloadAction<{
   currency?: string;
   days: string;
   interval: string;
+}>;
+
+export type RefreshHomeScreenRequestedAction = PayloadAction<{
+  id: string;
+  days: Days;
+  interval: Interval;
+  priceChangePerc: PriceChangePerc;
 }>;
 
 const marketSlice = createSlice({
@@ -109,6 +118,12 @@ const marketSlice = createSlice({
       state.loadingGetSparkline = false;
       state.errorGetSparkline = error;
     },
+    refreshHomeScreenRequested: (state, _: RefreshHomeScreenRequestedAction) => {
+      state.refreshingHomeScreen = true;
+    },
+    refreshHomeScreenSucceeded: (state, _: PayloadAction<undefined>) => {
+      state.refreshingHomeScreen = false;
+    },
   },
 });
 
@@ -123,6 +138,8 @@ export const {
   getSparklineRequested,
   getSparklineSucceeded,
   getSparklineFailed,
+  refreshHomeScreenRequested,
+  refreshHomeScreenSucceeded,
 } = marketSlice.actions;
 
 export default marketSlice.reducer;

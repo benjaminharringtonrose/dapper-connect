@@ -1,44 +1,88 @@
-import React, { useEffect, useState } from "react";
-import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 
 import { Chart, TextButton } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
+import { useErrors } from "../hooks";
 import { getCoinMarketRequested, getSparklineRequested } from "../store/market";
+import { PriceChangePerc, refreshHomeScreenRequested } from "../store/market/slice";
+import { Days, Interval } from "../types";
+import { CurrencyFormatter, getPriceColor } from "../util";
 
 import RootView from "./RootView";
 
 const HomeScreen = () => {
   const {
     coins,
-    loadingGetCoinMarket,
     errorGetCoinMarket,
     sparkline,
     errorGetSparkline,
+    refreshingHomeScreen,
   } = useAppSelector((state) => state.market);
 
   const dispatch = useAppDispatch();
 
   const [selectedId, setSelectedId] = useState<string>("bitcoin");
-  const [selectedNumDays, setSelectedNumDays] = useState<string>("1");
-  const [selectedInterval, setSelectedInterval] = useState<string>("minutely");
+  const [selectedNumDays, setSelectedNumDays] = useState<Days>(Days.one);
+  const [selectedInterval, setSelectedInterval] = useState<Interval>(Interval.minutely);
+  const [selectedPriceChangePerc, setSelectedPriceChangePerc] = useState<PriceChangePerc>(
+    PriceChangePerc.oneDay
+  );
 
-  useEffect(() => {
-    if (errorGetCoinMarket || errorGetSparkline) {
-      Alert.alert(`Error:`, errorGetCoinMarket?.message);
-    }
-    if (errorGetSparkline) {
-      Alert.alert(`Error:`, errorGetSparkline?.message);
-    }
-  }, [errorGetCoinMarket, errorGetSparkline]);
+  useErrors([errorGetCoinMarket, errorGetSparkline]);
 
-  const onRefresh = () => {
-    dispatch(getCoinMarketRequested({}));
+  const onSelectOneDay = () => {
+    setSelectedNumDays(Days.one);
+    setSelectedInterval(Interval.minutely);
+    setSelectedPriceChangePerc(PriceChangePerc.oneDay);
+    dispatch(getCoinMarketRequested({ priceChangePerc: PriceChangePerc.oneDay }));
+    dispatch(
+      getSparklineRequested({ id: selectedId, days: Days.one, interval: Interval.minutely })
+    );
+  };
+
+  const onSelectOneWeek = () => {
+    setSelectedNumDays(Days.seven);
+    setSelectedInterval(Interval.hourly);
+    setSelectedPriceChangePerc(PriceChangePerc.oneWeek);
+    dispatch(getCoinMarketRequested({ priceChangePerc: PriceChangePerc.oneWeek }));
+    dispatch(
+      getSparklineRequested({ id: selectedId, days: Days.seven, interval: Interval.hourly })
+    );
+  };
+
+  const onSelectOneMonth = () => {
+    setSelectedNumDays(Days.thirty);
+    setSelectedInterval(Interval.hourly);
+    setSelectedPriceChangePerc(PriceChangePerc.oneMonth);
+    dispatch(getCoinMarketRequested({ priceChangePerc: PriceChangePerc.oneMonth }));
+    dispatch(
+      getSparklineRequested({ id: selectedId, days: Days.thirty, interval: Interval.hourly })
+    );
+  };
+
+  const onSelectOneYear = () => {
+    setSelectedNumDays(Days.threeHundredAndSixtyFive);
+    setSelectedInterval(Interval.hourly);
+    setSelectedPriceChangePerc(PriceChangePerc.oneYear);
+    dispatch(getCoinMarketRequested({ priceChangePerc: PriceChangePerc.oneYear }));
     dispatch(
       getSparklineRequested({
         id: selectedId,
+        days: Days.threeHundredAndSixtyFive,
+        interval: Interval.hourly,
+      })
+    );
+  };
+
+  const onRefresh = () => {
+    dispatch(
+      refreshHomeScreenRequested({
+        id: selectedId,
         days: selectedNumDays,
         interval: selectedInterval,
+        priceChangePerc: selectedPriceChangePerc,
       })
     );
   };
@@ -55,46 +99,31 @@ const HomeScreen = () => {
       >
         <TextButton
           label={"1D"}
-          onPress={() => {
-            setSelectedNumDays("1");
-            setSelectedInterval("minutely");
-            dispatch(getSparklineRequested({ id: selectedId, days: "1", interval: "minutely" }));
-          }}
+          onPress={onSelectOneDay}
           containerStyle={{
-            backgroundColor: selectedNumDays === "1" ? COLORS.lightGray : COLORS.gray1,
+            backgroundColor: selectedNumDays === Days.one ? COLORS.lightGray : COLORS.gray1,
           }}
         />
         <TextButton
           label={"1W"}
-          onPress={() => {
-            setSelectedNumDays("7");
-            setSelectedInterval("hourly");
-            dispatch(getSparklineRequested({ id: selectedId, days: "7", interval: "hourly" }));
-          }}
+          onPress={onSelectOneWeek}
           containerStyle={{
-            backgroundColor: selectedNumDays === "7" ? COLORS.lightGray : COLORS.gray1,
+            backgroundColor: selectedNumDays === Days.seven ? COLORS.lightGray : COLORS.gray1,
           }}
         />
         <TextButton
           label={"1M"}
-          onPress={() => {
-            setSelectedNumDays("30");
-            setSelectedInterval("hourly");
-            dispatch(getSparklineRequested({ id: selectedId, days: "30", interval: "hourly" }));
-          }}
+          onPress={onSelectOneMonth}
           containerStyle={{
-            backgroundColor: selectedNumDays === "30" ? COLORS.lightGray : COLORS.gray1,
+            backgroundColor: selectedNumDays === Days.thirty ? COLORS.lightGray : COLORS.gray1,
           }}
         />
         <TextButton
           label={"1Y"}
-          onPress={() => {
-            setSelectedNumDays("365");
-            setSelectedInterval("hourly");
-            dispatch(getSparklineRequested({ id: selectedId, days: "365", interval: "hourly" }));
-          }}
+          onPress={onSelectOneYear}
           containerStyle={{
-            backgroundColor: selectedNumDays === "365" ? COLORS.lightGray : COLORS.gray1,
+            backgroundColor:
+              selectedNumDays === Days.threeHundredAndSixtyFive ? COLORS.lightGray : COLORS.gray1,
           }}
         />
       </View>
@@ -102,17 +131,12 @@ const HomeScreen = () => {
   };
 
   return (
-    <RootView>
-      <View style={{ flex: 1, backgroundColor: COLORS.black }}>
+    <RootView style={{ backgroundColor: COLORS.black }}>
+      <>
         <View style={{ paddingBottom: SIZES.radius }}>
           {/* Chart */}
-          <Chart containerStyle={{}} chartPrices={sparkline} />
+          {!!sparkline[0][0] && <Chart containerStyle={{}} chartPrices={sparkline} />}
           {renderButtons()}
-        </View>
-        <View style={{ marginVertical: SIZES.radius }}>
-          <Text style={[FONTS.h3, { fontSize: 18, color: COLORS.white }]}>
-            {"Popular Cryptocurrency"}
-          </Text>
         </View>
         {/* Top Cryptocurrency */}
         <FlatList
@@ -121,18 +145,14 @@ const HomeScreen = () => {
           contentContainerStyle={{ marginTop: 30 }}
           refreshControl={
             <RefreshControl
-              refreshing={loadingGetCoinMarket}
+              refreshing={refreshingHomeScreen}
               onRefresh={onRefresh}
               tintColor={COLORS.white}
             />
           }
           renderItem={({ item }) => {
-            const priceColor =
-              item.price_change_percentage_7d_in_currency === 0
-                ? COLORS.lightGray3
-                : item.price_change_percentage_7d_in_currency > 0
-                ? COLORS.lightGreen
-                : COLORS.red;
+            const priceChangePercentage = item.priceChangePercentageInCurrency;
+            const priceColor = getPriceColor(priceChangePercentage);
             const backgroundColor = item?.id === selectedId ? COLORS.gray : COLORS.black;
             return (
               <TouchableOpacity
@@ -165,9 +185,9 @@ const HomeScreen = () => {
                 </View>
                 {/* Figures */}
                 <View>
-                  <Text
-                    style={[FONTS.h4, { textAlign: "right", color: COLORS.white }]}
-                  >{`$ ${item.current_price}`}</Text>
+                  <Text style={[FONTS.h4, { textAlign: "right", color: COLORS.white }]}>
+                    {CurrencyFormatter.format(item.current_price)}
+                  </Text>
                   <View
                     style={{
                       flexDirection: "row",
@@ -175,7 +195,7 @@ const HomeScreen = () => {
                       justifyContent: "flex-end",
                     }}
                   >
-                    {item.price_change_percentage_7d_in_currency !== 0 && (
+                    {priceChangePercentage !== 0 && (
                       <Image
                         source={icons.upArrow}
                         style={{
@@ -183,15 +203,16 @@ const HomeScreen = () => {
                           width: 10,
                           tintColor: priceColor,
                           transform:
-                            item.price_change_percentage_7d_in_currency > 0
+                            priceChangePercentage > 0
                               ? [{ rotate: "45deg" }]
                               : [{ rotate: "125deg" }],
                         }}
                       />
                     )}
+
                     <Text
                       style={[FONTS.body5, { marginLeft: 5, color: priceColor, lineHeight: 15 }]}
-                    >{`${item.price_change_percentage_7d_in_currency.toFixed(2)}%`}</Text>
+                    >{`${priceChangePercentage?.toFixed(2)}%`}</Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -199,7 +220,7 @@ const HomeScreen = () => {
           }}
           ListFooterComponent={<View style={{ marginBottom: 50 }} />}
         />
-      </View>
+      </>
     </RootView>
   );
 };

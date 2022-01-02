@@ -3,6 +3,7 @@ import axios from "axios";
 import { call, put, takeLatest } from "redux-saga/effects";
 
 import { Coin } from "../../types";
+import { getPriceChangePercentage } from "../../util";
 
 import {
   getCoinMarketFailed,
@@ -17,6 +18,10 @@ import {
   getSparklineRequested,
   GetSparklineRequestedAction,
   getSparklineSucceeded,
+  PriceChangePerc,
+  refreshHomeScreenRequested,
+  RefreshHomeScreenRequestedAction,
+  refreshHomeScreenSucceeded,
 } from "./slice";
 
 export interface ResponseGenerator {
@@ -33,7 +38,7 @@ export function* getHoldingsSaga(action: GetHoldingsRequestedAction) {
     holdings,
     currency = "usd",
     orderBy = "market_cap_desc",
-    sparkline = true,
+    sparkline = false,
     priceChangePerc = "7d",
     perPage = 50,
     page = 1,
@@ -74,8 +79,8 @@ export function* getCoinMarketSaga(action: GetCoinMarketRequestedAction) {
   const {
     currency = "usd",
     orderBy = "market_cap_desc",
-    sparkline = true,
-    priceChangePerc = "7d",
+    sparkline = false,
+    priceChangePerc = PriceChangePerc.oneWeek,
     perPage = 50,
     page = 1,
   } = action.payload;
@@ -84,8 +89,14 @@ export function* getCoinMarketSaga(action: GetCoinMarketRequestedAction) {
 
   try {
     const response: ResponseGenerator = yield call([axios, axios.get], apiUrl);
-
-    yield put(getCoinMarketSucceeded({ coins: response.data as Coin[] }));
+    const coins = response.data as Coin[];
+    const mappedCoins = coins.map((coin) => {
+      return {
+        ...coin,
+        priceChangePercentageInCurrency: getPriceChangePercentage(coin, priceChangePerc),
+      };
+    });
+    yield put(getCoinMarketSucceeded({ coins: mappedCoins }));
   } catch (error) {
     console.log(error.message);
     console.warn(error.message);
@@ -108,10 +119,18 @@ export function* getSparklineSaga(action: GetSparklineRequestedAction) {
   }
 }
 
+export function* refreshHomeScreenSaga(action: RefreshHomeScreenRequestedAction) {
+  const { id, days, interval, priceChangePerc } = action.payload;
+  yield call(getSparklineSaga, getSparklineRequested({ id, days, interval }));
+  yield call(getCoinMarketSaga, getCoinMarketRequested({ priceChangePerc }));
+  yield put(refreshHomeScreenSucceeded());
+}
+
 function* marketSaga() {
   yield takeLatest(getHoldingsRequested.type, getHoldingsSaga);
   yield takeLatest(getCoinMarketRequested.type, getCoinMarketSaga);
   yield takeLatest(getSparklineRequested.type, getSparklineSaga);
+  yield takeLatest(refreshHomeScreenRequested.type, refreshHomeScreenSaga);
 }
 
 export default marketSaga;
