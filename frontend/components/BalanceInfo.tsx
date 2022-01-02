@@ -3,7 +3,7 @@ import { Image, StyleProp, Text, View, ViewStyle } from "react-native";
 
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 
-import { FadeInView } from "./FadeInView";
+import FadeInView from "./FadeInView";
 
 type BalanceInfoProps = {
   readonly title: string;

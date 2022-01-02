@@ -20,7 +20,7 @@ export interface InputProps extends TextInputProps {
   noBorder?: boolean;
 }
 
-const Input = React.forwardRef<TextInput, InputProps>((props: InputProps, ref) => {
+export const Input = React.forwardRef<TextInput, InputProps>((props: InputProps, ref) => {
   return (
     <View
       style={[
