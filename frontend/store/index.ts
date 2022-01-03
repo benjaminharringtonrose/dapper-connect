@@ -10,9 +10,9 @@ import marketSaga from "./market/sagas";
 import marketReducer from "./market/slice";
 import settingsSaga from "./settings/sagas";
 import settingsReducer from "./settings/slice";
-import tabReducer from "./tab/slice";
 import walletSaga from "./wallet/sagas";
 import walletReducer from "./wallet/slice";
+import { injectStore } from "./web3";
 
 function* rootSaga() {
   yield fork(accountSaga);
@@ -29,7 +29,6 @@ const reducer = combineReducers({
   exchange: exchangeReducer,
   market: marketReducer,
   settings: settingsReducer,
-  tabs: tabReducer,
   wallets: walletReducer,
 });
 
@@ -39,3 +38,7 @@ sagaMiddleware.run(rootSaga);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+const { network } = store.getState().settings;
+
+injectStore(store);

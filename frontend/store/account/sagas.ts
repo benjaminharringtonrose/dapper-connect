@@ -2,11 +2,10 @@ import { ETHERSCAN_API_KEY, ETHPLORER_API_KEY } from "@env";
 import axios from "axios";
 import { call, put, select, takeLatest } from "redux-saga/effects";
 
-import { Account, Network } from "../../types";
+import { Account, Network, ResponseGenerator } from "../../types";
 import { getTokenIdBySymbol } from "../../util";
-import { web3 } from "../../web3";
-import { getHoldingsSaga, ResponseGenerator } from "../market/sagas";
-import { getHoldingsRequested } from "../market/slice";
+import { getHoldingsRequested, getHoldingsSaga } from "../market";
+import { web3 } from "../web3";
 
 import {
   getAccountFailed,

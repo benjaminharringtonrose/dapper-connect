@@ -2,8 +2,7 @@
 import axios from "axios";
 import { call, put, takeLatest } from "redux-saga/effects";
 
-import { Exchange } from "../../types";
-import { ResponseGenerator } from "../market/sagas";
+import { Exchange, ResponseGenerator } from "../../types";
 
 import {
   GetExchangeRequestedAction,

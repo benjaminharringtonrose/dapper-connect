@@ -16,9 +16,9 @@ import { getAccountRequested } from "../store/account";
 import { resetHoldings } from "../store/market";
 import { setToastMessages } from "../store/settings";
 import { addWalletRequested, getWalletsRequested, removeWalletRequested } from "../store/wallet";
+import { web3 } from "../store/web3";
 import { Holding } from "../types";
 import { CurrencyFormatter } from "../util";
-import { web3 } from "../web3";
 
 import RootView from "./RootView";
 

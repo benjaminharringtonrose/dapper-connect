@@ -2,7 +2,7 @@
 import axios from "axios";
 import { call, put, takeLatest } from "redux-saga/effects";
 
-import { Coin } from "../../types";
+import { Coin, ResponseGenerator } from "../../types";
 
 import {
   getCoinMarketFailed,
@@ -21,15 +21,6 @@ import {
   RefreshHomeScreenRequestedAction,
   refreshHomeScreenSucceeded,
 } from "./slice";
-
-export interface ResponseGenerator {
-  config?: any;
-  data?: any;
-  headers?: any;
-  request?: any;
-  status?: number;
-  statusText?: string;
-}
 
 export function* getHoldingsSaga(action: GetHoldingsRequestedAction) {
   const {

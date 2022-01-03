@@ -20,6 +20,8 @@ export const NETWORK = "NETWORK";
 
 export function* frontloadAppSaga() {
   try {
+    const network: Network = yield call(getNetwork);
+    yield put(setNetwork({ network }));
     yield call(getCoinMarketSaga, getCoinMarketRequested({}));
     yield call(
       getSparklineSaga,
@@ -31,8 +33,6 @@ export function* frontloadAppSaga() {
     );
     yield call(getExchangesSaga, getExchangesRequested());
     yield call(getWalletsSaga, getWalletsRequested());
-    const network: Network = yield call(getNetwork);
-    yield put(setNetwork({ network }));
     yield delay(1000);
     yield put(frontloadAppSucceeded());
   } catch (error) {

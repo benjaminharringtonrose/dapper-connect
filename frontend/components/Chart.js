@@ -114,7 +114,7 @@ const Chart = ({ containerStyle, chartPrices }) => {
       {/* Chart */}
       {data.length > 0 && (
         <ChartPathProvider data={{ points: data, smoothingStrategy: "bezier" }}>
-          <ChartPath height={150} width={SIZES.width} stroke={"blue"} strokeWidth={2} />
+          <ChartPath height={150} width={SIZES.width} stroke={COLORS.blue} strokeWidth={2} />
           <ChartDot>
             <View
               style={{
