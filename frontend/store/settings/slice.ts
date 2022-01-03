@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+import { Network } from "../../types";
+
 export interface SettingsState {
   loadingFrontloadApp: boolean;
   errorFrontloadApp?: Error;
   toastMessages: string[];
+  network?: Network;
 }
 
 const initialState: SettingsState = {
   loadingFrontloadApp: true, // must start with true
   errorFrontloadApp: undefined,
   toastMessages: [],
+  network: undefined,
 };
 
 type ErrorAction = PayloadAction<{ error: Error }>;
@@ -34,6 +38,10 @@ const settingsSlice = createSlice({
       const { toastMessages } = action.payload;
       state.toastMessages = toastMessages;
     },
+    setNetwork: (state, action: PayloadAction<{ network: Network }>) => {
+      const { network } = action.payload;
+      state.network = network;
+    },
   },
 });
 
@@ -42,6 +50,7 @@ export const {
   frontloadAppSucceeded,
   frontloadAppFailed,
   setToastMessages,
+  setNetwork,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

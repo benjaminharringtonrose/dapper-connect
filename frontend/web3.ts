@@ -1,7 +1,11 @@
-import { ENV, KOVAN_API, MAINNET_API } from "@env";
+import { KOVAN_API, MAINNET_API } from "@env";
 import Web3 from "web3";
 
-const serverEndpoint = ENV === "production" ? MAINNET_API : KOVAN_API;
+import { store } from "./store";
+
+const { network } = store.getState().settings;
+
+const serverEndpoint = network === "mainnet" ? MAINNET_API : KOVAN_API;
 
 const provider = new Web3.providers.HttpProvider(serverEndpoint);
 

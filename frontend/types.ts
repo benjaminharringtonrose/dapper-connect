@@ -1,3 +1,5 @@
+export type Network = "mainnet" | "kovan";
+
 export enum PriceChangePerc {
   oneHour = "1h",
   oneDay = "24h",

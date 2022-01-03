@@ -1,8 +1,8 @@
-import { ENV, ETHERSCAN_API_KEY, ETHPLORER_API_KEY } from "@env";
+import { ETHERSCAN_API_KEY, ETHPLORER_API_KEY } from "@env";
 import axios from "axios";
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, select, takeLatest } from "redux-saga/effects";
 
-import { Account } from "../../types";
+import { Account, Network } from "../../types";
 import { getTokenIdBySymbol } from "../../util";
 import { web3 } from "../../web3";
 import { getHoldingsSaga, ResponseGenerator } from "../market/sagas";
@@ -16,16 +16,17 @@ import {
 } from "./slice";
 
 export function* getAccountSaga(action: GetAccountRequestedAction) {
-  const { address } = action.payload;
   try {
+    const { address } = action.payload;
+    const network: Network = yield select((state) => state.settings.network);
     const ethplorerBaseUrl =
-      ENV === "production" ? "https://api.ethplorer.io" : "https://kovan-api.ethplorer.io";
+      network === "mainnet" ? "https://api.ethplorer.io" : "https://kovan-api.ethplorer.io";
     const ethplorerApiUrl = `${ethplorerBaseUrl}/getAddressInfo/${address}?apiKey=${ETHPLORER_API_KEY}`;
     const ethplorerResponse: ResponseGenerator = yield call([axios, axios.get], ethplorerApiUrl);
     const ethplorerAccount = ethplorerResponse.data as Account;
 
     const etherscanBaseUrl =
-      ENV === "production" ? "https://api.etherscan.io" : "https://api-kovan.etherscan.io";
+      network === "mainnet" ? "https://api.etherscan.io" : "https://api-kovan.etherscan.io";
     const etherscanApiUrl = `${etherscanBaseUrl}/api?module=account&action=balance&address=${address}&tag=latest&apikey=${ETHERSCAN_API_KEY}`;
     const etherscanResponse: ResponseGenerator = yield call([axios, axios.get], etherscanApiUrl);
     const etherBalance = Number(web3.utils.fromWei(etherscanResponse.data.result, "ether"));

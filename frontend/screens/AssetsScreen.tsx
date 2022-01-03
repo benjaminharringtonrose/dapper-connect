@@ -291,8 +291,13 @@ const AssetsScreen = () => {
             setSelectedAddress(address);
             dispatch(getAccountRequested({ address }));
           }}
+          onResetSelectedAddress={() => {
+            setSelectedAddress(wallets?.[0]?.address);
+          }}
           onWalletConnect={onWalletConnect}
+          onClose={() => walletModalRef.current?.close()}
           address={selectedAddress}
+          connector={connector}
         />
         <SendModal
           ref={sendModalRef}

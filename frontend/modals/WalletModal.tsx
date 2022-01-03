@@ -1,69 +1,122 @@
 import { AntDesign } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
-import React, { forwardRef, Ref } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import React, { forwardRef, Ref, useEffect, useRef, useState } from "react";
+import {
+  Alert,
+  Animated,
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button, SectionTitle } from "../components";
 import { COLORS, FONTS, SIZES } from "../constants";
-import { useAppSelector } from "../hooks";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { getAccountRequested } from "../store/account";
+import { removeWalletRequested } from "../store/wallet";
 
 interface WalletModalProps {
   address: string;
+  connector: any;
   onCreate: () => void;
   onWalletConnect: () => void;
   onSelectWallet: (address: string) => void;
+  onResetSelectedAddress: () => void;
+  onClose: () => void;
 }
 
-export const WalletModal = forwardRef(
-  (
-    { address, onCreate, onWalletConnect, onSelectWallet }: WalletModalProps,
-    ref: Ref<Modalize>
-  ) => {
-    const insets = useSafeAreaInsets();
-    const { wallets } = useAppSelector((state) => state.wallets);
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+const { width } = Dimensions.get("screen");
 
-    return (
-      <Portal>
-        <Modalize
-          ref={ref}
-          adjustToContentHeight={true}
-          useNativeDriver={false}
-          flatListProps={{
-            keyExtractor: (item) => item.address,
-            data: wallets,
-            ListHeaderComponent: () => {
-              return (
-                <View
+export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modalize>) => {
+  const anim = useRef(new Animated.Value(0)).current;
+  const { wallets } = useAppSelector((state) => state.wallets);
+  const wallet = wallets?.find((wallet) => wallet.address === props.address);
+
+  const insets = useSafeAreaInsets();
+  const dispatch = useAppDispatch();
+
+  const [editMode, setEditMode] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (editMode) {
+      onEdit();
+    } else {
+      onView();
+    }
+  }, [editMode]);
+
+  const onEdit = () => {
+    Animated.spring(anim, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const onView = () => {
+    Animated.spring(anim, {
+      toValue: 0,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  return (
+    <Portal>
+      <Modalize
+        ref={ref}
+        adjustToContentHeight={true}
+        useNativeDriver={false}
+        flatListProps={{
+          keyExtractor: (item) => item.address,
+          data: wallets,
+          ListHeaderComponent: () => {
+            return (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingHorizontal: SIZES.padding,
+                  paddingVertical: SIZES.radius,
+                  borderBottomColor: COLORS.lightGray,
+                  borderBottomWidth: StyleSheet.hairlineWidth,
+                }}
+              >
+                <SectionTitle title={"Wallets"} />
+                <TouchableOpacity onPress={() => setEditMode(!editMode)}>
+                  <Text style={[FONTS.h3, { color: COLORS.white }]}>{"Edit"}</Text>
+                </TouchableOpacity>
+              </View>
+            );
+          },
+          renderItem: ({ item }) => {
+            const selected = props.address === item.address;
+            return (
+              <View style={{ flexDirection: "row" }}>
+                {/* Wallet Item */}
+                <AnimatedTouchable
+                  onPress={() => props.onSelectWallet(item?.address)}
                   style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingHorizontal: SIZES.padding,
-                    paddingVertical: SIZES.radius,
-                  }}
-                >
-                  <SectionTitle title={"WALLETS"} />
-                  <TouchableOpacity>
-                    {/* <FontAwesome name={"trash"} color={COLORS.white} size={25} /> */}
-                    <Text style={[FONTS.h3, { color: COLORS.white }]}>{"Edit"}</Text>
-                  </TouchableOpacity>
-                </View>
-              );
-            },
-            renderItem: ({ item }) => {
-              const selected = address === item.address;
-              return (
-                <TouchableOpacity
-                  onPress={() => onSelectWallet(item?.address)}
-                  style={{
+                    transform: [
+                      {
+                        translateX: anim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, -50],
+                        }),
+                      },
+                    ],
                     minHeight: 50,
                     borderColor: COLORS.gray,
                     borderBottomWidth: 1,
                     padding: SIZES.padding,
                     flexDirection: "row",
+                    alignItems: "center",
+                    width,
                   }}
                 >
                   <View style={{ flex: 1 }}>
@@ -73,36 +126,86 @@ export const WalletModal = forwardRef(
                     </Text>
                   </View>
                   {selected && (
-                    <AntDesign name={"checksquare"} size={20} color={COLORS.lightGreen} />
+                    <AntDesign name={"checksquare"} size={20} color={COLORS.lightGray3} />
                   )}
-                </TouchableOpacity>
-              );
-            },
-            ListFooterComponent: () => {
-              return (
-                <>
-                  <Button
-                    label={"Create new wallet"}
-                    onPress={onCreate}
-                    style={{ marginTop: SIZES.radius, marginHorizontal: SIZES.padding }}
-                  />
-                  <Button
-                    label={"WalletConnect"}
-                    onPress={onWalletConnect}
-                    style={{ marginTop: SIZES.radius, marginHorizontal: SIZES.padding }}
-                  />
-                </>
-              );
-            },
-          }}
-          modalStyle={{
-            bottom: insets.bottom,
-            backgroundColor: COLORS.black,
-            borderTopStartRadius: 25,
-            borderTopEndRadius: 25,
-          }}
-        />
-      </Portal>
-    );
-  }
-);
+                </AnimatedTouchable>
+                {/* Delete Wallet Button */}
+                <AnimatedTouchable
+                  onPress={() => {
+                    Alert.alert(
+                      "Are you sure you want to delete this wallet?",
+                      "Your wallet data will be deleted from the app. Make sure to hold on to your address and private key if you still need them.",
+                      [
+                        {
+                          text: "Delete",
+                          onPress: () => {
+                            dispatch(removeWalletRequested({ address: item?.address }));
+                            if (item?.address === props.address) {
+                              props.onResetSelectedAddress();
+                              dispatch(getAccountRequested({ address: wallets[0]?.address }));
+                            } else {
+                              dispatch(getAccountRequested({ address: props.address }));
+                            }
+                            if (wallet.provider === "walletconnect") {
+                              props.connector.killSession();
+                            }
+                            setEditMode(!editMode);
+                            props.onClose();
+                          },
+                          style: "destructive",
+                        },
+                        {
+                          text: "Cancel",
+                          style: "cancel",
+                        },
+                      ]
+                    );
+                  }}
+                  style={{
+                    transform: [
+                      {
+                        translateX: anim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, -50],
+                        }),
+                      },
+                    ],
+                    minHeight: 50,
+                    width: 50,
+                    borderColor: COLORS.gray,
+                    borderBottomWidth: 1,
+                    justifyContent: "center",
+                  }}
+                >
+                  <Ionicons name={"ios-trash"} size={20} color={COLORS.white} />
+                </AnimatedTouchable>
+              </View>
+            );
+          },
+          ListFooterComponent: () => {
+            return (
+              <>
+                <Button
+                  type={"bordered"}
+                  label={"Create new wallet"}
+                  onPress={props.onCreate}
+                  style={{ marginTop: SIZES.radius, marginHorizontal: SIZES.padding }}
+                />
+                <Button
+                  type={"bordered"}
+                  label={"WalletConnect"}
+                  onPress={props.onWalletConnect}
+                  style={{ marginTop: SIZES.radius, marginHorizontal: SIZES.padding }}
+                />
+              </>
+            );
+          },
+        }}
+        modalStyle={{
+          bottom: insets.bottom,
+          backgroundColor: COLORS.black,
+        }}
+      />
+    </Portal>
+  );
+});

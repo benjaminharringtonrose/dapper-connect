@@ -11,7 +11,7 @@ const SectionTitle = ({
 }) => {
   return (
     <View style={containerStyle}>
-      <Text style={[FONTS.h4, { color: COLORS.lightGray3 }]}>{title}</Text>
+      <Text style={[FONTS.h3, { color: COLORS.lightGray3 }]}>{title}</Text>
     </View>
   );
 };
