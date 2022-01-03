@@ -4,6 +4,7 @@ import {
 } from "@react-navigation/bottom-tabs";
 import { StackNavigationOptions } from "@react-navigation/stack";
 import React from "react";
+import { useTheme } from "react-native-paper";
 
 import { TabIcon } from "../components";
 import { COLORS, FONTS } from "../constants";
@@ -24,14 +25,22 @@ export const defaultNavigationOptions: BottomTabNavigationOptions & StackNavigat
 };
 
 const Tabs = () => {
+  const { colors } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={{
-        ...defaultNavigationOptions,
+        headerTitleStyle: [FONTS.h3, { color: colors.text }],
+        headerStyle: {
+          backgroundColor: colors.background,
+          shadowRadius: 0,
+          shadowOffset: {
+            height: 0,
+            width: 0,
+          },
+        },
         tabBarShowLabel: false,
         tabBarStyle: {
-          height: 140,
-          backgroundColor: COLORS.black,
+          backgroundColor: colors.background,
           borderTopColor: COLORS.gray,
         },
       }}
@@ -43,7 +52,7 @@ const Tabs = () => {
           headerTitle: "Crypto",
           headerShown: true,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={"graph"} label={"Crypto"} />
+            <TabIcon focused={focused} icon={"graph"} label={"Crypto"} colors={colors} />
           ),
         }}
       />
@@ -54,7 +63,7 @@ const Tabs = () => {
           headerTitle: "Assets",
           headerShown: true,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={"briefcase"} label={"Assets"} />
+            <TabIcon focused={focused} icon={"briefcase"} label={"Assets"} colors={colors} />
           ),
         }}
       />
@@ -74,7 +83,7 @@ const Tabs = () => {
           headerTitle: "Settings",
           headerShown: true,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={"settings"} label={"Settings"} />
+            <TabIcon focused={focused} icon={"settings"} label={"Settings"} colors={colors} />
           ),
         }}
       />

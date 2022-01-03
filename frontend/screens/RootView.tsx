@@ -1,3 +1,4 @@
+import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { SafeAreaView, StyleProp, View, ViewStyle } from "react-native";
 
@@ -10,8 +11,10 @@ const RootView = ({ style, children }: { style?: StyleProp<ViewStyle>; children:
 
   const dispatch = useAppDispatch();
 
+  const { colors } = useTheme();
+
   return (
-    <SafeAreaView style={[{ flex: 1 }, style]}>
+    <SafeAreaView style={[{ flex: 1, backgroundColor: colors.background }, style]}>
       {children}
       <View
         style={{

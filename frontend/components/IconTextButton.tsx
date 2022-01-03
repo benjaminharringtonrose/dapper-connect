@@ -16,6 +16,7 @@ interface IconTextButtonProps {
   customIcon?: () => JSX.Element;
   onPress: () => void;
   containerStyle?: StyleProp<ViewStyle>;
+  colors: ReactNativePaper.ThemeColors;
 }
 
 const IconTextButton = ({
@@ -24,6 +25,7 @@ const IconTextButton = ({
   customIcon,
   containerStyle,
   onPress,
+  colors,
 }: IconTextButtonProps) => {
   return (
     <TouchableOpacity
@@ -35,13 +37,13 @@ const IconTextButton = ({
           justifyContent: "center",
           height: 50,
           borderRadius: SIZES.radius,
-          backgroundColor: COLORS.gray,
+          backgroundColor: colors.primary,
         },
         containerStyle,
       ]}
     >
       {customIcon ? customIcon() : <Image source={icon} style={{ width: 20, height: 20 }} />}
-      <Text style={[FONTS.h3, { marginLeft: SIZES.base, color: COLORS.white }]}>{label}</Text>
+      <Text style={[FONTS.h3, { marginLeft: SIZES.base, color: colors.background }]}>{label}</Text>
     </TouchableOpacity>
   );
 };

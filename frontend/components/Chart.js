@@ -8,12 +8,15 @@ import {
 } from "@rainbow-me/animated-charts";
 import React from "react";
 import { Text, View } from "react-native";
+import { useTheme } from "react-native-paper";
 
 import { COLORS, FONTS, SIZES } from "../constants";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const Chart = ({ containerStyle, chartPrices }) => {
+  const { colors } = useTheme();
+
   const data = chartPrices
     ? chartPrices?.map((item) => {
         return {
@@ -86,9 +89,9 @@ const Chart = ({ containerStyle, chartPrices }) => {
       style={[
         containerStyle,
         {
-          borderColor: COLORS.gray1,
+          borderColor: colors.border,
           borderWidth: 1,
-          borderRadius: 25,
+          borderRadius: SIZES.radius,
         },
       ]}
     >
@@ -114,7 +117,12 @@ const Chart = ({ containerStyle, chartPrices }) => {
       {/* Chart */}
       {data.length > 0 && (
         <ChartPathProvider data={{ points: data, smoothingStrategy: "bezier" }}>
-          <ChartPath height={150} width={SIZES.width} stroke={COLORS.blue} strokeWidth={2} />
+          <ChartPath
+            height={150}
+            width={SIZES.width - SIZES.radius * 2}
+            stroke={colors.primary}
+            strokeWidth={2}
+          />
           <ChartDot>
             <View
               style={{

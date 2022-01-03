@@ -11,6 +11,7 @@ type BalanceInfoProps = {
   readonly displayAmount: number;
   readonly changePercentage: number;
   readonly containerStyle?: StyleProp<ViewStyle>;
+  readonly colors: ReactNativePaper.ThemeColors;
 };
 
 const BalanceInfo = ({
@@ -18,6 +19,7 @@ const BalanceInfo = ({
   displayAmount,
   changePercentage,
   containerStyle,
+  colors,
 }: BalanceInfoProps) => {
   return (
     <View style={[{}, containerStyle]}>
@@ -32,7 +34,7 @@ const BalanceInfo = ({
           flexDirection: "row",
         }}
       >
-        <Text style={[FONTS.h2, { color: COLORS.white }]}>
+        <Text style={[FONTS.h2, { color: colors.text }]}>
           {CurrencyFormatter.format(displayAmount)}
         </Text>
         <Text style={[FONTS.h3, { color: COLORS.lightGray3 }]}>{" USD"}</Text>
@@ -51,7 +53,7 @@ const BalanceInfo = ({
               width: 10,
               height: 10,
               alignSelf: "center",
-              tintColor: changePercentage > 0 ? COLORS.lightGreen : COLORS.red,
+              tintColor: changePercentage > 0 ? colors.success : colors.error,
               transform: changePercentage > 0 ? [{ rotate: "45deg" }] : [{ rotate: "125deg" }],
             }}
           />
@@ -64,7 +66,7 @@ const BalanceInfo = ({
                 {
                   marginLeft: SIZES.base,
                   alignSelf: "flex-end",
-                  color: changePercentage > 0 ? COLORS.lightGreen : COLORS.red,
+                  color: changePercentage > 0 ? colors.success : colors.error,
                 },
               ]}
             >{`${changePercentage.toFixed(2)}%`}</Text>

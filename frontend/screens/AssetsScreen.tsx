@@ -7,6 +7,7 @@ import * as Haptics from "expo-haptics";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
+import { useTheme } from "react-native-paper";
 
 import { BalanceInfo, FadeInView, IconTextButton } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
@@ -36,6 +37,7 @@ const AssetsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const connector = useWalletConnect();
+  const { colors } = useTheme();
 
   const [selectedHolding, setSelectedHolding] = useState<Holding>(undefined);
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(wallets?.[0]?.address);
@@ -55,10 +57,11 @@ const AssetsScreen = () => {
           style={{
             justifyContent: "center",
             alignItems: "center",
+            paddingRight: SIZES.radius,
           }}
         >
           <TouchableOpacity onPress={() => walletModalRef.current?.open()}>
-            <Ionicons name={"wallet"} size={32} color={COLORS.white} />
+            <Ionicons name={"wallet"} size={32} color={colors.primary} />
           </TouchableOpacity>
         </FadeInView>
       ),
@@ -117,7 +120,7 @@ const AssetsScreen = () => {
   };
 
   return (
-    <RootView style={{ backgroundColor: COLORS.black }}>
+    <RootView>
       <>
         <View style={{ paddingBottom: SIZES.padding }}>
           {/* Header - Wallet Info */}
@@ -127,8 +130,9 @@ const AssetsScreen = () => {
               paddingHorizontal: SIZES.padding,
               borderRadius: 25,
               borderWidth: 1,
-              borderColor: COLORS.lightGray,
-              backgroundColor: COLORS.black,
+              borderColor: colors.border,
+              backgroundColor: colors.background,
+              marginHorizontal: SIZES.radius,
             }}
           >
             {/* Balance Info */}
@@ -136,6 +140,7 @@ const AssetsScreen = () => {
               title={wallet?.name || "Your Wallet"}
               displayAmount={totalWallet}
               changePercentage={percentageChange}
+              colors={colors}
             />
             {/* Buttons */}
             <View
@@ -148,27 +153,25 @@ const AssetsScreen = () => {
             >
               <IconTextButton
                 label={"Send"}
-                customIcon={() => <Feather name={"upload"} size={24} color={COLORS.white} />}
+                customIcon={() => <Feather name={"upload"} size={24} color={colors.background} />}
                 containerStyle={{
                   flex: 1,
                   height: 40,
                   marginRight: SIZES.radius,
-                  borderColor: COLORS.lightGray,
-                  borderWidth: 1,
                 }}
                 onPress={() => sendModalRef.current?.open()}
+                colors={colors}
               />
               <IconTextButton
                 label={"Receive"}
-                customIcon={() => <Feather name={"download"} size={24} color={COLORS.white} />}
+                customIcon={() => <Feather name={"download"} size={24} color={colors.background} />}
                 containerStyle={{
                   flex: 1,
                   height: 40,
                   marginRight: SIZES.radius,
-                  borderColor: COLORS.lightGray,
-                  borderWidth: 1,
                 }}
                 onPress={() => receiveModalRef.current?.open()}
+                colors={colors}
               />
             </View>
           </View>
@@ -182,7 +185,7 @@ const AssetsScreen = () => {
             <RefreshControl
               refreshing={loadingGetAccount}
               onRefresh={onRefresh}
-              tintColor={COLORS.white}
+              tintColor={colors.activityIndicator}
             />
           }
           ListHeaderComponent={
@@ -204,16 +207,16 @@ const AssetsScreen = () => {
               item?.priceChangePercentageInCurrency7d === 0
                 ? COLORS.lightGray3
                 : item?.priceChangePercentageInCurrency7d > 0
-                ? COLORS.lightGreen
-                : COLORS.red;
+                ? colors.success
+                : colors.error;
 
             const backgroundColor = selectedHolding?.id
               ? item?.id === selectedHolding?.id
-                ? COLORS.gray
-                : COLORS.black
+                ? colors.accent
+                : colors.background
               : item?.id === holdings?.[0]?.id
-              ? COLORS.gray
-              : COLORS.black;
+              ? colors.accent
+              : colors.background;
 
             return (
               <TouchableOpacity
@@ -228,14 +231,14 @@ const AssetsScreen = () => {
                 {/* Asset */}
                 <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
                   <Image source={{ uri: item?.image }} style={{ width: 20, height: 20 }} />
-                  <Text style={[FONTS.h4, { marginLeft: SIZES.radius, color: COLORS.white }]}>
+                  <Text style={[FONTS.h4, { marginLeft: SIZES.radius, color: colors.text }]}>
                     {item?.name}
                   </Text>
                 </View>
                 {/* Price */}
                 <View style={{ flex: 1, justifyContent: "center" }}>
                   <Text
-                    style={[FONTS.h4, { textAlign: "right", color: COLORS.white, lineHeight: 15 }]}
+                    style={[FONTS.h4, { textAlign: "right", color: colors.text, lineHeight: 15 }]}
                   >{`${CurrencyFormatter.format(item?.currentPrice)}`}</Text>
                   <View
                     style={{
@@ -266,7 +269,7 @@ const AssetsScreen = () => {
                 {/* Holdings */}
                 <View style={{ flex: 1, justifyContent: "center" }}>
                   <Text
-                    style={[FONTS.h4, { textAlign: "right", color: COLORS.white, lineHeight: 15 }]}
+                    style={[FONTS.h4, { textAlign: "right", color: colors.text, lineHeight: 15 }]}
                   >{`${CurrencyFormatter.format(item?.total)}`}</Text>
                   <Text
                     style={[
@@ -282,6 +285,7 @@ const AssetsScreen = () => {
         />
         <WalletModal
           ref={walletModalRef}
+          colors={colors}
           onCreate={() => {
             walletModalRef.current?.close();
             createWalletModalRef.current?.open();
@@ -301,12 +305,14 @@ const AssetsScreen = () => {
         />
         <SendModal
           ref={sendModalRef}
+          colors={colors}
           onPress={() => sendModalRef.current?.close()}
           web3={web3}
           address={selectedAddress}
         />
         <ReceiveModal
           ref={receiveModalRef}
+          colors={colors}
           address={selectedAddress}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -319,6 +325,7 @@ const AssetsScreen = () => {
         />
         <CreateWalletModal
           ref={createWalletModalRef}
+          colors={colors}
           onPress={(address) => {
             setSelectedAddress(address);
             createWalletModalRef.current?.close();

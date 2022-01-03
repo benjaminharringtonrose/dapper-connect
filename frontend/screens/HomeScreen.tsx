@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
+import { useTheme } from "react-native-paper";
 
 import { Chart, TextButton } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
@@ -20,8 +21,11 @@ const HomeScreen = () => {
     errorGetSparkline,
     refreshingHomeScreen,
   } = useAppSelector((state) => state.market);
-
   const dispatch = useAppDispatch();
+
+  const { colors } = useTheme();
+
+  console.log(colors);
 
   const [selectedId, setSelectedId] = useState<string>(coins[0]?.id);
   const [selectedNumDays, setSelectedNumDays] = useState<Days>(Days.one);
@@ -101,41 +105,60 @@ const HomeScreen = () => {
           label={"1D"}
           onPress={onSelectOneDay}
           containerStyle={{
-            backgroundColor: selectedNumDays === Days.one ? COLORS.lightGray : COLORS.gray1,
+            backgroundColor: selectedNumDays === Days.one ? colors.primary : colors.accent,
           }}
+          textStyle={{
+            color: selectedNumDays === Days.one ? colors.background : colors.text,
+          }}
+          colors={colors}
         />
         <TextButton
           label={"1W"}
           onPress={onSelectOneWeek}
           containerStyle={{
-            backgroundColor: selectedNumDays === Days.seven ? COLORS.lightGray : COLORS.gray1,
+            backgroundColor: selectedNumDays === Days.seven ? colors.primary : colors.accent,
           }}
+          textStyle={{
+            color: selectedNumDays === Days.seven ? colors.background : colors.text,
+          }}
+          colors={colors}
         />
         <TextButton
           label={"1M"}
           onPress={onSelectOneMonth}
           containerStyle={{
-            backgroundColor: selectedNumDays === Days.thirty ? COLORS.lightGray : COLORS.gray1,
+            backgroundColor: selectedNumDays === Days.thirty ? colors.primary : colors.accent,
           }}
+          textStyle={{
+            color: selectedNumDays === Days.thirty ? colors.background : colors.text,
+          }}
+          colors={colors}
         />
         <TextButton
           label={"1Y"}
           onPress={onSelectOneYear}
           containerStyle={{
             backgroundColor:
-              selectedNumDays === Days.threeHundredAndSixtyFive ? COLORS.lightGray : COLORS.gray1,
+              selectedNumDays === Days.threeHundredAndSixtyFive ? colors.primary : colors.accent,
           }}
+          textStyle={{
+            color:
+              selectedNumDays === Days.threeHundredAndSixtyFive ? colors.background : colors.text,
+          }}
+          colors={colors}
         />
       </View>
     );
   };
 
   return (
-    <RootView style={{ backgroundColor: COLORS.black }}>
+    <RootView>
       <>
         <View style={{ paddingBottom: SIZES.radius }}>
           {/* Chart */}
-          {!!sparkline[0][0] && <Chart containerStyle={{}} chartPrices={sparkline} />}
+          {!!sparkline[0][0] && (
+            <Chart containerStyle={{ marginHorizontal: SIZES.radius }} chartPrices={sparkline} />
+          )}
           {renderButtons()}
         </View>
         {/* Top Cryptocurrency */}
@@ -147,13 +170,13 @@ const HomeScreen = () => {
             <RefreshControl
               refreshing={refreshingHomeScreen}
               onRefresh={onRefresh}
-              tintColor={COLORS.white}
+              tintColor={colors.activityIndicator}
             />
           }
           renderItem={({ item }) => {
             const priceChangePercentage = getPriceChangePercentageInCurrency(item, selectedNumDays);
-            const priceColor = getPriceColor(priceChangePercentage);
-            const backgroundColor = item?.id === selectedId ? COLORS.gray : COLORS.black;
+            const priceColor = getPriceColor(priceChangePercentage, colors);
+            const backgroundColor = item?.id === selectedId ? colors.accent : colors.background;
             return (
               <TouchableOpacity
                 style={{
@@ -181,11 +204,11 @@ const HomeScreen = () => {
                 </View>
                 {/* Name */}
                 <View style={{ flex: 1 }}>
-                  <Text style={[FONTS.h3, { color: COLORS.white }]}>{item.name}</Text>
+                  <Text style={[FONTS.h3, { color: colors.text }]}>{item.name}</Text>
                 </View>
                 {/* Figures */}
                 <View>
-                  <Text style={[FONTS.h4, { textAlign: "right", color: COLORS.white }]}>
+                  <Text style={[FONTS.h4, { textAlign: "right", color: colors.text }]}>
                     {CurrencyFormatter.format(item.current_price)}
                   </Text>
                   <View

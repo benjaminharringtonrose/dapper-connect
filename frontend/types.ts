@@ -1,5 +1,7 @@
 export type Network = "mainnet" | "kovan";
 
+export type ColorScheme = "light" | "dark" | null | undefined;
+
 export enum PriceChangePerc {
   oneHour = "1h",
   oneDay = "24h",

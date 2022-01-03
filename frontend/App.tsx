@@ -1,13 +1,24 @@
-import { DarkTheme, NavigationContainer } from "@react-navigation/native";
+/* eslint-disable @typescript-eslint/no-namespace */
+import {
+  NavigationContainer,
+  DarkTheme as NavigationDarkTheme,
+  DefaultTheme as NavigationDefaultTheme,
+} from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import React, { useEffect } from "react";
 import { LogBox, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  DarkTheme as PaperDarkTheme,
+  DefaultTheme as PaperDefaultTheme,
+  Provider as PaperProvider,
+} from "react-native-paper";
 import { Host } from "react-native-portalize";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreen from "react-native-splash-screen";
 import { Provider } from "react-redux";
 
+import { COLORS } from "./constants";
 import { useAppDispatch, useAppSelector } from "./hooks";
 import { AppStack, StartupStack } from "./navigation";
 import { store } from "./store";
@@ -18,8 +29,24 @@ LogBox.ignoreLogs([
   "Warning: The provided value 'moz-chunked-arraybuffer' is not a valid 'responseType'.",
 ]);
 
+// so I can add my custom colors
+declare global {
+  namespace ReactNativePaper {
+    interface ThemeColors {
+      border: string;
+      activityIndicator: string;
+      success: string;
+      error: string;
+      input: string;
+      white: string;
+      bottomTabActive: string;
+      bottomTabInactive: string;
+    }
+  }
+}
+
 const Root = () => {
-  const { loadingFrontloadApp } = useAppSelector((state) => state.settings);
+  const { loadingFrontloadApp, colorScheme } = useAppSelector((state) => state.settings);
 
   const dispatch = useAppDispatch();
 
@@ -28,13 +55,56 @@ const Root = () => {
     dispatch(frontloadAppRequested());
   }, []);
 
+  const CustomDefaultTheme = {
+    ...NavigationDefaultTheme,
+    ...PaperDefaultTheme,
+    colors: {
+      ...NavigationDefaultTheme.colors,
+      ...PaperDefaultTheme.colors,
+      white: COLORS.white,
+      background: "#ffffff",
+      text: "#000000",
+      accent: "#ededed",
+      border: "#c6c6c6",
+      activityIndicator: "#c6c6c6",
+      error: "#b00020",
+      success: "#018786",
+      input: COLORS.white,
+      bottomTabActive: "",
+      bottomTabInactive: COLORS.gray,
+    },
+  };
+
+  const CustomDarkTheme = {
+    ...NavigationDarkTheme,
+    ...PaperDarkTheme,
+    colors: {
+      ...NavigationDarkTheme.colors,
+      ...PaperDarkTheme.colors,
+      white: COLORS.white,
+      background: "#000000",
+      text: "#ffffff",
+      accent: "#212125",
+      border: COLORS.primary,
+      activityIndicator: COLORS.white,
+      error: "#cf6679",
+      success: "#03dac6",
+      input: COLORS.gray,
+      disabled: COLORS.gray,
+      bottomTabActive: "",
+      bottomTabInactive: COLORS.gray,
+    },
+  };
+
+  const theme = colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme;
+
   return (
-    <>
-      <StatusBar barStyle={"light-content"} />
-      <NavigationContainer theme={DarkTheme}>
+    <PaperProvider theme={theme}>
+      <StatusBar barStyle={colorScheme === "dark" ? "light-content" : "dark-content"} />
+      <NavigationContainer theme={theme}>
         {loadingFrontloadApp ? <StartupStack /> : <AppStack />}
       </NavigationContainer>
-    </>
+    </PaperProvider>
   );
 };
 

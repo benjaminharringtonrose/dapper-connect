@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Network } from "../../types";
+import { ColorScheme, Network } from "../../types";
 
 export interface SettingsState {
   loadingFrontloadApp: boolean;
   errorFrontloadApp?: Error;
   toastMessages: string[];
   network?: Network;
+  colorScheme: ColorScheme;
 }
 
 const initialState: SettingsState = {
@@ -15,6 +16,7 @@ const initialState: SettingsState = {
   errorFrontloadApp: undefined,
   toastMessages: [],
   network: undefined,
+  colorScheme: "dark",
 };
 
 type ErrorAction = PayloadAction<{ error: Error }>;
@@ -42,6 +44,10 @@ const settingsSlice = createSlice({
       const { network } = action.payload;
       state.network = network;
     },
+    setColorScheme: (state, action: PayloadAction<{ colorScheme: ColorScheme }>) => {
+      const { colorScheme } = action.payload;
+      state.colorScheme = colorScheme;
+    },
   },
 });
 
@@ -51,6 +57,7 @@ export const {
   frontloadAppFailed,
   setToastMessages,
   setNetwork,
+  setColorScheme,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

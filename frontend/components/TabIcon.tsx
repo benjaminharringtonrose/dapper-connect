@@ -11,9 +11,10 @@ interface TabIconProps {
   iconStyle?: StyleProp<ViewStyle & ImageStyle>;
   label: string;
   isTrade?: boolean;
+  colors: ReactNativePaper.ThemeColors;
 }
 
-const TabIcon = ({ focused, icon, iconStyle, label }: TabIconProps) => {
+const TabIcon = ({ focused, icon, iconStyle, label, colors }: TabIconProps) => {
   const getIcon = (icon: string) => {
     switch (icon) {
       case "graph":
@@ -21,7 +22,7 @@ const TabIcon = ({ focused, icon, iconStyle, label }: TabIconProps) => {
           <SimpleLineIcons
             name={"graph"}
             size={20}
-            color={focused ? COLORS.white : COLORS.secondary}
+            color={focused ? colors.primary : colors.bottomTabInactive}
             style={iconStyle}
           />
         );
@@ -29,7 +30,7 @@ const TabIcon = ({ focused, icon, iconStyle, label }: TabIconProps) => {
         return (
           <Ionicons
             name={icon as any}
-            color={focused ? COLORS.white : COLORS.secondary}
+            color={focused ? colors.primary : colors.bottomTabInactive}
             size={20}
             style={iconStyle}
           />
@@ -42,7 +43,7 @@ const TabIcon = ({ focused, icon, iconStyle, label }: TabIconProps) => {
       <Text
         style={[
           {
-            color: focused ? COLORS.white : COLORS.secondary,
+            color: focused ? colors.primary : colors.bottomTabInactive,
           },
           iconStyle,
         ]}

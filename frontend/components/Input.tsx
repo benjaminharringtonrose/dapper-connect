@@ -9,8 +9,6 @@ import {
   ViewStyle,
 } from "react-native";
 
-import { COLORS } from "../constants";
-
 export interface InputProps extends TextInputProps {
   label?: string;
   style?: StyleProp<ViewStyle>;
@@ -18,6 +16,7 @@ export interface InputProps extends TextInputProps {
   footnote?: string;
   icon?: () => JSX.Element;
   noBorder?: boolean;
+  colors: ReactNativePaper.ThemeColors;
 }
 
 export const Input = React.forwardRef<TextInput, InputProps>((props: InputProps, ref) => {
@@ -26,7 +25,7 @@ export const Input = React.forwardRef<TextInput, InputProps>((props: InputProps,
       style={[
         {
           opacity: 0.8,
-          borderColor: COLORS.white,
+          borderColor: props.colors.border,
           borderBottomWidth: props?.noBorder ? 0 : 1,
         },
         props.style,
@@ -36,7 +35,7 @@ export const Input = React.forwardRef<TextInput, InputProps>((props: InputProps,
         <Text
           style={{
             fontWeight: "600",
-            color: COLORS.white,
+            color: props.colors.text,
           }}
         >
           {props.label}
@@ -45,15 +44,15 @@ export const Input = React.forwardRef<TextInput, InputProps>((props: InputProps,
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <TextInput
           ref={ref}
-          placeholderTextColor={COLORS.white}
-          selectionColor={COLORS.white}
+          placeholderTextColor={props.colors.text}
+          selectionColor={props.colors.text}
           autoCapitalize={"none"}
           {...props}
           style={[
             {
               opacity: 0.8,
               minHeight: 40,
-              color: COLORS.white,
+              color: props.colors.text,
             },
             props.inputStyle,
           ]}

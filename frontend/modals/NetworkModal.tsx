@@ -15,6 +15,7 @@ import { Network } from "../types";
 interface NetworkModalProps {
   network: Network;
   onClose: () => void;
+  colors: ReactNativePaper.ThemeColors;
 }
 
 export const NetworkModal = forwardRef((props: NetworkModalProps, ref: Ref<Modalize>) => {
@@ -46,7 +47,7 @@ export const NetworkModal = forwardRef((props: NetworkModalProps, ref: Ref<Modal
                   borderBottomWidth: StyleSheet.hairlineWidth,
                 }}
               >
-                <SectionTitle title={"Networks"} />
+                <SectionTitle title={"NETWORKS"} />
               </View>
             );
           },
@@ -69,7 +70,9 @@ export const NetworkModal = forwardRef((props: NetworkModalProps, ref: Ref<Modal
                 }}
               >
                 <Text style={[FONTS.h4, { flex: 1, color: COLORS.white }]}>{item.name}</Text>
-                {selected && <AntDesign name={"checksquare"} size={20} color={COLORS.lightGray3} />}
+                {selected && (
+                  <AntDesign name={"checksquare"} size={20} color={props.colors.success} />
+                )}
               </TouchableOpacity>
             );
           },

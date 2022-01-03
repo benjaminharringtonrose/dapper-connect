@@ -96,12 +96,15 @@ export const getPriceChangePercentage = (coin: Coin, priceChangePerc: PriceChang
   }
 };
 
-export const getPriceColor = (priceChangePercentage: number) => {
+export const getPriceColor = (
+  priceChangePercentage: number,
+  colors: ReactNativePaper.ThemeColors
+) => {
   if (priceChangePercentage === 0) {
     return COLORS.lightGray3;
   } else if (priceChangePercentage > 0) {
-    return COLORS.lightGreen;
+    return colors.success;
   } else {
-    return COLORS.red;
+    return colors.error;
   }
 };

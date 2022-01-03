@@ -3,6 +3,7 @@ import SegmentedControl from "@react-native-segmented-control/segmented-control"
 import React, { useState } from "react";
 import { FlatList, Image, RefreshControl, Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
+import { useTheme } from "react-native-paper";
 
 import { FadeInView, Input } from "../components";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
@@ -20,6 +21,7 @@ const MarketScreen = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   const dispatch = useAppDispatch();
+  const { colors } = useTheme();
 
   const onRefresh = () => {
     dispatch(getCoinMarketRequested({}));
@@ -198,6 +200,7 @@ const MarketScreen = () => {
                 backgroundColor: COLORS.white,
                 borderRadius: SIZES.radius,
               }}
+              colors={colors}
             />
           </View>
           {/* Tab Bar */}

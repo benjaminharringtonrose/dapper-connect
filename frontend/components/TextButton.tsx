@@ -1,16 +1,20 @@
 import React from "react";
-import { StyleProp, Text, TouchableOpacity, ViewStyle } from "react-native";
+import { StyleProp, Text, TextStyle, TouchableOpacity, ViewStyle } from "react-native";
 
 import { COLORS, FONTS } from "../constants";
 
 const TextButton = ({
   label,
   containerStyle,
+  textStyle,
   onPress,
+  colors,
 }: {
   label: string;
   containerStyle?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
   onPress: () => void;
+  colors: any;
 }) => {
   return (
     <TouchableOpacity
@@ -28,7 +32,7 @@ const TextButton = ({
         containerStyle,
       ]}
     >
-      <Text style={[FONTS.h5, { color: COLORS.white }]}>{label}</Text>
+      <Text style={[FONTS.h5, { color: colors.text }, textStyle]}>{label}</Text>
     </TouchableOpacity>
   );
 };

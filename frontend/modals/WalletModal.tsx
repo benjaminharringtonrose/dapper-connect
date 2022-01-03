@@ -21,6 +21,7 @@ import { getAccountRequested } from "../store/account";
 import { removeWalletRequested } from "../store/wallet";
 
 interface WalletModalProps {
+  colors: ReactNativePaper.ThemeColors;
   address: string;
   connector: any;
   onCreate: () => void;
@@ -89,7 +90,7 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
               >
                 <SectionTitle title={"Wallets"} />
                 <TouchableOpacity onPress={() => setEditMode(!editMode)}>
-                  <Text style={[FONTS.h3, { color: COLORS.white }]}>{"Edit"}</Text>
+                  <Text style={[FONTS.h3, { color: props.colors.primary }]}>{"Edit"}</Text>
                 </TouchableOpacity>
               </View>
             );
@@ -126,7 +127,7 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
                     </Text>
                   </View>
                   {selected && (
-                    <AntDesign name={"checksquare"} size={20} color={COLORS.lightGray3} />
+                    <AntDesign name={"checksquare"} size={20} color={props.colors.success} />
                   )}
                 </AnimatedTouchable>
                 {/* Delete Wallet Button */}
@@ -177,7 +178,7 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
                     justifyContent: "center",
                   }}
                 >
-                  <Ionicons name={"ios-trash"} size={20} color={COLORS.white} />
+                  <Ionicons name={"ios-trash"} size={20} color={props.colors.error} />
                 </AnimatedTouchable>
               </View>
             );
@@ -190,12 +191,14 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
                   label={"Create new wallet"}
                   onPress={props.onCreate}
                   style={{ marginTop: SIZES.radius, marginHorizontal: SIZES.padding }}
+                  colors={props.colors}
                 />
                 <Button
                   type={"bordered"}
                   label={"WalletConnect"}
                   onPress={props.onWalletConnect}
                   style={{ marginTop: SIZES.radius, marginHorizontal: SIZES.padding }}
+                  colors={props.colors}
                 />
               </>
             );

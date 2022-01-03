@@ -1,9 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, Animated, Easing, Image, View } from "react-native";
+import { useTheme } from "react-native-paper";
 
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 
 export const StartupScreen = () => {
+  const { colors } = useTheme();
+
   const anim = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -75,7 +78,7 @@ export const StartupScreen = () => {
         {"DapperConnect"}
       </Animated.Text>
       <Animated.View style={{ opacity }}>
-        <ActivityIndicator size={"large"} />
+        <ActivityIndicator size={"large"} color={colors.activityIndicator} />
       </Animated.View>
     </View>
   );

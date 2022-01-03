@@ -9,55 +9,41 @@ import {
   View,
 } from "react-native";
 
-// import Icon from "react-native-vector-icons/Ionicons";
-import { COLORS, FONTS, SIZES } from "../constants";
-
 export type ButtonProps = TouchableOpacityProps & {
   readonly type?: "contained" | "bordered" | "text";
   readonly label: string;
   readonly loading?: boolean;
   readonly disabled?: boolean;
-  readonly prefixIcon?: string;
-  readonly postfixIcon?: string;
   readonly textColor?: string;
   readonly textStyle?: StyleProp<TextStyle>;
+  readonly colors: ReactNativePaper.ThemeColors;
 };
 
 const Button = (props: ButtonProps) => {
   const { type = "contained", textColor } = props;
-  const contentColor = textColor ? textColor : COLORS.white;
+  const contentColor = textColor ? textColor : props.colors.background;
+
   return (
     <TouchableOpacity
       {...props}
       disabled={props.loading || props.disabled}
       style={[
         {
-          backgroundColor: COLORS.gray,
+          backgroundColor: props.disabled ? props.colors.disabled : props.colors.primary,
           paddingHorizontal: type !== "text" ? 10 : 0,
           paddingVertical: 5,
           justifyContent: "center",
           alignItems: "center",
           minHeight: 45,
           borderRadius: 10,
-          opacity: props.disabled || props.loading ? 0.5 : 1.0,
-          borderColor: COLORS.lightGray,
-          borderWidth: type === "bordered" ? 1 : 0,
         },
         props.style,
       ]}
     >
       {props.loading ? (
-        <ActivityIndicator color={COLORS.white} />
+        <ActivityIndicator color={props.colors.activityIndicator} />
       ) : (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          {/* {!!props.prefixIcon && (
-            <Icon
-              name={props.prefixIcon}
-              size={20}
-              color={contentColor}
-              style={{ marginRight: 10 }}
-            />
-          )} */}
           <Text
             style={[
               {
@@ -69,14 +55,6 @@ const Button = (props: ButtonProps) => {
           >
             {props.label}
           </Text>
-          {/* {!!props.postfixIcon && (
-            <Icon
-              name={props.postfixIcon}
-              size={20}
-              color={contentColor}
-              style={{ marginLeft: spacings.small }}
-            />
-          )} */}
         </View>
       )}
     </TouchableOpacity>
