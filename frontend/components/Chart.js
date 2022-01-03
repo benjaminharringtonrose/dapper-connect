@@ -5,6 +5,7 @@ import {
   ChartPathProvider,
   ChartXLabel,
   ChartYLabel,
+  monotoneCubicInterpolation,
 } from "@rainbow-me/animated-charts";
 import React from "react";
 import { Text, View } from "react-native";
@@ -25,6 +26,8 @@ const Chart = ({ containerStyle, chartPrices }) => {
         };
       })
     : [];
+
+  const points = monotoneCubicInterpolation({ data, range: 200 });
 
   const formatUSD = (value) => {
     "worklet";
@@ -115,8 +118,8 @@ const Chart = ({ containerStyle, chartPrices }) => {
         })}
       </View>
       {/* Chart */}
-      {data.length > 0 && (
-        <ChartPathProvider data={{ points: data, smoothingStrategy: "bezier" }}>
+      {points.length > 0 && (
+        <ChartPathProvider data={{ points, smoothingStrategy: "bezier" }}>
           <ChartPath
             height={150}
             width={SIZES.width - SIZES.radius * 2}
