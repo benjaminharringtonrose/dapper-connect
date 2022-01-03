@@ -39,8 +39,11 @@ declare global {
       error: string;
       input: string;
       white: string;
+      black: string;
       bottomTabActive: string;
       bottomTabInactive: string;
+      textGray: string;
+      shadow: string;
     }
   }
 }
@@ -61,17 +64,22 @@ const Root = () => {
     colors: {
       ...NavigationDefaultTheme.colors,
       ...PaperDefaultTheme.colors,
+      primary: "#0E68B3",
       white: COLORS.white,
+      black: COLORS.black,
       background: "#ffffff",
       text: "#000000",
       accent: "#ededed",
-      border: "#c6c6c6",
+      border: "#f2f2f2",
       activityIndicator: "#c6c6c6",
       error: "#b00020",
       success: "#018786",
       input: COLORS.white,
       bottomTabActive: "",
-      bottomTabInactive: COLORS.gray,
+      bottomTabInactive: "#c6c6c6",
+      textGray: COLORS.lightGray3,
+      transparentBlack: "rgba(0, 0, 0, 0.5)",
+      shadow: "#e5e5e5",
     },
   };
 
@@ -81,18 +89,23 @@ const Root = () => {
     colors: {
       ...NavigationDarkTheme.colors,
       ...PaperDarkTheme.colors,
+      primary: "#4682b4",
       white: COLORS.white,
+      black: COLORS.black,
       background: "#000000",
       text: "#ffffff",
       accent: "#212125",
-      border: COLORS.primary,
+      border: "#404040",
       activityIndicator: COLORS.white,
       error: "#cf6679",
       success: "#03dac6",
       input: COLORS.gray,
       disabled: COLORS.gray,
       bottomTabActive: "",
-      bottomTabInactive: COLORS.gray,
+      bottomTabInactive: "#4c4c4c",
+      textGray: "#a6a6a6",
+      transparentBlack: COLORS.transparentBlack,
+      shadow: "#191919",
     },
   };
 

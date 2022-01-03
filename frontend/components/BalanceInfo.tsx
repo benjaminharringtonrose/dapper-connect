@@ -25,7 +25,7 @@ const BalanceInfo = ({
     <View style={[{}, containerStyle]}>
       {/* Title */}
       <FadeInView>
-        <Text style={[FONTS.h3, { color: COLORS.lightGray3 }]}>{title}</Text>
+        <Text style={[FONTS.h3, { color: colors.textGray }]}>{title}</Text>
       </FadeInView>
       {/* Figures */}
       <View
@@ -37,7 +37,7 @@ const BalanceInfo = ({
         <Text style={[FONTS.h2, { color: colors.text }]}>
           {CurrencyFormatter.format(displayAmount)}
         </Text>
-        <Text style={[FONTS.h3, { color: COLORS.lightGray3 }]}>{" USD"}</Text>
+        <Text style={[FONTS.h3, { color: colors.textGray }]}>{" USD"}</Text>
       </View>
       {/* Change Precentage */}
       <FadeInView
@@ -77,7 +77,7 @@ const BalanceInfo = ({
                 {
                   marginLeft: SIZES.radius,
                   alignSelf: "flex-end",
-                  color: COLORS.lightGray3,
+                  color: colors.textGray,
                 },
               ]}
             >

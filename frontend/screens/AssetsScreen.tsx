@@ -128,10 +128,10 @@ const AssetsScreen = () => {
             style={{
               paddingTop: SIZES.padding,
               paddingHorizontal: SIZES.padding,
-              borderRadius: 25,
-              borderWidth: 1,
-              borderColor: colors.border,
               backgroundColor: colors.background,
+              borderColor: colors.border,
+              borderWidth: 1,
+              borderRadius: SIZES.radius,
               marginHorizontal: SIZES.radius,
             }}
           >
@@ -192,11 +192,11 @@ const AssetsScreen = () => {
             <View style={{ paddingHorizontal: SIZES.padding }}>
               {/* Header Label */}
               <View style={{ flexDirection: "row", marginTop: SIZES.radius }}>
-                <Text style={{ flex: 1, color: COLORS.lightGray3 }}>{"Asset"}</Text>
-                <Text style={{ flex: 1, color: COLORS.lightGray3, textAlign: "right" }}>
+                <Text style={[FONTS.h5, { flex: 1, color: colors.textGray }]}>{"Asset"}</Text>
+                <Text style={[FONTS.h5, { flex: 1, color: colors.textGray, textAlign: "right" }]}>
                   {"Price"}
                 </Text>
-                <Text style={{ flex: 1, color: COLORS.lightGray3, textAlign: "right" }}>
+                <Text style={[FONTS.h5, { flex: 1, color: colors.textGray, textAlign: "right" }]}>
                   {"Holdings"}
                 </Text>
               </View>
@@ -205,7 +205,7 @@ const AssetsScreen = () => {
           renderItem={({ item }) => {
             const priceColor =
               item?.priceChangePercentageInCurrency7d === 0
-                ? COLORS.lightGray3
+                ? colors.textGray
                 : item?.priceChangePercentageInCurrency7d > 0
                 ? colors.success
                 : colors.error;
@@ -274,7 +274,7 @@ const AssetsScreen = () => {
                   <Text
                     style={[
                       FONTS.body5,
-                      { textAlign: "right", color: COLORS.lightGray3, lineHeight: 15 },
+                      { textAlign: "right", color: colors.textGray, lineHeight: 15 },
                     ]}
                   >{`${item?.qty?.toFixed(4)} ${item?.symbol}`}</Text>
                 </View>

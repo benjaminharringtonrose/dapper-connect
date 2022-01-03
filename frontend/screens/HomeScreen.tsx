@@ -31,6 +31,9 @@ const HomeScreen = () => {
   const [selectedNumDays, setSelectedNumDays] = useState<Days>(Days.one);
   const [selectedInterval, setSelectedInterval] = useState<Interval>(Interval.minutely);
 
+  const [date, setDate] = useState<string>("");
+  const [price, setPrice] = useState<string>("");
+
   useErrors([errorGetCoinMarket, errorGetSparkline]);
 
   const onSelectOneDay = () => {
@@ -154,7 +157,7 @@ const HomeScreen = () => {
   return (
     <RootView>
       <>
-        <View style={{ paddingBottom: SIZES.radius }}>
+        <View style={{ paddingVertical: SIZES.radius }}>
           {/* Chart */}
           {!!sparkline[0][0] && (
             <Chart containerStyle={{ marginHorizontal: SIZES.radius }} chartPrices={sparkline} />

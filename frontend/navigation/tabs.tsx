@@ -29,7 +29,7 @@ const Tabs = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerTitleStyle: [FONTS.h3, { color: colors.text }],
+        headerTitleStyle: [FONTS.h2, { color: colors.text }],
         headerStyle: {
           backgroundColor: colors.background,
           shadowRadius: 0,
@@ -41,7 +41,8 @@ const Tabs = () => {
         tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: colors.background,
-          borderTopColor: COLORS.gray,
+          borderTopColor: colors.border,
+          borderTopWidth: 1,
         },
       }}
     >

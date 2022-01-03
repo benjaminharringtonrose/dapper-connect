@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-color-literals */
 import {
   ChartDot,
   ChartPath,
@@ -10,8 +9,9 @@ import {
 import React from "react";
 import { Text, View } from "react-native";
 import { useTheme } from "react-native-paper";
+import { runOnJS } from "react-native-reanimated";
 
-import { COLORS, FONTS, SIZES } from "../constants";
+import { FONTS, SIZES } from "../constants";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -92,9 +92,14 @@ const Chart = ({ containerStyle, chartPrices }) => {
       style={[
         containerStyle,
         {
+          backgroundColor: colors.background,
           borderColor: colors.border,
           borderWidth: 1,
           borderRadius: SIZES.radius,
+          shadowRadius: 4,
+          shadowColor: colors.shadow,
+          shadowOffset: { width: 2, height: 2 },
+          shadowOpacity: 1,
         },
       ]}
     >
@@ -111,7 +116,7 @@ const Chart = ({ containerStyle, chartPrices }) => {
         {/* getYAxisLabelValues */}
         {getYAxisLabelValues().map((item, index) => {
           return (
-            <Text key={index} style={[FONTS.body5, { color: COLORS.lightGray3 }]}>
+            <Text key={index} style={[FONTS.body5, { color: colors.textGray }]}>
               {item}
             </Text>
           );
@@ -122,7 +127,7 @@ const Chart = ({ containerStyle, chartPrices }) => {
       <ChartPathProvider data={{ points, smoothingStrategy: "bezier" }}>
         <ChartPath
           height={150}
-          width={SIZES.width - SIZES.radius * 2}
+          width={SIZES.width - SIZES.radius * 2 - 4}
           stroke={colors.primary}
           strokeWidth={2}
         />
@@ -133,18 +138,20 @@ const Chart = ({ containerStyle, chartPrices }) => {
               left: -35,
               width: 80,
               alignItems: "center",
-              backgroundColor: COLORS.transparentBlack,
+              backgroundColor: colors.transparentBlack,
+              borderRadius: SIZES.radius,
             }}
           >
             {/* Dot */}
             <View
               style={{
+                marginTop: SIZES.radius,
                 alignItems: "center",
                 justifyContent: "center",
                 width: 25,
                 height: 25,
                 borderRadius: 15,
-                backgroundColor: COLORS.white,
+                backgroundColor: colors.white,
               }}
             >
               <View
@@ -152,20 +159,20 @@ const Chart = ({ containerStyle, chartPrices }) => {
                   width: 15,
                   height: 15,
                   borderRadius: 10,
-                  backgroundColor: "blue",
+                  backgroundColor: colors.primary,
                 }}
               />
             </View>
             {/* Y-Label */}
-            <ChartYLabel format={formatUSD} style={[FONTS.body5, { color: COLORS.white }]} />
+            <ChartYLabel format={formatUSD} style={[FONTS.body5, { color: colors.white }]} />
             {/* X-Label */}
             <ChartXLabel
-              format={formatDateTime}
+              format={runOnJS(formatDateTime)}
               style={[
                 FONTS.body5,
                 {
                   marginTop: 3,
-                  color: COLORS.lightGray3,
+                  color: colors.white,
                   lineHeight: 15,
                 },
               ]}
