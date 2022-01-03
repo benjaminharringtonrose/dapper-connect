@@ -118,62 +118,61 @@ const Chart = ({ containerStyle, chartPrices }) => {
         })}
       </View>
       {/* Chart */}
-      {points.length > 0 && (
-        <ChartPathProvider data={{ points, smoothingStrategy: "bezier" }}>
-          <ChartPath
-            height={150}
-            width={SIZES.width - SIZES.radius * 2}
-            stroke={colors.primary}
-            strokeWidth={2}
-          />
-          <ChartDot>
+
+      <ChartPathProvider data={{ points, smoothingStrategy: "bezier" }}>
+        <ChartPath
+          height={150}
+          width={SIZES.width - SIZES.radius * 2}
+          stroke={colors.primary}
+          strokeWidth={2}
+        />
+        <ChartDot>
+          <View
+            style={{
+              position: "absolute",
+              left: -35,
+              width: 80,
+              alignItems: "center",
+              backgroundColor: COLORS.transparentBlack,
+            }}
+          >
+            {/* Dot */}
             <View
               style={{
-                position: "absolute",
-                left: -35,
-                width: 80,
                 alignItems: "center",
-                backgroundColor: COLORS.transparentBlack,
+                justifyContent: "center",
+                width: 25,
+                height: 25,
+                borderRadius: 15,
+                backgroundColor: COLORS.white,
               }}
             >
-              {/* Dot */}
               <View
                 style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: 25,
-                  height: 25,
-                  borderRadius: 15,
-                  backgroundColor: COLORS.white,
+                  width: 15,
+                  height: 15,
+                  borderRadius: 10,
+                  backgroundColor: "blue",
                 }}
-              >
-                <View
-                  style={{
-                    width: 15,
-                    height: 15,
-                    borderRadius: 10,
-                    backgroundColor: "blue",
-                  }}
-                />
-              </View>
-              {/* Y-Label */}
-              <ChartYLabel format={formatUSD} style={[FONTS.body5, { color: COLORS.white }]} />
-              {/* X-Label */}
-              <ChartXLabel
-                format={formatDateTime}
-                style={[
-                  FONTS.body5,
-                  {
-                    marginTop: 3,
-                    color: COLORS.lightGray3,
-                    lineHeight: 15,
-                  },
-                ]}
               />
             </View>
-          </ChartDot>
-        </ChartPathProvider>
-      )}
+            {/* Y-Label */}
+            <ChartYLabel format={formatUSD} style={[FONTS.body5, { color: COLORS.white }]} />
+            {/* X-Label */}
+            <ChartXLabel
+              format={formatDateTime}
+              style={[
+                FONTS.body5,
+                {
+                  marginTop: 3,
+                  color: COLORS.lightGray3,
+                  lineHeight: 15,
+                },
+              ]}
+            />
+          </View>
+        </ChartDot>
+      </ChartPathProvider>
     </View>
   );
 };
