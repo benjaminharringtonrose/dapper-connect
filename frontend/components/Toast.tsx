@@ -10,16 +10,16 @@ export const getRandomMessage = () => {
 };
 
 export const Toast = (props) => {
-  const opacity = useRef(new Animated.Value(0)).current;
+  const anim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.sequence([
-      Animated.spring(opacity, {
+      Animated.spring(anim, {
         toValue: 0,
         useNativeDriver: true,
       }),
       Animated.delay(2000),
-      Animated.spring(opacity, {
+      Animated.spring(anim, {
         toValue: 1,
         useNativeDriver: true,
       }),
@@ -34,17 +34,16 @@ export const Toast = (props) => {
         opacity: 0.7,
         transform: [
           {
-            translateY: opacity.interpolate({
+            translateY: anim.interpolate({
               inputRange: [0, 1],
               outputRange: [0, -100],
             }),
           },
         ],
-        marginHorizontal: SIZES.radius,
         marginBottom: 5,
         backgroundColor: COLORS.lightGray,
-        padding: 10,
-        borderRadius: SIZES.radius,
+        paddingHorizontal: SIZES.radius,
+        paddingVertical: 15,
         shadowColor: "black",
         shadowOffset: {
           width: 0,
@@ -53,6 +52,7 @@ export const Toast = (props) => {
         shadowOpacity: 0.15,
         shadowRadius: 5,
         elevation: 6,
+        borderRadius: SIZES.radius,
       }}
     >
       <Text style={[FONTS.h4, { color: COLORS.white }]}>{props.message}</Text>

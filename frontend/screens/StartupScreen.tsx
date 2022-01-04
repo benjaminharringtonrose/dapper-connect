@@ -4,7 +4,7 @@ import { useTheme } from "react-native-paper";
 
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 
-export const StartupScreen = () => {
+const StartupScreen = () => {
   const { colors } = useTheme();
 
   const anim = useRef(new Animated.Value(0)).current;
@@ -83,3 +83,5 @@ export const StartupScreen = () => {
     </View>
   );
 };
+
+export default StartupScreen;

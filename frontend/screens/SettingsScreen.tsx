@@ -143,7 +143,7 @@ const Setting = ({
         <Switch
           value={value}
           onValueChange={(value) => onPress(value)}
-          trackColor={{ true: colors.primary }}
+          trackColor={{ true: colors.primary, false: colors.bottomTabInactive }}
         />
       </View>
     );

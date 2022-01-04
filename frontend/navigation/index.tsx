@@ -1,15 +1,46 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
+import { useTheme } from "react-native-paper";
 
-import { StartupScreen } from "../screens/StartupScreen";
+import { FONTS } from "../constants";
+import { NotificationScreen, StartupScreen } from "../screens";
 
-import Tabs, { defaultNavigationOptions } from "./tabs";
+import Tabs from "./tabs";
+
+export type AppStackParamList = {
+  MainLayout: undefined;
+  NotificationScreen: undefined;
+};
 
 export const AppStack = () => {
-  const Stack = createStackNavigator();
+  const Stack = createStackNavigator<AppStackParamList>();
+  const { colors } = useTheme();
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={"MainLayout"}>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        presentation: "modal",
+        headerTitleStyle: [FONTS.h2, { color: colors.text }],
+        headerStyle: {
+          backgroundColor: colors.background,
+          // shadowRadius: 0,
+          // shadowOffset: {
+          //   height: 0,
+          //   width: 0,
+          // },
+        },
+      }}
+      initialRouteName={"MainLayout"}
+    >
       <Stack.Screen name="MainLayout" component={Tabs} />
+      <Stack.Screen
+        name="NotificationScreen"
+        component={NotificationScreen}
+        options={{
+          headerShown: true,
+          title: "Notifications",
+        }}
+      />
     </Stack.Navigator>
   );
 };

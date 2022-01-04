@@ -208,6 +208,7 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
           bottom: insets.bottom,
           backgroundColor: COLORS.black,
         }}
+        handleStyle={{ backgroundColor: props.colors.modalHandle }}
       />
     </Portal>
   );

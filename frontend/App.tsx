@@ -44,6 +44,7 @@ declare global {
       bottomTabInactive: string;
       textGray: string;
       shadow: string;
+      modalHandle: string;
     }
   }
 }
@@ -80,6 +81,8 @@ const Root = () => {
       textGray: COLORS.lightGray3,
       transparentBlack: "rgba(0, 0, 0, 0.5)",
       shadow: "#e5e5e5",
+      backdrop: "#ededed",
+      modalHandle: COLORS.white,
     },
   };
 
@@ -106,6 +109,8 @@ const Root = () => {
       textGray: "#a6a6a6",
       transparentBlack: COLORS.transparentBlack,
       shadow: "#191919",
+      backdrop: COLORS.black,
+      modalHandle: "#4682b4",
     },
   };
 

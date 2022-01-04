@@ -1,17 +1,14 @@
 import * as React from "react";
 import { Text } from "react-native";
-import { useTheme } from "react-native-paper";
-
-import { COLORS } from "../constants";
 
 import { Input, InputProps } from "./Input";
 
 export interface FormInputProps extends InputProps {
   error?: string;
   touched?: boolean;
+  colors: ReactNativePaper.ThemeColors;
 }
 const FormInput = (props: FormInputProps) => {
-  const { colors } = useTheme();
   return (
     <>
       <Input {...props} />
@@ -19,7 +16,7 @@ const FormInput = (props: FormInputProps) => {
         <Text
           style={{
             marginTop: 3,
-            color: colors.error,
+            color: props.colors.error,
           }}
         >
           {props.error}

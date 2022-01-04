@@ -3,7 +3,7 @@ import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "r
 import { useTheme } from "react-native-paper";
 
 import { Chart, TextButton } from "../components";
-import { COLORS, FONTS, icons, SIZES } from "../constants";
+import { FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { useErrors } from "../hooks";
 import { getSparklineRequested } from "../store/market";
@@ -25,14 +25,9 @@ const HomeScreen = () => {
 
   const { colors } = useTheme();
 
-  console.log(colors);
-
   const [selectedId, setSelectedId] = useState<string>(coins[0]?.id);
   const [selectedNumDays, setSelectedNumDays] = useState<Days>(Days.one);
   const [selectedInterval, setSelectedInterval] = useState<Interval>(Interval.minutely);
-
-  const [date, setDate] = useState<string>("");
-  const [price, setPrice] = useState<string>("");
 
   useErrors([errorGetCoinMarket, errorGetSparkline]);
 
@@ -100,7 +95,7 @@ const HomeScreen = () => {
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
-          marginTop: SIZES.radius,
+          marginTop: SIZES.padding,
           marginHorizontal: SIZES.radius,
         }}
       >
@@ -157,10 +152,17 @@ const HomeScreen = () => {
   return (
     <RootView>
       <>
-        <View style={{ paddingVertical: SIZES.radius }}>
+        <View
+          style={{
+            paddingVertical: SIZES.radius,
+          }}
+        >
           {/* Chart */}
           {!!sparkline[0][0] && (
-            <Chart containerStyle={{ marginHorizontal: SIZES.radius }} chartPrices={sparkline} />
+            <Chart
+              containerStyle={{ marginHorizontal: SIZES.radius, marginBottom: SIZES.padding }}
+              chartPrices={sparkline}
+            />
           )}
           {renderButtons()}
         </View>
@@ -168,7 +170,9 @@ const HomeScreen = () => {
         <FlatList
           data={coins}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ marginTop: 30 }}
+          style={{
+            paddingTop: 20,
+          }}
           refreshControl={
             <RefreshControl
               refreshing={refreshingHomeScreen}

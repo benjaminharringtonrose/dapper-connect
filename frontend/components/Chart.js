@@ -135,9 +135,11 @@ const Chart = ({ containerStyle, chartPrices }) => {
           <View
             style={{
               position: "absolute",
-              left: -35,
-              width: 80,
+              left: -55,
+              top: -20,
+              width: 120,
               alignItems: "center",
+              padding: SIZES.radius,
               backgroundColor: colors.transparentBlack,
               borderRadius: SIZES.radius,
             }}
@@ -145,12 +147,11 @@ const Chart = ({ containerStyle, chartPrices }) => {
             {/* Dot */}
             <View
               style={{
-                marginTop: SIZES.radius,
                 alignItems: "center",
                 justifyContent: "center",
-                width: 25,
-                height: 25,
-                borderRadius: 15,
+                width: 20,
+                height: 20,
+                borderRadius: 10,
                 backgroundColor: colors.white,
               }}
             >

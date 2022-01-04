@@ -79,6 +79,9 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       const formData = formRef.current?.values;
       formRef.current?.setTouched({ amount: true, address: true });
+      if (!formData?.address || !formData?.amount) {
+        return;
+      }
       const { transactionFee, maxTotal, usdAmount } = await calculateTransactionFee(formData);
       setTransactionFee(transactionFee);
       setMaxTotal(maxTotal);
@@ -149,6 +152,7 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
       setLoading(false);
       console.warn(error.message);
     }
+    formRef.current?.resetForm();
     props.onPress();
   };
 
@@ -162,6 +166,7 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
           backgroundColor: props.colors.background,
           bottom: insets.bottom,
         }}
+        handleStyle={{ backgroundColor: props.colors.modalHandle }}
       >
         <View style={{}}>
           <Formik

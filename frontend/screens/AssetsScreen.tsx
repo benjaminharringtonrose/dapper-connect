@@ -1,7 +1,9 @@
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useRef, useState } from "react";
@@ -10,9 +12,10 @@ import { Modalize } from "react-native-modalize";
 import { useTheme } from "react-native-paper";
 
 import { BalanceInfo, FadeInView, IconTextButton } from "../components";
-import { COLORS, FONTS, icons, SIZES } from "../constants";
+import { FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { CreateWalletModal, ReceiveModal, SendModal, WalletModal } from "../modals";
+import { AppStackParamList } from "../navigation";
 import { getAccountRequested } from "../store/account";
 import { resetHoldings } from "../store/market";
 import { setToastMessages } from "../store/settings";
@@ -34,7 +37,7 @@ const AssetsScreen = () => {
   const { toastMessages } = useAppSelector((state) => state.settings);
   const { wallets } = useAppSelector((state) => state.wallets);
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<AppStackParamList, "NotificationScreen">>();
   const dispatch = useAppDispatch();
   const connector = useWalletConnect();
   const { colors } = useTheme();
@@ -62,6 +65,19 @@ const AssetsScreen = () => {
         >
           <TouchableOpacity onPress={() => walletModalRef.current?.open()}>
             <Ionicons name={"wallet"} size={32} color={colors.primary} />
+          </TouchableOpacity>
+        </FadeInView>
+      ),
+      headerLeft: () => (
+        <FadeInView
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            paddingLeft: SIZES.radius,
+          }}
+        >
+          <TouchableOpacity onPress={() => navigation.navigate("NotificationScreen")}>
+            <MaterialCommunityIcons name={"bell"} size={30} color={colors.primary} />
           </TouchableOpacity>
         </FadeInView>
       ),

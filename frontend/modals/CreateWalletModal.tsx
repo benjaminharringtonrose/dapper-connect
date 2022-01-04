@@ -77,6 +77,7 @@ export const CreateWalletModal = forwardRef((props: CreateModalProps, ref: Ref<M
           backgroundColor: COLORS.black,
           bottom: insets.bottom,
         }}
+        handleStyle={{ backgroundColor: props.colors.modalHandle }}
       >
         <View>
           <Formik

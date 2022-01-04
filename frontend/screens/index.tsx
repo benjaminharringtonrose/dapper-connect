@@ -1,7 +1,17 @@
 import AssetsScreen from "./AssetsScreen";
 import HomeScreen from "./HomeScreen";
 import MarketScreen from "./MarketScreen";
+import NotificationScreen from "./NotificationScreen";
 import RootView from "./RootView";
 import SettingsScreen from "./SettingsScreen";
+import StartupScreen from "./StartupScreen";
 
-export { RootView, HomeScreen, AssetsScreen, MarketScreen, SettingsScreen };
+export {
+  AssetsScreen,
+  HomeScreen,
+  MarketScreen,
+  NotificationScreen,
+  RootView,
+  SettingsScreen,
+  StartupScreen,
+};
