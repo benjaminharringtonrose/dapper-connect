@@ -3,13 +3,14 @@ import React from "react";
 import { useTheme } from "react-native-paper";
 
 import { FONTS } from "../constants";
-import { NotificationScreen, StartupScreen } from "../screens";
+import { NotificationScreen, StartupScreen, TranslucentScreen } from "../screens";
 
 import Tabs from "./tabs";
 
 export type AppStackParamList = {
   MainLayout: undefined;
   NotificationScreen: undefined;
+  TranslucentScreen: undefined;
 };
 
 export const AppStack = () => {
@@ -23,11 +24,6 @@ export const AppStack = () => {
         headerTitleStyle: [FONTS.h2, { color: colors.text }],
         headerStyle: {
           backgroundColor: colors.background,
-          // shadowRadius: 0,
-          // shadowOffset: {
-          //   height: 0,
-          //   width: 0,
-          // },
         },
       }}
       initialRouteName={"MainLayout"}
@@ -41,6 +37,7 @@ export const AppStack = () => {
           title: "Notifications",
         }}
       />
+      <Stack.Screen name="TranslucentScreen" component={TranslucentScreen} />
     </Stack.Navigator>
   );
 };

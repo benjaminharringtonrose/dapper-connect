@@ -6,7 +6,8 @@ import {
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import React, { useEffect } from "react";
-import { LogBox, StatusBar } from "react-native";
+import { Alert, LogBox, StatusBar } from "react-native";
+import RNExitApp from "react-native-exit-app";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   DarkTheme as PaperDarkTheme,
@@ -22,7 +23,7 @@ import { COLORS } from "./constants";
 import { useAppDispatch, useAppSelector } from "./hooks";
 import { AppStack, StartupStack } from "./navigation";
 import { store } from "./store";
-import { frontloadAppRequested } from "./store/settings/slice";
+import { frontloadAppRequested, setAuthenticated } from "./store/settings/slice";
 
 LogBox.ignoreLogs([
   "Warning: The provided value 'ms-stream' is not a valid 'responseType'.",
@@ -50,7 +51,9 @@ declare global {
 }
 
 const Root = () => {
-  const { loadingFrontloadApp, colorScheme } = useAppSelector((state) => state.settings);
+  const { loadingFrontloadApp, colorScheme, authenticated } = useAppSelector(
+    (state) => state.settings
+  );
 
   const dispatch = useAppDispatch();
 
@@ -120,7 +123,7 @@ const Root = () => {
     <PaperProvider theme={theme}>
       <StatusBar barStyle={colorScheme === "dark" ? "light-content" : "dark-content"} />
       <NavigationContainer theme={theme}>
-        {loadingFrontloadApp ? <StartupStack /> : <AppStack />}
+        {loadingFrontloadApp || !authenticated ? <StartupStack /> : <AppStack />}
       </NavigationContainer>
     </PaperProvider>
   );

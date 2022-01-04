@@ -1,6 +1,8 @@
 import { Feather } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import React, { useRef, useState } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
+import RNExitApp from "react-native-exit-app";
 import { Modalize } from "react-native-modalize";
 import { useTheme } from "react-native-paper";
 
@@ -8,18 +10,16 @@ import { Button, SectionTitle } from "../components";
 import { COLORS, FONTS, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { NetworkModal } from "../modals/NetworkModal";
-import { setColorScheme } from "../store/settings/slice";
-import { resetWallets, resetWalletsInLocalStorage } from "../store/wallet";
+import { hardResetAppRequested, setColorScheme, toggleFaceId } from "../store/settings/slice";
 import { Network } from "../types";
 
 import RootView from "./RootView";
 
 const SettingsScreen = () => {
   const networkModalRef = useRef<Modalize>(null);
-  const { network, colorScheme } = useAppSelector((state) => state.settings);
+  const { network, colorScheme, faceID } = useAppSelector((state) => state.settings);
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
-  const [faceID, setFaceID] = useState<boolean | undefined>(false);
 
   const getNetworkName = (network: Network) => {
     switch (network) {
@@ -38,7 +38,6 @@ const SettingsScreen = () => {
         {/* Details */}
         <ScrollView style={{ paddingHorizontal: SIZES.padding }}>
           {/* APP */}
-
           <SectionTitle title={"APP"} containerStyle={{ marginTop: SIZES.padding }} />
           <Setting
             title={"Dark Mode"}
@@ -63,8 +62,7 @@ const SettingsScreen = () => {
             title={"FaceID"}
             value={faceID}
             type={"switch"}
-            onPress={(value) => setFaceID(value)}
-            iconType={"right"}
+            onPress={() => dispatch(toggleFaceId({ faceID: !faceID }))}
             colors={colors}
           />
           <Setting
@@ -85,11 +83,20 @@ const SettingsScreen = () => {
           />
           <Button
             type={"bordered"}
-            label={"Reset all wallets"}
+            label={"Hard reset app"}
+            style={{ marginVertical: SIZES.padding }}
+            onPress={() => dispatch(hardResetAppRequested())}
+            colors={colors}
+          />
+          <Button
+            type={"bordered"}
+            label={"Close App"}
             style={{ marginVertical: SIZES.padding }}
             onPress={async () => {
-              await resetWalletsInLocalStorage();
-              dispatch(resetWallets());
+              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+              setTimeout(() => {
+                RNExitApp.exitApp();
+              }, 400);
             }}
             colors={colors}
           />

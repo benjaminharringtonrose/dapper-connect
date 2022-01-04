@@ -85,8 +85,10 @@ const AssetsScreen = () => {
   });
 
   useEffect(() => {
-    dispatch(getAccountRequested({ address: selectedAddress }));
-  }, []);
+    if (selectedAddress) {
+      dispatch(getAccountRequested({ address: selectedAddress }));
+    }
+  }, [selectedAddress]);
 
   useEffect(() => {
     if (connector.connected) {

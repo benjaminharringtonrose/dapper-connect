@@ -1,3 +1,4 @@
+import { authenticateAsync, hasHardwareAsync, isEnrolledAsync } from "expo-local-authentication";
 import React, { useState } from "react";
 import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "react-native-paper";

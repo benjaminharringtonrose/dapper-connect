@@ -3,7 +3,13 @@ import {
   frontloadAppFailed,
   frontloadAppRequested,
   frontloadAppSucceeded,
+  hardResetAppFailed,
+  hardResetAppRequested,
+  hardResetAppSucceeded,
+  setColorScheme,
+  setNetwork,
   setToastMessages,
+  toggleFaceId,
 } from "./slice";
 
 export {
@@ -11,5 +17,11 @@ export {
   frontloadAppFailed,
   frontloadAppRequested,
   frontloadAppSucceeded,
+  hardResetAppFailed,
+  hardResetAppRequested,
+  hardResetAppSucceeded,
+  setColorScheme,
+  setNetwork,
   setToastMessages,
+  toggleFaceId,
 };

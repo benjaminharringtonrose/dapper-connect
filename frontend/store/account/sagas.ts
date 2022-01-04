@@ -18,6 +18,8 @@ export function* getAccountSaga(action: GetAccountRequestedAction) {
   try {
     const { address } = action.payload;
     const network: Network = yield select((state) => state.settings.network);
+    console.log("network:", network);
+    console.log("address:", address);
     const ethplorerBaseUrl =
       network === "mainnet" ? "https://api.ethplorer.io" : "https://kovan-api.ethplorer.io";
     const ethplorerApiUrl = `${ethplorerBaseUrl}/getAddressInfo/${address}?apiKey=${ETHPLORER_API_KEY}`;

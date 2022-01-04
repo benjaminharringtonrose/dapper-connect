@@ -9,21 +9,29 @@ export interface SettingsState {
   toastMessages: string[];
   network?: Network;
   colorScheme: ColorScheme;
+  loadingHardReset: boolean;
+  errorHardReset?: Error;
+  authenticated: boolean;
+  faceID: boolean;
 }
 
-const initialState: SettingsState = {
+export const InitialSettingsState: SettingsState = {
   loadingFrontloadApp: true, // must start with true
   errorFrontloadApp: undefined,
   toastMessages: [],
-  network: undefined,
+  network: "mainnet",
   colorScheme: "dark",
+  loadingHardReset: false,
+  errorHardReset: undefined,
+  authenticated: false,
+  faceID: false,
 };
 
 type ErrorAction = PayloadAction<{ error: Error }>;
 
 const settingsSlice = createSlice({
   name: "settings",
-  initialState,
+  initialState: InitialSettingsState,
   reducers: {
     frontloadAppRequested: (state, _: PayloadAction<undefined>) => {
       state.loadingFrontloadApp = true;
@@ -48,6 +56,26 @@ const settingsSlice = createSlice({
       const { colorScheme } = action.payload;
       state.colorScheme = colorScheme;
     },
+    hardResetAppRequested: (state, _: PayloadAction<undefined>) => {
+      state.loadingHardReset = true;
+    },
+    hardResetAppSucceeded: (state, _: PayloadAction<undefined>) => {
+      const { toastMessages, network, colorScheme } = InitialSettingsState;
+      state.toastMessages = toastMessages;
+      state.network = network;
+      state.colorScheme = colorScheme;
+      state.loadingHardReset = false;
+    },
+    hardResetAppFailed: (state, action: PayloadAction<{ error: Error }>) => {
+      state.loadingHardReset = false;
+      state.errorHardReset = action.payload.error;
+    },
+    setAuthenticated: (state, action: PayloadAction<{ authenticated: boolean }>) => {
+      state.authenticated = action.payload.authenticated;
+    },
+    toggleFaceId: (state, action: PayloadAction<{ faceID: boolean }>) => {
+      state.faceID = action.payload.faceID;
+    },
   },
 });
 
@@ -58,6 +86,11 @@ export const {
   setToastMessages,
   setNetwork,
   setColorScheme,
+  hardResetAppRequested,
+  hardResetAppSucceeded,
+  hardResetAppFailed,
+  setAuthenticated,
+  toggleFaceId,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

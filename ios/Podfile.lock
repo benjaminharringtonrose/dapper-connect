@@ -13,6 +13,8 @@ PODS:
     - ExpoModulesCore
   - EXKeepAwake (10.0.1):
     - ExpoModulesCore
+  - EXLocalAuthentication (12.1.0):
+    - ExpoModulesCore
   - Expo (44.0.1):
     - ExpoModulesCore
   - ExpoHaptics (11.1.0):
@@ -305,6 +307,8 @@ PODS:
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
+  - RNExitApp (1.1.0):
+    - React
   - RNGestureHandler (2.1.0):
     - React-Core
   - RNReanimated (2.3.1):
@@ -350,6 +354,7 @@ DEPENDENCIES:
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXFont (from `../node_modules/expo-font/ios`)
   - EXKeepAwake (from `../node_modules/expo-keep-awake/ios`)
+  - EXLocalAuthentication (from `../node_modules/expo-local-authentication/ios`)
   - Expo (from `../node_modules/expo/ios`)
   - ExpoHaptics (from `../node_modules/expo-haptics/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core/ios`)
@@ -390,6 +395,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
+  - RNExitApp (from `../node_modules/react-native-exit-app`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -415,6 +421,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-font/ios"
   EXKeepAwake:
     :path: "../node_modules/expo-keep-awake/ios"
+  EXLocalAuthentication:
+    :path: "../node_modules/expo-local-authentication/ios"
   Expo:
     :path: "../node_modules/expo/ios"
   ExpoHaptics:
@@ -491,6 +499,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-clipboard/clipboard"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
+  RNExitApp:
+    :path: "../node_modules/react-native-exit-app"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNReanimated:
@@ -511,6 +521,7 @@ SPEC CHECKSUMS:
   EXFileSystem: 35453fcb2f311ac6c67a2c77527fd4ac8dabe526
   EXFont: e0a7f501df6e833398dfd4b075a022370e215236
   EXKeepAwake: e190d9ee4550bcf5f8a46bdb199735f542795ebb
+  EXLocalAuthentication: e6eddea07741480f84c1618bf111adaefcd86cc7
   Expo: 0fc6c66a71414a8b76e7d96f160af8d1e8b85e78
   ExpoHaptics: a6dfeceb9da635c15fbb80aa92fbfc9dde7966eb
   ExpoModulesCore: a13b4c1f9cb420b4177f2675bfe83f3cd5b2d318
@@ -549,6 +560,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 4b6538222ce3f01f61011f512226ba3aaa0dc336
   RNCClipboard: f49f3de56b40d0f4104680dabadc7a1f063f4fd4
   RNCMaskedView: f127cd9652acfa31b91dcff613e07ba18b774db6
+  RNExitApp: 7d81855142a4d11eb75f4f06fdebf5a950d7aef2
   RNGestureHandler: e5c7cab5f214503dcefd6b2b0cefb050e1f51c4a
   RNReanimated: 7f143675d94978c3555345d5bfa8ed6ae800c5d3
   RNScreens: 522705f2e5c9d27efb17f24aceb2bf8335bc7b8e

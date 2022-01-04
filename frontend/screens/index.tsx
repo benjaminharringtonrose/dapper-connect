@@ -5,6 +5,7 @@ import NotificationScreen from "./NotificationScreen";
 import RootView from "./RootView";
 import SettingsScreen from "./SettingsScreen";
 import StartupScreen from "./StartupScreen";
+import TranslucentScreen from "./TranslucentScreen";
 
 export {
   AssetsScreen,
@@ -14,4 +15,5 @@ export {
   RootView,
   SettingsScreen,
   StartupScreen,
+  TranslucentScreen,
 };

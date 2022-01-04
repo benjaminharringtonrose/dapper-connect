@@ -37,12 +37,14 @@ static void InitializeFlipper(UIApplication *application) {
   
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"main" initialProperties:nil];
-  id rootViewBackgroundColor = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"RCTRootViewBackgroundColor"];
-  if (rootViewBackgroundColor != nil) {
-    rootView.backgroundColor = [RCTConvert UIColor:rootViewBackgroundColor];
-  } else {
-    rootView.backgroundColor = [UIColor blackColor];
-  }
+//  id rootViewBackgroundColor = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"RCTRootViewBackgroundColor"];
+//  if (rootViewBackgroundColor != nil) {
+//    rootView.backgroundColor = [RCTConvert UIColor:rootViewBackgroundColor];
+//  } else {
+//    rootView.backgroundColor = [UIColor blackColor];
+//  }
+  
+  rootView.backgroundColor = [UIColor blackColor];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
