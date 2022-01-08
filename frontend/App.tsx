@@ -25,8 +25,8 @@ import { store } from "./store";
 import { frontloadAppRequested } from "./store/settings/slice";
 
 LogBox.ignoreLogs([
-  "Warning: The provided value 'ms-stream' is not a valid 'responseType'.",
-  "Warning: The provided value 'moz-chunked-arraybuffer' is not a valid 'responseType'.",
+  "The provided value 'ms-stream' is not a valid 'responseType'",
+  "The provided value 'moz-chunked-arraybuffer' is not a valid 'responseType'",
 ]);
 
 // so I can add my custom colors
@@ -46,6 +46,7 @@ declare global {
       shadow: string;
       modalHandle: string;
       modal: string;
+      translucent: string;
       button: string;
     }
   }
@@ -89,6 +90,7 @@ const Root = () => {
       modal: COLORS.white,
       modalHandle: COLORS.white,
       button: "#0E68B3",
+      translucent: "rgba(255, 255, 255, 0.9)",
     },
   };
 
@@ -119,6 +121,7 @@ const Root = () => {
       modal: "#191919",
       modalHandle: COLORS.white,
       button: COLORS.white,
+      translucent: "rgba(25, 25, 25, 0.9)",
     },
   };
 

@@ -70,7 +70,6 @@ export const OnboardCreateWalletModal = forwardRef(
           adjustToContentHeight={true}
           modalStyle={{
             backgroundColor: props.colors.modal,
-            bottom: insets.bottom,
           }}
           handleStyle={{ backgroundColor: props.colors.modalHandle }}
         >
@@ -100,7 +99,7 @@ export const OnboardCreateWalletModal = forwardRef(
                     <Text
                       style={[FONTS.h2, { paddingBottom: SIZES.radius, color: props.colors.text }]}
                     >
-                      {"Secure Your Wallet"}
+                      {"1. Secure Your Wallet"}
                     </Text>
                     <Entypo name={"lock"} size={24} color={props.colors.text} />
                   </View>
@@ -109,7 +108,7 @@ export const OnboardCreateWalletModal = forwardRef(
                     style={[FONTS.body4, { paddingBottom: SIZES.radius, color: props.colors.text }]}
                   >
                     {
-                      "You can recover your 12-word recovery phrase with this password if you happen to lose it. Since your password be securely stored on your device, DapperConnect cannot recover it for you."
+                      "You can recover your 12-word recovery phrase with this password if you happen to lose it. Since your password will be securely stored on your device, DapperConnect cannot recover it for you."
                     }
                   </Text>
                   <View
@@ -187,6 +186,7 @@ export const OnboardCreateWalletModal = forwardRef(
               )}
             </Formik>
           </View>
+          <View style={{ backgroundColor: props.colors.modal, paddingBottom: insets.bottom }} />
         </Modalize>
       </Portal>
     );

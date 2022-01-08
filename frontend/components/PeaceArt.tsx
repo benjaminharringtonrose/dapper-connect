@@ -17,7 +17,7 @@ const PeaceArt = ({
 }) => {
   const OUTLINE = selectedColor || COLORS.white;
   return (
-    <View style={{ backgroundColor: colors.background, width: SIDE_WIDTH, height: SIDE_WIDTH }}>
+    <View style={{ backgroundColor: colors.modal, width: SIDE_WIDTH, height: SIDE_WIDTH }}>
       <Block color={OUTLINE} style={{ top: 6, left: 8 }} />
       <Block color={OUTLINE} style={{ top: 6, left: 10 }} />
       <Block color={OUTLINE} style={{ top: 8, left: 12 }} />

@@ -42,9 +42,22 @@ export const AppStack = () => {
   );
 };
 export const StartupStack = () => {
+  const { colors } = useTheme();
+
   const Stack = createStackNavigator();
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={"StartupScreen"}>
+    <Stack.Navigator
+      screenOptions={{
+        presentation: "modal",
+        title: "",
+        headerStyle: {
+          backgroundColor: colors.background,
+          borderWidth: 0,
+          shadowColor: "transparent",
+        },
+      }}
+      initialRouteName={"StartupScreen"}
+    >
       <Stack.Screen name="StartupScreen" component={StartupScreen} />
     </Stack.Navigator>
   );

@@ -94,7 +94,6 @@ const walletSlice = createSlice({
     },
     onboardCreateWalletSucceeded: (state, _: PayloadAction<undefined>) => {
       state.loadingOnboardCreateWallet = false;
-      state.onboarded = true;
     },
     onboardCreateWalletFailed: (state, action) => {
       state.loadingOnboardCreateWallet = false;

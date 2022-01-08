@@ -74,7 +74,7 @@ export function* onboardCreateWalletSaga(_: PayloadAction<undefined>) {
     };
 
     yield call(addWalletSaga, addWalletRequested({ wallet: dapperWallet }));
-    yield call(saveOnboardStatus, true);
+
     yield put(onboardCreateWalletSucceeded());
   } catch (error) {
     console.log("onboardCreateWalletSaga Error: ", error);
