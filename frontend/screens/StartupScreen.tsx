@@ -4,16 +4,22 @@ import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, Alert, Animated, Easing, Image, View } from "react-native";
 import RNExitApp from "react-native-exit-app";
 import { useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import Button from "../components/Button";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { setAuthenticated } from "../store/settings/slice";
+import { onboardCreateWalletRequested } from "../store/wallet/slice";
+import { web3 } from "../store/web3";
 
 const StartupScreen = () => {
   const { loadingFrontloadApp, faceID } = useAppSelector((state) => state.settings);
+  const { onboarded } = useAppSelector((state) => state.wallets);
 
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
+  const insets = useSafeAreaInsets();
 
   const anim = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
@@ -35,15 +41,16 @@ const StartupScreen = () => {
   }, []);
 
   useEffect(() => {
-    console.log("StartupScreen: faceID", faceID);
     (async () => {
-      if (!faceID) {
-        dispatch(setAuthenticated({ authenticated: true }));
-      } else {
-        await biometricsAuth();
+      if (onboarded) {
+        if (!faceID) {
+          dispatch(setAuthenticated({ authenticated: true }));
+        } else {
+          await biometricsAuth();
+        }
       }
     })();
-  }, [faceID]);
+  }, [faceID, onboarded]);
 
   const biometricsAuth = async () => {
     try {
@@ -85,63 +92,129 @@ const StartupScreen = () => {
     return;
   };
 
+  const onCreateNewWallet = () => {
+    dispatch(onboardCreateWalletRequested());
+  };
+
+  const onUseExistingWallet = () => {
+    //
+  };
+
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: COLORS.black,
-      }}
-    >
+    <>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: COLORS.black,
+        }}
+      >
+        <Animated.View
+          style={{
+            transform: [
+              {
+                translateY: anim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-SIZES.height / 2 + 60, -60],
+                }),
+              },
+            ],
+          }}
+        >
+          <Image
+            source={icons.wallet}
+            style={{
+              width: 100,
+              height: 100,
+              alignSelf: "center",
+            }}
+          />
+        </Animated.View>
+
+        <Animated.Text
+          style={[
+            FONTS.h1,
+            {
+              opacity,
+              color: COLORS.white,
+              position: "absolute",
+              transform: [
+                {
+                  translateY: opacity.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [60, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          {"DapperConnect"}
+        </Animated.Text>
+        {loadingFrontloadApp && (
+          <Animated.View style={{ opacity }}>
+            <ActivityIndicator size={"large"} color={colors.activityIndicator} />
+          </Animated.View>
+        )}
+      </View>
       <Animated.View
         style={{
+          opacity,
           transform: [
             {
-              translateY: anim.interpolate({
+              translateX: anim.interpolate({
                 inputRange: [0, 1],
-                outputRange: [-SIZES.height / 2 + 60, -60],
+                outputRange: [-SIZES.width / 2, 0],
               }),
             },
           ],
         }}
       >
-        <Image
-          source={icons.wallet}
-          style={{
-            width: 100,
-            height: 100,
-            alignSelf: "center",
-          }}
-        />
+        {!onboarded && (
+          <Button
+            label={"Create a new wallet"}
+            colors={colors}
+            onPress={onCreateNewWallet}
+            style={{
+              position: "absolute",
+              bottom: insets.bottom + 100,
+              left: 0,
+              right: 0,
+              marginHorizontal: SIZES.padding,
+            }}
+          />
+        )}
       </Animated.View>
-
-      <Animated.Text
-        style={[
-          FONTS.h1,
-          {
-            opacity,
-            color: COLORS.white,
-            position: "absolute",
-            transform: [
-              {
-                translateY: opacity.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [60, 0],
-                }),
-              },
-            ],
-          },
-        ]}
+      <Animated.View
+        style={{
+          opacity,
+          transform: [
+            {
+              translateX: anim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [SIZES.width / 2, 0],
+              }),
+            },
+          ],
+        }}
       >
-        {"DapperConnect"}
-      </Animated.Text>
-      {loadingFrontloadApp && (
-        <Animated.View style={{ opacity }}>
-          <ActivityIndicator size={"large"} color={colors.activityIndicator} />
-        </Animated.View>
-      )}
-    </View>
+        {!onboarded && (
+          <Button
+            label={"Use existing wallet"}
+            colors={colors}
+            onPress={onUseExistingWallet}
+            style={{
+              position: "absolute",
+              bottom: insets.bottom + 50,
+              left: 0,
+              right: 0,
+              marginHorizontal: SIZES.padding,
+            }}
+          />
+        )}
+      </Animated.View>
+    </>
   );
 };
 

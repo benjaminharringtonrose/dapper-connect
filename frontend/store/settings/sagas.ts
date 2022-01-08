@@ -2,14 +2,31 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { call, delay, put, takeLatest } from "redux-saga/effects";
 
+import {
+  ADDRESS,
+  COLOR_SCHEME,
+  FACE_ID,
+  NETWORK,
+  NEXT_INDEX,
+  ONBOARDED,
+  PRIVATE_KEY,
+  SEED_PHRASE,
+  SELECTED_WALLET,
+} from "../../constants";
+import {
+  getNextIndexInDeviceStorage,
+  getOnboardStatus,
+  resetWalletsInLocalStorage,
+} from "../../helpers";
+import { loadString, remove, saveString } from "../../helpers";
 import { ColorScheme, Days, Interval, Network } from "../../types";
 import { getExchangesSaga } from "../exchange/sagas";
 import { getExchangesRequested } from "../exchange/slice";
-import { loadString, remove, saveString } from "../local";
 import { getCoinMarketRequested, getSparklineRequested } from "../market";
 import { getCoinMarketSaga, getSparklineSaga } from "../market/sagas";
-import { getWalletsSaga, resetWalletsInLocalStorage } from "../wallet";
+import { getWalletsSaga } from "../wallet";
 import { getWalletsRequested } from "../wallet";
+import { setNextIndex, setOnboardStatus } from "../wallet/slice";
 
 import {
   frontloadAppFailed,
@@ -22,19 +39,20 @@ import {
   toggleFaceId,
 } from "./slice";
 
-export const NETWORK = "NETWORK";
-export const COLOR_SCHEME = "COLOR_SCHEME";
-export const FACE_ID = "FACE_ID";
-
 export function* frontloadAppSaga() {
   try {
     const network: Network = yield call(getNetwork);
-    yield put(setNetwork({ network }));
-    const colorScheme: ColorScheme = yield call(getColorScheme);
     const faceID: boolean = yield call(getFaceIDInDeviceStorage);
-    console.log("frontloadAppSaga: faceID", faceID);
+    const colorScheme: ColorScheme = yield call(getColorScheme);
+    const onboarded: boolean = yield call(getOnboardStatus);
+    const nextIndex: number = yield call(getNextIndexInDeviceStorage);
+
+    yield put(setNetwork({ network }));
     yield put(toggleFaceId({ faceID }));
     yield put(setColorScheme({ colorScheme }));
+    yield put(setOnboardStatus({ onboarded }));
+    yield put(setNextIndex({ nextIndex }));
+
     yield call(getCoinMarketSaga, getCoinMarketRequested({}));
     yield call(
       getSparklineSaga,
@@ -71,6 +89,11 @@ export function* hardResetSaga(_: PayloadAction<undefined>) {
     yield call(removeNetworkInDeviceStorage);
     yield call(removeColorSchemeInDeviceStorage);
     yield call(removeFaceIDInDeviceStorage);
+    yield call(removePrivateKeyInDeviceStorage);
+    yield call(removeSeedPhraseInDeviceStorage);
+    yield call(removeSelectedWalletInDeviceStorage);
+    yield call(removeOnboardStatusInDeviceStorage);
+    yield call(removeNextIndexInDeviceStorage);
     yield put(hardResetAppSucceeded());
   } catch (error) {
     console.log(error.message);
@@ -137,6 +160,30 @@ export const toggleFaceIDInDeviceStorage = async (faceID: "true" | "false"): Pro
 
 export const removeFaceIDInDeviceStorage = async (): Promise<void> => {
   return await remove(FACE_ID);
+};
+
+export const removePrivateKeyInDeviceStorage = async (): Promise<void> => {
+  return await remove(PRIVATE_KEY);
+};
+
+export const removeAddressInDeviceStorage = async (): Promise<void> => {
+  return await remove(ADDRESS);
+};
+
+export const removeSeedPhraseInDeviceStorage = async (): Promise<void> => {
+  return await remove(SEED_PHRASE);
+};
+
+export const removeSelectedWalletInDeviceStorage = async (): Promise<void> => {
+  return await remove(SELECTED_WALLET);
+};
+
+export const removeOnboardStatusInDeviceStorage = async (): Promise<void> => {
+  return await remove(ONBOARDED);
+};
+
+export const removeNextIndexInDeviceStorage = async (): Promise<void> => {
+  return await remove(NEXT_INDEX);
 };
 
 function* settingsSaga() {

@@ -1,3 +1,4 @@
+import { addHexPrefix, toChecksumAddress } from "ethereumjs-util";
 import * as Haptics from "expo-haptics";
 import { Formik, FormikProps } from "formik";
 import React, { forwardRef, Ref, useState } from "react";
@@ -9,10 +10,19 @@ import Web3 from "web3";
 import * as Yup from "yup";
 
 import { Button, FormInput } from "../components";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, PEACE_COLORS, SIZES } from "../constants";
+import {
+  deriveAccountFromMnemonic,
+  getAddressInDeviceStorage,
+  getNextIndexInDeviceStorage,
+  getPrivateKey,
+  getSeedPhrase,
+  saveNextIndex,
+} from "../helpers";
 import { useAppDispatch } from "../hooks";
 import { getAccountRequested } from "../store/account";
 import { addWalletRequested } from "../store/wallet";
+import { DapperWallet } from "../types";
 
 interface FormProps {
   name?: string;
@@ -42,31 +52,16 @@ export const CreateWalletModal = forwardRef((props: CreateModalProps, ref: Ref<M
     }
     try {
       setLoading(true);
-      const account = props.web3.eth.accounts.create(props.web3.utils.randomHex(32));
-      const wallet = props.web3.eth.accounts.wallet.add(account);
-      const password = props.web3.utils.randomHex(32);
-      const keystore = wallet.encrypt(password);
-      dispatch(
-        addWalletRequested({
-          wallet: {
-            name: values.name,
-            address: wallet.address,
-            privateKey: wallet.privateKey,
-            provider: "local",
-            password: password,
-            keystore: keystore,
-          },
-        })
-      );
-      props.onPress(wallet.address);
-      dispatch(getAccountRequested({ address: wallet.address }));
+      const newWallet = await createNextWallet(values.name);
+      dispatch(addWalletRequested({ wallet: newWallet }));
+      props.onPress(newWallet.address);
+      dispatch(getAccountRequested({ address: newWallet.address }));
       setLoading(false);
     } catch (error) {
       setLoading(false);
       console.warn(error.message);
     }
   };
-
   return (
     <Portal>
       <Modalize
@@ -132,3 +127,24 @@ export const CreateWalletModal = forwardRef((props: CreateModalProps, ref: Ref<M
     </Portal>
   );
 });
+
+export const createNextWallet = async (name: string) => {
+  const nextIndex = await getNextIndexInDeviceStorage();
+  const address = await getAddressInDeviceStorage();
+  const { privateKey } = await getPrivateKey(address);
+  const { seedPhrase } = await getSeedPhrase(privateKey);
+  const { wallet } = deriveAccountFromMnemonic(seedPhrase as string, nextIndex);
+  const walletColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
+  const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
+  const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
+  await saveNextIndex(nextIndex + 1);
+  const nextDapperWallet: DapperWallet = {
+    name,
+    color: walletColor,
+    address: walletAddress,
+    privateKey: walletPkey,
+    provider: "local",
+    primary: false,
+  };
+  return nextDapperWallet;
+};

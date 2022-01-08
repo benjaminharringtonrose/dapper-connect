@@ -6,6 +6,7 @@ import FormInput from "./FormInput";
 import HeaderBar from "./HeaderBar";
 import IconTextButton from "./IconTextButton";
 import Input from "./Input";
+import PeaceArt from "./PeaceArt";
 import SectionTitle from "./SectionTitle";
 import TabIcon from "./TabIcon";
 import TextButton from "./TextButton";
@@ -22,4 +23,5 @@ export {
   HeaderBar,
   SectionTitle,
   TextButton,
+  PeaceArt,
 };

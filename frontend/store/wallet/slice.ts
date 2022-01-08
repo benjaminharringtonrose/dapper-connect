@@ -1,16 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { generateMnemonic } from "bip39";
+import { State } from "react-native-gesture-handler";
 
-import { Wallet } from "../../types";
+import { DapperWallet } from "../../types";
 
 export interface WalletState {
-  wallets?: Wallet[];
+  wallets?: DapperWallet[];
   loadingGetWallets: boolean;
   errorGetWallets?: Error;
   loadingAddWallet: boolean;
   errorAddWallet?: Error;
   loadingRemoveWallet: boolean;
   errorRemoveWallet?: Error;
+  onboarded: boolean;
+  loadingOnboardCreateWallet: boolean;
+  errorOnboardCreateWallet?: Error;
+  nextIndex: number;
+  loadingAddNextWallet: boolean;
+  errorAddNextWallet?: Error;
 }
 
 const initialState: WalletState = {
@@ -21,10 +29,16 @@ const initialState: WalletState = {
   errorAddWallet: undefined,
   loadingRemoveWallet: false,
   errorRemoveWallet: undefined,
+  onboarded: false,
+  loadingOnboardCreateWallet: false,
+  errorOnboardCreateWallet: undefined,
+  nextIndex: 0,
+  loadingAddNextWallet: false,
+  errorAddNextWallet: undefined,
 };
 
 export type GetWalletsRequestedAction = PayloadAction<undefined>;
-export type AddWalletRequestedAction = PayloadAction<{ wallet: Wallet }>;
+export type AddWalletRequestedAction = PayloadAction<{ wallet: DapperWallet }>;
 export type RemoveWalletRequestedAction = PayloadAction<{ address: string }>;
 
 type ErrorAction = PayloadAction<{ error: Error }>;
@@ -36,7 +50,7 @@ const walletSlice = createSlice({
     getWalletsRequested: (state, _: GetWalletsRequestedAction) => {
       state.loadingGetWallets = true;
     },
-    getWalletsSucceeded: (state, action: PayloadAction<{ wallets: Wallet[] }>) => {
+    getWalletsSucceeded: (state, action: PayloadAction<{ wallets: DapperWallet[] }>) => {
       const { wallets } = action.payload;
       state.loadingGetWallets = false;
       state.wallets = wallets;
@@ -49,7 +63,7 @@ const walletSlice = createSlice({
     addWalletRequested: (state, _: AddWalletRequestedAction) => {
       state.loadingGetWallets = true;
     },
-    addWalletSucceeded: (state, action: PayloadAction<{ wallets: Wallet[] }>) => {
+    addWalletSucceeded: (state, action: PayloadAction<{ wallets: DapperWallet[] }>) => {
       const { wallets } = action.payload;
       state.loadingGetWallets = false;
       state.wallets = wallets;
@@ -62,7 +76,7 @@ const walletSlice = createSlice({
     removeWalletRequested: (state, _: RemoveWalletRequestedAction) => {
       state.loadingGetWallets = true;
     },
-    removeWalletSucceeded: (state, action: PayloadAction<{ wallets: Wallet[] }>) => {
+    removeWalletSucceeded: (state, action: PayloadAction<{ wallets: DapperWallet[] }>) => {
       const { wallets } = action.payload;
       state.loadingRemoveWallet = false;
       state.wallets = wallets;
@@ -74,6 +88,33 @@ const walletSlice = createSlice({
     },
     resetWallets: (state, _: PayloadAction<undefined>) => {
       state.wallets = [];
+    },
+    onboardCreateWalletRequested: (state, _: PayloadAction<undefined>) => {
+      state.loadingOnboardCreateWallet = true;
+    },
+    onboardCreateWalletSucceeded: (state, _: PayloadAction<undefined>) => {
+      state.loadingOnboardCreateWallet = false;
+      state.onboarded = true;
+    },
+    onboardCreateWalletFailed: (state, action) => {
+      state.loadingOnboardCreateWallet = false;
+      state.errorOnboardCreateWallet = action.payload.error;
+    },
+    setOnboardStatus: (state, action: PayloadAction<{ onboarded: boolean }>) => {
+      state.onboarded = action.payload.onboarded;
+    },
+    setNextIndex: (state, action: PayloadAction<{ nextIndex: number }>) => {
+      state.nextIndex = action.payload.nextIndex;
+    },
+    addNextWalletRequested: (state, _: PayloadAction<{ walletName: string }>) => {
+      state.loadingAddNextWallet = true;
+    },
+    addNextWalletSucceeded: (state, _: PayloadAction<{ walletName: string }>) => {
+      state.loadingAddNextWallet = false;
+    },
+    addNextWalletFailed: (state, action: PayloadAction<{ error: Error }>) => {
+      state.loadingAddNextWallet = false;
+      state.errorAddNextWallet = action.payload.error;
     },
   },
 });
@@ -89,6 +130,14 @@ export const {
   removeWalletSucceeded,
   removeWalletFailed,
   resetWallets,
+  onboardCreateWalletRequested,
+  onboardCreateWalletSucceeded,
+  onboardCreateWalletFailed,
+  setOnboardStatus,
+  setNextIndex,
+  addNextWalletRequested,
+  addNextWalletSucceeded,
+  addNextWalletFailed,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

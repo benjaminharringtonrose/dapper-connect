@@ -14,7 +14,7 @@ import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Button, SectionTitle } from "../components";
+import { Button, PeaceArt, SectionTitle } from "../components";
 import { COLORS, FONTS, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getAccountRequested } from "../store/account";
@@ -120,6 +120,10 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
                     width,
                   }}
                 >
+                  <View style={{ paddingRight: SIZES.radius }}>
+                    <PeaceArt selectedColor={item.color} colors={props.colors} />
+                  </View>
+
                   <View style={{ flex: 1 }}>
                     <Text style={[FONTS.h3, { color: COLORS.white }]}>{item?.name}</Text>
                     <Text style={[FONTS.h5, { color: COLORS.lightGray3 }]}>

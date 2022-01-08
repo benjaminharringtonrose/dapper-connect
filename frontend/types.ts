@@ -186,11 +186,29 @@ export interface Keystore {
   version: number;
 }
 
-export interface Wallet {
+export enum EthereumWalletType {
+  mnemonic = "mnemonic",
+  privateKey = "privateKey",
+  readOnly = "readOnly",
+  seed = "seed",
+}
+
+export interface DapperAccount {
+  index: number;
+  label: string;
+  address: string;
+  avatar: null | string;
+  color: number;
+  visible: boolean;
+  image: string | null;
+}
+
+export interface DapperWallet {
   name?: string;
   address?: string;
-  keystore?: Keystore;
-  password?: string;
+  color?: string;
   privateKey?: string;
   provider?: "walletconnect" | "local";
+  type?: EthereumWalletType;
+  primary?: boolean;
 }
