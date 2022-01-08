@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { PayloadAction } from "@reduxjs/toolkit";
-import { generateMnemonic } from "bip39";
+import { entropyToMnemonic, generateMnemonic } from "bip39";
 import { addHexPrefix } from "ethereumjs-util";
+import * as Random from "expo-random";
 import { call, put, select, takeLatest } from "redux-saga/effects";
 
 import { DEFAULT_WALLET_NAME, PEACE_COLORS } from "../../constants";
 import {
   addWallet,
   deriveAccountFromMnemonic,
-  getAddressInDeviceStorage,
+  getAddressInSecureStorage,
   getAllWallets,
-  getNextIndexInDeviceStorage,
+  getNextIndexInSecureStorage,
   getPrivateKey,
   getSeedPhrase,
   removeWallet,
@@ -25,6 +26,7 @@ import { DapperWallet } from "../../types";
 import {
   addNextWalletFailed,
   addNextWalletRequested,
+  addNextWalletSucceeded,
   AddWalletRequestedAction,
   getWalletsFailed,
   getWalletsRequested,
@@ -47,7 +49,10 @@ import {
 
 export function* onboardCreateWalletSaga(_: PayloadAction<undefined>) {
   try {
-    const seedPhrase = generateMnemonic();
+    // const seedPhrase = yield call(generateMnemonic);
+    const randomBytes = yield call(Random.getRandomBytesAsync, 16);
+    const seedPhrase = entropyToMnemonic(randomBytes);
+    console.log(seedPhrase);
     const { wallet } = yield call(deriveAccountFromMnemonic, seedPhrase, 0);
     const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
     const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
@@ -105,8 +110,8 @@ export function* addWalletSaga(action: AddWalletRequestedAction) {
 export function* addNextWalletSaga(action: PayloadAction<{ walletName: string }>) {
   const { walletName } = action.payload;
   try {
-    const nextIndex = yield call(getNextIndexInDeviceStorage);
-    const address = yield call(getAddressInDeviceStorage);
+    const nextIndex = yield call(getNextIndexInSecureStorage);
+    const address = yield call(getAddressInSecureStorage);
     const { privateKey } = yield call(getPrivateKey, address);
     const { seedPhrase } = yield call(getSeedPhrase, privateKey);
     const { wallet } = deriveAccountFromMnemonic(seedPhrase as string, nextIndex);
@@ -123,33 +128,13 @@ export function* addNextWalletSaga(action: PayloadAction<{ walletName: string }>
     };
     yield call(saveNextIndex, nextIndex + 1);
     yield call(addWalletSaga, addWalletRequested({ wallet: nextDapperWallet }));
+    yield put(addNextWalletSucceeded());
   } catch (error) {
     console.log("addNextWalletSaga Error:", error);
     console.warn("addNextWalletSaga Error:", error);
     yield put(addNextWalletFailed({ error }));
   }
 }
-
-export const createNextWallet = async (name: string) => {
-  const nextIndex = await getNextIndexInDeviceStorage();
-  const address = await getAddressInDeviceStorage();
-  const { privateKey } = await getPrivateKey(address);
-  const { seedPhrase } = await getSeedPhrase(privateKey);
-  const { wallet } = deriveAccountFromMnemonic(seedPhrase as string, nextIndex);
-  const walletColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
-  const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
-  const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
-  await saveNextIndex(nextIndex + 1);
-  const nextDapperWallet: DapperWallet = {
-    name,
-    color: walletColor,
-    address: walletAddress,
-    privateKey: walletPkey,
-    provider: "local",
-    primary: false,
-  };
-  return nextDapperWallet;
-};
 
 export function* removeWalletSaga(action: RemoveWalletRequestedAction) {
   try {

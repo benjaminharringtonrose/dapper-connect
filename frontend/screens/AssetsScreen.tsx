@@ -129,7 +129,6 @@ const AssetsScreen = () => {
     } catch (e) {
       console.log(e.message);
     }
-    walletModalRef.current?.close();
   };
 
   const onRefresh = () => {
@@ -309,9 +308,9 @@ const AssetsScreen = () => {
             createWalletModalRef.current?.open();
           }}
           onSelectWallet={(address) => {
-            walletModalRef.current?.close();
             setSelectedAddress(address);
             dispatch(getAccountRequested({ address }));
+            walletModalRef.current?.close();
           }}
           onResetSelectedAddress={() => {
             setSelectedAddress(wallets?.[0]?.address);

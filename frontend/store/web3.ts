@@ -3,7 +3,7 @@ import Web3 from "web3";
 
 let store;
 
-export const injectStore = (_store) => {
+export const injectStoreIntoWeb3 = (_store) => {
   store = _store;
 };
 

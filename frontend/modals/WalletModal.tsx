@@ -84,8 +84,8 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
                   justifyContent: "space-between",
                   paddingHorizontal: SIZES.padding,
                   paddingVertical: SIZES.radius,
-                  borderBottomColor: COLORS.lightGray,
-                  borderBottomWidth: StyleSheet.hairlineWidth,
+                  borderBottomColor: props.colors.border,
+                  borderBottomWidth: 1,
                 }}
               >
                 <SectionTitle title={"Wallets"} />
@@ -112,7 +112,7 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
                       },
                     ],
                     minHeight: 50,
-                    borderColor: COLORS.gray,
+                    borderColor: props.colors.border,
                     borderBottomWidth: 1,
                     padding: SIZES.padding,
                     flexDirection: "row",
@@ -125,8 +125,8 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
                   </View>
 
                   <View style={{ flex: 1 }}>
-                    <Text style={[FONTS.h3, { color: COLORS.white }]}>{item?.name}</Text>
-                    <Text style={[FONTS.h5, { color: COLORS.lightGray3 }]}>
+                    <Text style={[FONTS.h3, { color: props.colors.text }]}>{item?.name}</Text>
+                    <Text style={[FONTS.h5, { color: props.colors.textGray }]}>
                       {`${String(item?.address).substring(0, 10)}...`}
                     </Text>
                   </View>
@@ -155,7 +155,6 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
                               props.connector.killSession();
                             }
                             setEditMode(!editMode);
-                            props.onClose();
                           },
                           style: "destructive",
                         },
@@ -177,7 +176,7 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
                     ],
                     minHeight: 50,
                     width: 50,
-                    borderColor: COLORS.gray,
+                    borderColor: props.colors.border,
                     borderBottomWidth: 1,
                     justifyContent: "center",
                   }}
@@ -201,7 +200,7 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
                   type={"bordered"}
                   label={"WalletConnect"}
                   onPress={props.onWalletConnect}
-                  style={{ marginTop: SIZES.radius, marginHorizontal: SIZES.padding }}
+                  style={{ marginVertical: SIZES.radius, marginHorizontal: SIZES.padding }}
                   colors={props.colors}
                 />
               </>
@@ -210,7 +209,7 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
         }}
         modalStyle={{
           bottom: insets.bottom,
-          backgroundColor: COLORS.black,
+          backgroundColor: props.colors.background,
         }}
         handleStyle={{ backgroundColor: props.colors.modalHandle }}
       />

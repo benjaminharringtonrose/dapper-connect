@@ -1,24 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PayloadAction } from "@reduxjs/toolkit";
 import { call, delay, put, takeLatest } from "redux-saga/effects";
 
 import {
-  ADDRESS,
-  COLOR_SCHEME,
-  FACE_ID,
-  NETWORK,
-  NEXT_INDEX,
-  ONBOARDED,
-  PRIVATE_KEY,
-  SEED_PHRASE,
-  SELECTED_WALLET,
-} from "../../constants";
-import {
-  getNextIndexInDeviceStorage,
+  getColorScheme,
+  getFaceIDInSecureStorage,
+  getNetwork,
+  getNextIndexInSecureStorage,
   getOnboardStatus,
-  resetWalletsInLocalStorage,
+  removeColorSchemeInSecureStorage,
+  removeFaceIDInSecureStorage,
+  removeNetworkInSecureStorage,
+  removeNextIndexInSecureStorage,
+  removeOnboardStatusInSecureStorage,
+  removePrivateKeyInSecureStorage,
+  removeSeedPhraseInSecureStorage,
+  removeSelectedWalletInSecureStorage,
+  resetWalletsInSecureStorage,
+  setColorSchemeInSecureStorage,
+  toggleFaceIDInSecureStorage,
 } from "../../helpers";
-import { loadString, remove, saveString } from "../../helpers";
 import { ColorScheme, Days, Interval, Network } from "../../types";
 import { getExchangesSaga } from "../exchange/sagas";
 import { getExchangesRequested } from "../exchange/slice";
@@ -42,11 +42,10 @@ import {
 export function* frontloadAppSaga() {
   try {
     const network: Network = yield call(getNetwork);
-    const faceID: boolean = yield call(getFaceIDInDeviceStorage);
+    const faceID: boolean = yield call(getFaceIDInSecureStorage);
     const colorScheme: ColorScheme = yield call(getColorScheme);
     const onboarded: boolean = yield call(getOnboardStatus);
-    const nextIndex: number = yield call(getNextIndexInDeviceStorage);
-
+    const nextIndex: number = yield call(getNextIndexInSecureStorage);
     yield put(setNetwork({ network }));
     yield put(toggleFaceId({ faceID }));
     yield put(setColorScheme({ colorScheme }));
@@ -76,24 +75,24 @@ export function* frontloadAppSaga() {
 export function* setColorSchemeSaga(action: PayloadAction<{ colorScheme: ColorScheme }>) {
   try {
     const { colorScheme } = action.payload;
-    yield call(setColorSchemeInDeviceStorage, colorScheme);
+    yield call(setColorSchemeInSecureStorage, colorScheme);
   } catch (error) {
     console.log(error.message);
     console.warn(error.message);
   }
 }
 
-export function* hardResetSaga(_: PayloadAction<undefined>) {
+export function* hardResetSaga() {
   try {
-    yield call(resetWalletsInLocalStorage);
-    yield call(removeNetworkInDeviceStorage);
-    yield call(removeColorSchemeInDeviceStorage);
-    yield call(removeFaceIDInDeviceStorage);
-    yield call(removePrivateKeyInDeviceStorage);
-    yield call(removeSeedPhraseInDeviceStorage);
-    yield call(removeSelectedWalletInDeviceStorage);
-    yield call(removeOnboardStatusInDeviceStorage);
-    yield call(removeNextIndexInDeviceStorage);
+    yield call(resetWalletsInSecureStorage);
+    yield call(removeNetworkInSecureStorage);
+    yield call(removeColorSchemeInSecureStorage);
+    yield call(removeFaceIDInSecureStorage);
+    yield call(removePrivateKeyInSecureStorage);
+    yield call(removeSeedPhraseInSecureStorage);
+    yield call(removeSelectedWalletInSecureStorage);
+    yield call(removeOnboardStatusInSecureStorage);
+    yield call(removeNextIndexInSecureStorage);
     yield put(hardResetAppSucceeded());
   } catch (error) {
     console.log(error.message);
@@ -105,86 +104,15 @@ export function* toggleFaceIDSaga(action: PayloadAction<{ faceID: boolean }>) {
   try {
     const { faceID } = action.payload;
     if (faceID) {
-      yield call(toggleFaceIDInDeviceStorage, "true");
+      yield call(toggleFaceIDInSecureStorage, "true");
     } else {
-      yield call(toggleFaceIDInDeviceStorage, "false");
+      yield call(toggleFaceIDInSecureStorage, "false");
     }
   } catch (error) {
     console.log(error.message);
     console.warn(error.message);
   }
 }
-
-export const getNetwork = async (): Promise<string> => {
-  const network = await loadString(NETWORK);
-  if (!network) return "mainnet";
-  return network;
-};
-
-export const setNetworkInDeviceStorage = async (network: Network): Promise<void> => {
-  return await saveString(NETWORK, network);
-};
-
-export const removeNetworkInDeviceStorage = async (): Promise<void> => {
-  return await remove(NETWORK);
-};
-
-export const getColorScheme = async (): Promise<string> => {
-  const colorScheme = await loadString(COLOR_SCHEME);
-  if (!colorScheme) return "dark";
-  return colorScheme;
-};
-
-export const setColorSchemeInDeviceStorage = async (colorScheme: ColorScheme): Promise<void> => {
-  return await saveString(COLOR_SCHEME, colorScheme);
-};
-
-export const removeColorSchemeInDeviceStorage = async (): Promise<void> => {
-  return await remove(COLOR_SCHEME);
-};
-
-export const getFaceIDInDeviceStorage = async (): Promise<boolean> => {
-  const faceID = await loadString(FACE_ID);
-  if (!faceID) return true;
-  if (faceID === "true") {
-    return true;
-  } else {
-    return false;
-  }
-};
-
-export const toggleFaceIDInDeviceStorage = async (faceID: "true" | "false"): Promise<void> => {
-  console.log("faceID", faceID);
-  return await saveString(FACE_ID, faceID);
-};
-
-export const removeFaceIDInDeviceStorage = async (): Promise<void> => {
-  return await remove(FACE_ID);
-};
-
-export const removePrivateKeyInDeviceStorage = async (): Promise<void> => {
-  return await remove(PRIVATE_KEY);
-};
-
-export const removeAddressInDeviceStorage = async (): Promise<void> => {
-  return await remove(ADDRESS);
-};
-
-export const removeSeedPhraseInDeviceStorage = async (): Promise<void> => {
-  return await remove(SEED_PHRASE);
-};
-
-export const removeSelectedWalletInDeviceStorage = async (): Promise<void> => {
-  return await remove(SELECTED_WALLET);
-};
-
-export const removeOnboardStatusInDeviceStorage = async (): Promise<void> => {
-  return await remove(ONBOARDED);
-};
-
-export const removeNextIndexInDeviceStorage = async (): Promise<void> => {
-  return await remove(NEXT_INDEX);
-};
 
 function* settingsSaga() {
   yield takeLatest(frontloadAppRequested.type, frontloadAppSaga);

@@ -41,7 +41,7 @@ const Button = (props: ButtonProps) => {
       ]}
     >
       {props.loading ? (
-        <ActivityIndicator color={props.colors.activityIndicator} />
+        <ActivityIndicator color={props.colors.accent} />
       ) : (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Text

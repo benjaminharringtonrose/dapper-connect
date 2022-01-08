@@ -22,6 +22,10 @@ PODS:
   - ExpoModulesCore (0.6.3):
     - React-Core
     - ReactCommon/turbomodule/core
+  - ExpoSystemUI (1.1.0):
+    - ExpoModulesCore
+  - EXRandom (12.1.1):
+    - React-Core
   - EXSecureStore (11.1.0):
     - ExpoModulesCore
   - EXSplashScreen (0.14.1):
@@ -303,6 +307,8 @@ PODS:
     - React-perflogger (= 0.64.3)
   - RNCAsyncStorage (1.15.14):
     - React-Core
+  - RNCCheckbox (0.5.9):
+    - React-Core
   - RNCClipboard (1.9.0):
     - React-Core
   - RNCMaskedView (0.1.11):
@@ -358,6 +364,8 @@ DEPENDENCIES:
   - Expo (from `../node_modules/expo/ios`)
   - ExpoHaptics (from `../node_modules/expo-haptics/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core/ios`)
+  - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
+  - EXRandom (from `../node_modules/expo-random/ios`)
   - EXSecureStore (from `../node_modules/expo-secure-store/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -393,6 +401,7 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCCheckbox (from `../node_modules/@react-native-community/checkbox`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNExitApp (from `../node_modules/react-native-exit-app`)
@@ -429,6 +438,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-haptics/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core/ios"
+  ExpoSystemUI:
+    :path: "../node_modules/expo-system-ui/ios"
+  EXRandom:
+    :path: "../node_modules/expo-random/ios"
   EXSecureStore:
     :path: "../node_modules/expo-secure-store/ios"
   EXSplashScreen:
@@ -495,6 +508,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNCCheckbox:
+    :path: "../node_modules/@react-native-community/checkbox"
   RNCClipboard:
     :path: "../node_modules/@react-native-clipboard/clipboard"
   RNCMaskedView:
@@ -525,6 +540,8 @@ SPEC CHECKSUMS:
   Expo: 0fc6c66a71414a8b76e7d96f160af8d1e8b85e78
   ExpoHaptics: a6dfeceb9da635c15fbb80aa92fbfc9dde7966eb
   ExpoModulesCore: a13b4c1f9cb420b4177f2675bfe83f3cd5b2d318
+  ExpoSystemUI: 2f45522bbdb4e28328efb548f7fe54c2d0d74d38
+  EXRandom: 9b9f014c04850cf84e651ed100895a387106cdc3
   EXSecureStore: ada74c249250643e19b58692202ebaed611e8dd4
   EXSplashScreen: 6f02bcc84bf6bdc19dcb7ae934b7015a3aaef008
   FBLazyVector: c71c5917ec0ad2de41d5d06a5855f6d5eda06971
@@ -558,6 +575,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 493d9abb8b23c3f84e19ae221eeba92cadcb70dc
   ReactCommon: 8fea6422328e2fc093e25c9fac67adbcf0f04fb4
   RNCAsyncStorage: 4b6538222ce3f01f61011f512226ba3aaa0dc336
+  RNCCheckbox: 7e2cd6ea8e200210c36fe0898bbe200826bdaf56
   RNCClipboard: f49f3de56b40d0f4104680dabadc7a1f063f4fd4
   RNCMaskedView: f127cd9652acfa31b91dcff613e07ba18b774db6
   RNExitApp: 7d81855142a4d11eb75f4f06fdebf5a950d7aef2

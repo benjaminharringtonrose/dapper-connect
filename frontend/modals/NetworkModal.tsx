@@ -7,8 +7,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { SectionTitle } from "../components";
 import { COLORS, FONTS, SIZES } from "../constants";
+import { setNetworkInSecureStorage } from "../helpers";
 import { useAppDispatch } from "../hooks";
-import { setNetworkInDeviceStorage } from "../store/settings/sagas";
 import { frontloadAppRequested, setNetwork } from "../store/settings/slice";
 import { Network } from "../types";
 
@@ -29,7 +29,7 @@ export const NetworkModal = forwardRef((props: NetworkModalProps, ref: Ref<Modal
         adjustToContentHeight={true}
         useNativeDriver={false}
         flatListProps={{
-          keyExtractor: (item) => item.address,
+          keyExtractor: (item) => item.id,
           data: [
             { id: "mainnet", name: "Mainnet" },
             { id: "kovan", name: "Kovan (test network)" },
@@ -57,7 +57,7 @@ export const NetworkModal = forwardRef((props: NetworkModalProps, ref: Ref<Modal
               <TouchableOpacity
                 onPress={async () => {
                   dispatch(setNetwork({ network: item.id }));
-                  await setNetworkInDeviceStorage(item.id);
+                  await setNetworkInSecureStorage(item.id);
                   dispatch(frontloadAppRequested());
                   props.onClose();
                 }}

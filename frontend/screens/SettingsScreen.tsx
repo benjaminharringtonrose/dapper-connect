@@ -1,13 +1,13 @@
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 import RNExitApp from "react-native-exit-app";
 import { Modalize } from "react-native-modalize";
 import { useTheme } from "react-native-paper";
 
 import { Button, SectionTitle } from "../components";
-import { COLORS, FONTS, SIZES } from "../constants";
+import { FONTS, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { NetworkModal } from "../modals/NetworkModal";
 import { hardResetAppRequested, setColorScheme, toggleFaceId } from "../store/settings/slice";
@@ -85,7 +85,10 @@ const SettingsScreen = () => {
             type={"bordered"}
             label={"Hard reset app"}
             style={{ marginVertical: SIZES.padding }}
-            onPress={() => dispatch(hardResetAppRequested())}
+            onPress={async () => {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+              dispatch(hardResetAppRequested());
+            }}
             colors={colors}
           />
           <Button

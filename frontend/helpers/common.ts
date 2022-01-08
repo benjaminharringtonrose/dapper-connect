@@ -16,7 +16,7 @@ export async function loadString(key: string) {
 
 export async function saveObject(key: string, value: Record<string, unknown>): Promise<void> {
   const jsonValue = JSON.stringify(value);
-  saveString(key, jsonValue);
+  await saveString(key, jsonValue);
 }
 
 export async function loadObject(key: string): Promise<Record<string, unknown>> {

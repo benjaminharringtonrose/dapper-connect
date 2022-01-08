@@ -3,19 +3,20 @@ import * as LocalAuthentication from "expo-local-authentication";
 import React, { useEffect, useRef } from "react";
 import { ActivityIndicator, Alert, Animated, Easing, Image, View } from "react-native";
 import RNExitApp from "react-native-exit-app";
+import { Modalize } from "react-native-modalize";
 import { useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Button from "../components/Button";
 import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
+import { OnboardCreateWalletModal } from "../modals/OnboardCreateWalletModal";
 import { setAuthenticated } from "../store/settings/slice";
 import { onboardCreateWalletRequested } from "../store/wallet/slice";
-import { web3 } from "../store/web3";
 
 const StartupScreen = () => {
   const { loadingFrontloadApp, faceID } = useAppSelector((state) => state.settings);
-  const { onboarded } = useAppSelector((state) => state.wallets);
+  const { onboarded, loadingOnboardCreateWallet } = useAppSelector((state) => state.wallets);
 
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
@@ -23,6 +24,7 @@ const StartupScreen = () => {
 
   const anim = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
+  const createWalletModalRef = useRef<Modalize>(null);
 
   useEffect(() => {
     Animated.parallel([
@@ -158,24 +160,13 @@ const StartupScreen = () => {
           </Animated.View>
         )}
       </View>
-      <Animated.View
-        style={{
-          opacity,
-          transform: [
-            {
-              translateX: anim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [-SIZES.width / 2, 0],
-              }),
-            },
-          ],
-        }}
-      >
+      <Animated.View style={{ opacity }}>
         {!onboarded && (
           <Button
-            label={"Create a new wallet"}
+            label={"Create a wallet"}
             colors={colors}
-            onPress={onCreateNewWallet}
+            onPress={() => createWalletModalRef.current?.open()}
+            loading={loadingOnboardCreateWallet}
             style={{
               position: "absolute",
               bottom: insets.bottom + 100,
@@ -186,22 +177,10 @@ const StartupScreen = () => {
           />
         )}
       </Animated.View>
-      <Animated.View
-        style={{
-          opacity,
-          transform: [
-            {
-              translateX: anim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [SIZES.width / 2, 0],
-              }),
-            },
-          ],
-        }}
-      >
+      <Animated.View style={{ opacity }}>
         {!onboarded && (
           <Button
-            label={"Use existing wallet"}
+            label={"Import wallet"}
             colors={colors}
             onPress={onUseExistingWallet}
             style={{
@@ -214,6 +193,11 @@ const StartupScreen = () => {
           />
         )}
       </Animated.View>
+      <OnboardCreateWalletModal
+        ref={createWalletModalRef}
+        onPress={onCreateNewWallet}
+        colors={colors}
+      />
     </>
   );
 };

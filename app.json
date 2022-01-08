@@ -9,6 +9,7 @@
     },
     "android": {
       "package": "com.benjaminrose.dapperconnect"
-    }
+    },
+    "userInterfaceStyle": "automatic"
   }
 }
