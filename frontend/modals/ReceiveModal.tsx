@@ -20,7 +20,7 @@ export const ReceiveModal = forwardRef((props: ReceiveModalProps, ref: Ref<Modal
         ref={ref}
         useNativeDriver={false}
         adjustToContentHeight={true}
-        modalStyle={{ backgroundColor: props.colors.background }}
+        modalStyle={{ backgroundColor: props.colors.modal }}
         handleStyle={{ backgroundColor: props.colors.modalHandle }}
       >
         <View

@@ -1,4 +1,3 @@
-import { authenticateAsync, hasHardwareAsync, isEnrolledAsync } from "expo-local-authentication";
 import React, { useState } from "react";
 import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "react-native-paper";
@@ -29,6 +28,8 @@ const HomeScreen = () => {
   const [selectedId, setSelectedId] = useState<string>(coins[0]?.id);
   const [selectedNumDays, setSelectedNumDays] = useState<Days>(Days.one);
   const [selectedInterval, setSelectedInterval] = useState<Interval>(Interval.minutely);
+
+  console.log("rendered");
 
   useErrors([errorGetCoinMarket, errorGetSparkline]);
 

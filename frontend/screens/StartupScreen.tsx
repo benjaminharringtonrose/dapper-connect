@@ -96,6 +96,7 @@ const StartupScreen = () => {
 
   const onCreateNewWallet = () => {
     dispatch(onboardCreateWalletRequested());
+    createWalletModalRef.current?.close();
   };
 
   const onUseExistingWallet = () => {
@@ -195,7 +196,7 @@ const StartupScreen = () => {
       </Animated.View>
       <OnboardCreateWalletModal
         ref={createWalletModalRef}
-        onPress={onCreateNewWallet}
+        onCreateNewWallet={onCreateNewWallet}
         colors={colors}
       />
     </>

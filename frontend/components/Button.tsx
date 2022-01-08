@@ -9,6 +9,8 @@ import {
   View,
 } from "react-native";
 
+import { FONTS } from "../constants";
+
 export type ButtonProps = TouchableOpacityProps & {
   readonly type?: "contained" | "bordered" | "text";
   readonly label: string;
@@ -29,7 +31,7 @@ const Button = (props: ButtonProps) => {
       disabled={props.loading || props.disabled}
       style={[
         {
-          backgroundColor: props.disabled ? props.colors.disabled : props.colors.primary,
+          backgroundColor: props.disabled ? props.colors.disabled : props.colors.button,
           paddingHorizontal: type !== "text" ? 10 : 0,
           paddingVertical: 5,
           justifyContent: "center",
@@ -44,17 +46,7 @@ const Button = (props: ButtonProps) => {
         <ActivityIndicator color={props.colors.accent} />
       ) : (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text
-            style={[
-              {
-                color: contentColor,
-                fontWeight: "600",
-              },
-              props.textStyle,
-            ]}
-          >
-            {props.label}
-          </Text>
+          <Text style={[FONTS.h3, { color: contentColor }, props.textStyle]}>{props.label}</Text>
         </View>
       )}
     </TouchableOpacity>

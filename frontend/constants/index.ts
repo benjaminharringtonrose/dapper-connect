@@ -13,6 +13,9 @@ export const SELECTED_WALLET = "SELECTED_WALLET";
 export const ADDRESS = "ADDRESS";
 export const ONBOARDED = "ONBOARDED";
 export const NEXT_INDEX = "NEXT_INDEX";
+export const PASSWORD = "PASSWORD";
+export const ACCEPTED_TCS = "ACCEPTED_TCS";
+
 export const privateKeyVersion = 1.0;
 export const seedPhraseVersion = 1.0;
 export const allWalletsVersion = 1.0;

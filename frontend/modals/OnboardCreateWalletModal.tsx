@@ -1,4 +1,4 @@
-import CheckBox from "@react-native-community/checkbox";
+import { Entypo } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Formik, FormikProps } from "formik";
 import React, { forwardRef, Ref, useState } from "react";
@@ -8,18 +8,21 @@ import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Yup from "yup";
 
-import { Button, FormInput } from "../components";
-import { COLORS, SIZES } from "../constants";
+import { Button, FormCheckBox, FormInput, FormSwitch } from "../components";
+import { COLORS, FONTS, SIZES } from "../constants";
+import { saveAcknowledgements, savePassword, toggleFaceIDInSecureStorage } from "../helpers";
 import { useAppDispatch } from "../hooks";
+import { toggleFaceId } from "../store/settings";
 
 interface FormProps {
   newPassword?: string;
   confirmPassword?: string;
   acceptedTCs?: boolean;
+  faceID?: boolean;
 }
 
 interface OnboardCreateModalProps {
-  onPress: (address: string) => void;
+  onCreateNewWallet: () => void;
   colors: ReactNativePaper.ThemeColors;
 }
 
@@ -29,8 +32,12 @@ export const OnboardCreateWalletModal = forwardRef(
 
     const ProfileSchema = Yup.object().shape({
       newPassword: Yup.string().required("Required"),
-      confirmPassword: Yup.string().required("Required"),
-      acceptedTCs: Yup.boolean().required("Required"),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
+        .required("Required"),
+      acceptedTCs: Yup.boolean()
+        .isTrue("You must accept the Terms of Use to use this product")
+        .required("Required"),
     });
 
     const dispatch = useAppDispatch();
@@ -44,10 +51,12 @@ export const OnboardCreateWalletModal = forwardRef(
       }
       try {
         setLoading(true);
-
-        ///////////
-        ////////// need to implement
-        ///////////
+        await saveAcknowledgements(true);
+        await savePassword(values.confirmPassword);
+        dispatch(toggleFaceId({ faceID: values?.faceID }));
+        await toggleFaceIDInSecureStorage(values?.faceID ? "true" : "false");
+        props.onCreateNewWallet();
+        setLoading(false);
       } catch (error) {
         setLoading(false);
         console.warn(error.message);
@@ -60,7 +69,7 @@ export const OnboardCreateWalletModal = forwardRef(
           useNativeDriver={false}
           adjustToContentHeight={true}
           modalStyle={{
-            backgroundColor: COLORS.black,
+            backgroundColor: props.colors.modal,
             bottom: insets.bottom,
           }}
           handleStyle={{ backgroundColor: props.colors.modalHandle }}
@@ -72,6 +81,7 @@ export const OnboardCreateWalletModal = forwardRef(
                 newPassword: undefined,
                 confirmPassword: undefined,
                 acceptedTCs: undefined,
+                faceID: undefined,
               }}
               validationSchema={ProfileSchema}
               onSubmit={onSubmit}
@@ -86,13 +96,30 @@ export const OnboardCreateWalletModal = forwardRef(
                 errors,
               }) => (
                 <View style={{ margin: SIZES.padding }}>
+                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                    <Text
+                      style={[FONTS.h2, { paddingBottom: SIZES.radius, color: props.colors.text }]}
+                    >
+                      {"Secure Your Wallet"}
+                    </Text>
+                    <Entypo name={"lock"} size={24} color={props.colors.text} />
+                  </View>
+
+                  <Text
+                    style={[FONTS.body4, { paddingBottom: SIZES.radius, color: props.colors.text }]}
+                  >
+                    {
+                      "You can recover your 12-word recovery phrase with this password if you happen to lose it. Since your password be securely stored on your device, DapperConnect cannot recover it for you."
+                    }
+                  </Text>
                   <View
                     style={{
-                      backgroundColor: COLORS.gray,
+                      backgroundColor: props.colors.input,
                       borderRadius: SIZES.radius,
                       borderWidth: 1,
                       borderColor: COLORS.lightGray,
                       padding: SIZES.radius,
+                      marginVertical: SIZES.radius,
                     }}
                   >
                     <FormInput
@@ -129,38 +156,22 @@ export const OnboardCreateWalletModal = forwardRef(
                       noBorder
                     />
                   </View>
-                  <View style={{ marginTop: SIZES.padding }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <CheckBox
-                        value={values.acceptedTCs}
-                        onValueChange={(nextValue) => setFieldValue("acceptedTCs", nextValue)}
-                        boxType={"square"}
-                        onCheckColor={props.colors.primary}
-                        onTintColor={props.colors.primary}
-                      />
-                      <Text style={{ color: props.colors.text, marginLeft: SIZES.radius }}>
-                        {"I have read and agree to the Terms of Use"}
-                      </Text>
-                    </View>
-                    {!!errors.acceptedTCs && (
-                      <Text
-                        style={{
-                          marginTop: SIZES.radius,
-                          color: props.colors.error,
-                          paddingLeft: SIZES.radius,
-                        }}
-                      >
-                        {errors.acceptedTCs}
-                      </Text>
-                    )}
-                  </View>
-
+                  <FormCheckBox
+                    label={"I have read and agree to the Terms of Use"}
+                    value={values.acceptedTCs}
+                    onSetFieldValue={(nextValue) => setFieldValue("acceptedTCs", nextValue)}
+                    touched={touched.acceptedTCs}
+                    error={errors.acceptedTCs}
+                    colors={props.colors}
+                    style={{ marginVertical: SIZES.radius }}
+                  />
+                  <FormSwitch
+                    label={"Secure wallet with Face ID?"}
+                    value={values.faceID}
+                    setFieldValue={(nextValue) => setFieldValue("faceID", nextValue)}
+                    colors={props.colors}
+                    style={{ marginVertical: SIZES.radius }}
+                  />
                   <Button
                     type={"bordered"}
                     label={"Create"}
@@ -169,7 +180,7 @@ export const OnboardCreateWalletModal = forwardRef(
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                       handleSubmit();
                     }}
-                    style={{ marginTop: SIZES.padding }}
+                    style={{ marginVertical: SIZES.radius }}
                     colors={props.colors}
                   />
                 </View>

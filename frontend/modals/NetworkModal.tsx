@@ -79,7 +79,7 @@ export const NetworkModal = forwardRef((props: NetworkModalProps, ref: Ref<Modal
         }}
         modalStyle={{
           bottom: insets.bottom,
-          backgroundColor: COLORS.black,
+          backgroundColor: props.colors.modal,
         }}
       />
     </Portal>

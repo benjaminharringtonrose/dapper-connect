@@ -163,7 +163,7 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
         useNativeDriver={false}
         adjustToContentHeight={true}
         modalStyle={{
-          backgroundColor: props.colors.background,
+          backgroundColor: props.colors.modal,
           bottom: insets.bottom,
         }}
         handleStyle={{ backgroundColor: props.colors.modalHandle }}

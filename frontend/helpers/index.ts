@@ -4,6 +4,7 @@ import { addHexPrefix } from "ethereumjs-util";
 import { hdkey } from "ethereumjs-wallet";
 
 import {
+  ACCEPTED_TCS,
   ADDRESS,
   ALL_WALLETS,
   COLOR_SCHEME,
@@ -12,6 +13,7 @@ import {
   NETWORK,
   NEXT_INDEX,
   ONBOARDED,
+  PASSWORD,
   PEACE_COLORS,
   PRIVATE_KEY,
   privateKeyVersion,
@@ -137,6 +139,20 @@ export const getOnboardStatus = async () => {
     return false;
   }
 };
+
+export const saveAcknowledgements = async (acceptedTCs: boolean) => {
+  await saveString(ACCEPTED_TCS, acceptedTCs ? "true" : "false");
+};
+
+export const getAcknowledgements = async () => {
+  const acceptedTCs = await loadString(ACCEPTED_TCS);
+  if (acceptedTCs === "true") {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export const saveOnboardStatus = async (onboarded: boolean) => {
   await saveString(ONBOARDED, onboarded ? "true" : "false");
 };
@@ -184,6 +200,14 @@ export const getSeedPhrase = async (privateKey: any) => {
 
 export const saveAddress = async (address: string): Promise<void> => {
   return saveString(ADDRESS, address);
+};
+
+export const savePassword = async (password: string): Promise<void> => {
+  return saveString(PASSWORD, password);
+};
+
+export const getPassword = async (): Promise<string> => {
+  return await loadString(PASSWORD);
 };
 
 export const getNextIndexInSecureStorage = async () => {
@@ -288,5 +312,13 @@ export const removeOnboardStatusInSecureStorage = async (): Promise<void> => {
 };
 
 export const removeNextIndexInSecureStorage = async (): Promise<void> => {
+  return await remove(NEXT_INDEX);
+};
+
+export const removeAcknowledgementsInSecureStorage = async (): Promise<void> => {
+  return await remove(NEXT_INDEX);
+};
+
+export const removePasswordInSecureStorage = async (): Promise<void> => {
   return await remove(NEXT_INDEX);
 };

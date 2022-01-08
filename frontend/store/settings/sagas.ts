@@ -7,11 +7,13 @@ import {
   getNetwork,
   getNextIndexInSecureStorage,
   getOnboardStatus,
+  removeAcknowledgementsInSecureStorage,
   removeColorSchemeInSecureStorage,
   removeFaceIDInSecureStorage,
   removeNetworkInSecureStorage,
   removeNextIndexInSecureStorage,
   removeOnboardStatusInSecureStorage,
+  removePasswordInSecureStorage,
   removePrivateKeyInSecureStorage,
   removeSeedPhraseInSecureStorage,
   removeSelectedWalletInSecureStorage,
@@ -93,6 +95,8 @@ export function* hardResetSaga() {
     yield call(removeSelectedWalletInSecureStorage);
     yield call(removeOnboardStatusInSecureStorage);
     yield call(removeNextIndexInSecureStorage);
+    yield call(removeAcknowledgementsInSecureStorage);
+    yield call(removePasswordInSecureStorage);
     yield put(hardResetAppSucceeded());
   } catch (error) {
     console.log(error.message);

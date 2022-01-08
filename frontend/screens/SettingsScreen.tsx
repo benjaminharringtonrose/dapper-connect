@@ -1,4 +1,5 @@
 import { Feather } from "@expo/vector-icons";
+import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import * as Haptics from "expo-haptics";
 import React, { useRef } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
@@ -20,6 +21,7 @@ const SettingsScreen = () => {
   const { network, colorScheme, faceID } = useAppSelector((state) => state.settings);
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
+  const connector = useWalletConnect();
 
   const getNetworkName = (network: Network) => {
     switch (network) {
@@ -88,6 +90,7 @@ const SettingsScreen = () => {
             onPress={async () => {
               await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
               dispatch(hardResetAppRequested());
+              connector.killSession();
             }}
             colors={colors}
           />

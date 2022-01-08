@@ -60,7 +60,7 @@ export const CreateWalletModal = forwardRef((props: CreateModalProps, ref: Ref<M
         useNativeDriver={false}
         adjustToContentHeight={true}
         modalStyle={{
-          backgroundColor: COLORS.black,
+          backgroundColor: props.colors.modal,
           bottom: insets.bottom,
         }}
         handleStyle={{ backgroundColor: props.colors.modalHandle }}

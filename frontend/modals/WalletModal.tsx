@@ -209,7 +209,7 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
         }}
         modalStyle={{
           bottom: insets.bottom,
-          backgroundColor: props.colors.background,
+          backgroundColor: props.colors.modal,
         }}
         handleStyle={{ backgroundColor: props.colors.modalHandle }}
       />

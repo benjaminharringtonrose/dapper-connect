@@ -6,8 +6,7 @@ import {
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import React, { useEffect } from "react";
-import { Alert, LogBox, StatusBar } from "react-native";
-import RNExitApp from "react-native-exit-app";
+import { LogBox, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   DarkTheme as PaperDarkTheme,
@@ -23,7 +22,7 @@ import { COLORS } from "./constants";
 import { useAppDispatch, useAppSelector } from "./hooks";
 import { AppStack, StartupStack } from "./navigation";
 import { store } from "./store";
-import { frontloadAppRequested, setAuthenticated } from "./store/settings/slice";
+import { frontloadAppRequested } from "./store/settings/slice";
 
 LogBox.ignoreLogs([
   "Warning: The provided value 'ms-stream' is not a valid 'responseType'.",
@@ -46,6 +45,8 @@ declare global {
       textGray: string;
       shadow: string;
       modalHandle: string;
+      modal: string;
+      button: string;
     }
   }
 }
@@ -85,7 +86,9 @@ const Root = () => {
       transparentBlack: "rgba(0, 0, 0, 0.5)",
       shadow: "#e5e5e5",
       backdrop: "#ededed",
+      modal: COLORS.white,
       modalHandle: COLORS.white,
+      button: "#0E68B3",
     },
   };
 
@@ -105,7 +108,7 @@ const Root = () => {
       activityIndicator: COLORS.white,
       error: "#cf6679",
       success: "#03dac6",
-      input: COLORS.gray,
+      input: "#262626",
       disabled: COLORS.gray,
       bottomTabActive: "",
       bottomTabInactive: "#4c4c4c",
@@ -113,7 +116,9 @@ const Root = () => {
       transparentBlack: COLORS.transparentBlack,
       shadow: "#191919",
       backdrop: COLORS.black,
-      modalHandle: "#4682b4",
+      modal: "#191919",
+      modalHandle: COLORS.white,
+      button: COLORS.white,
     },
   };
 
