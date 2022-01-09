@@ -1,3 +1,7 @@
+export interface IStringMap<T> {
+  [index: string]: T;
+}
+
 export type Network = "mainnet" | "kovan";
 
 export type ColorScheme = "light" | "dark" | null | undefined;

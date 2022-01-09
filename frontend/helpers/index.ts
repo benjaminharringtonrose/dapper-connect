@@ -8,18 +8,14 @@ import { ALL_WALLETS, DEFAULT_HD_PATH, PEACE_COLORS } from "../constants";
 import { setNextIndex } from "../store/wallet/slice";
 import { DapperWallet } from "../types";
 
-import { loadObject, loadString, remove, saveObject, saveString } from "./common";
-
 let store;
 
 export const injectStoreIntoHelpers = (_store) => {
   store = _store;
 };
 
-export { loadObject, loadString, remove, saveObject, saveString };
-
 export const getAllWallets = async (): Promise<DapperWallet[]> => {
-  const allWallets = await loadString(ALL_WALLETS);
+  const allWallets = await secureStore.loadString(ALL_WALLETS);
   if (!allWallets) return [];
   const walletsObject: Record<string, DapperWallet> = JSON.parse(allWallets);
   const walletsArray: DapperWallet[] = [];
@@ -44,7 +40,7 @@ export const addWallet = async (
     ...walletsObject,
     [wallet.address as string]: wallet,
   };
-  await saveObject(ALL_WALLETS, walletsObject);
+  await secureStore.saveObject(ALL_WALLETS, walletsObject);
   return await getAllWallets();
 };
 
@@ -61,7 +57,7 @@ export const removeWallet = async (
       };
     }
   });
-  await saveObject(ALL_WALLETS, walletsObject);
+  await secureStore.saveObject(ALL_WALLETS, walletsObject);
   return await getAllWallets();
 };
 
