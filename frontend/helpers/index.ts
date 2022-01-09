@@ -283,7 +283,6 @@ export const getFaceIDInSecureStorage = async (): Promise<boolean> => {
 };
 
 export const toggleFaceIDInSecureStorage = async (faceID: "true" | "false"): Promise<void> => {
-  console.log("faceID", faceID);
   return await saveString(FACE_ID, faceID);
 };
 
@@ -322,3 +321,25 @@ export const removeAcknowledgementsInSecureStorage = async (): Promise<void> => 
 export const removePasswordInSecureStorage = async (): Promise<void> => {
   return await remove(NEXT_INDEX);
 };
+
+export const getSeedPhraseFromSecureStore = async () => {
+  try {
+    const address = await getAddressInSecureStorage();
+    const { privateKey } = await getPrivateKey(address);
+    const { seedphrase } = await getSeedPhrase(privateKey as string);
+    return seedphrase as string;
+  } catch (error) {
+    console.warn("getSeedPhraseFromSecureStore Error:", error);
+    console.log("getSeedPhraseFromSecureStore Error:", error);
+  }
+};
+
+export function sanitizeSeedPhrase(str: string) {
+  // trims extra whitespaces, removes new lines and line breaks
+  return str
+    .replace(/(\r\n|\n|\r)/gm, " ")
+    .trim()
+    .split(" ")
+    .filter((word) => !!word)
+    .join(" ");
+}

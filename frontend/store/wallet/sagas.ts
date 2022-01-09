@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { PayloadAction } from "@reduxjs/toolkit";
-import { entropyToMnemonic, generateMnemonic } from "bip39";
+import { entropyToMnemonic } from "bip39";
 import { addHexPrefix } from "ethereumjs-util";
 import * as Random from "expo-random";
 import { call, put, select, takeLatest } from "redux-saga/effects";
@@ -17,7 +17,6 @@ import {
   removeWallet,
   saveAddress,
   saveNextIndex,
-  saveOnboardStatus,
   savePrivateKey,
   saveSeedPhrase,
   toChecksumAddress,
@@ -32,9 +31,9 @@ import {
   getWalletsRequested,
   GetWalletsRequestedAction,
   getWalletsSucceeded,
-  onboardCreateWalletFailed,
-  onboardCreateWalletRequested,
-  onboardCreateWalletSucceeded,
+  onboardWalletFailed,
+  onboardWalletRequested,
+  onboardWalletSucceeded,
   RemoveWalletRequestedAction,
 } from "../wallet/slice";
 
@@ -47,19 +46,25 @@ import {
   removeWalletSucceeded,
 } from "./slice";
 
-export function* onboardCreateWalletSaga(_: PayloadAction<undefined>) {
+export function* onboardWalletSaga(action: PayloadAction<{ seedphrase?: string }>) {
   try {
-    // const seedPhrase = yield call(generateMnemonic);
-    const randomBytes = yield call(Random.getRandomBytesAsync, 16);
-    const seedPhrase = entropyToMnemonic(randomBytes);
-    console.log(seedPhrase);
-    const { wallet } = yield call(deriveAccountFromMnemonic, seedPhrase, 0);
+    let seed: string | undefined;
+    const { seedphrase } = action.payload;
+    seed = seedphrase;
+
+    // if no seed, create one
+    if (!seed) {
+      const randomBytes = yield call(Random.getRandomBytesAsync, 16);
+      seed = entropyToMnemonic(randomBytes);
+    }
+    // index 1 because first wallet
+    const { wallet } = yield call(deriveAccountFromMnemonic, seed, 0);
     const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
     const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
 
-    yield call(saveNextIndex, 0);
+    yield call(saveNextIndex, 1);
     yield call(savePrivateKey, walletAddress, walletPkey);
-    yield call(saveSeedPhrase, seedPhrase, walletPkey);
+    yield call(saveSeedPhrase, seed, walletPkey);
     yield call(saveAddress, walletAddress);
 
     const color = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
@@ -75,11 +80,11 @@ export function* onboardCreateWalletSaga(_: PayloadAction<undefined>) {
 
     yield call(addWalletSaga, addWalletRequested({ wallet: dapperWallet }));
 
-    yield put(onboardCreateWalletSucceeded());
+    yield put(onboardWalletSucceeded());
   } catch (error) {
-    console.log("onboardCreateWalletSaga Error: ", error);
-    console.warn("onboardCreateWalletSaga Error: ", error);
-    put(onboardCreateWalletFailed({ error }));
+    console.log("onboardWalletSaga Error: ", error);
+    console.warn("onboardWalletSaga Error: ", error);
+    put(onboardWalletFailed({ error }));
   }
 }
 
@@ -153,7 +158,7 @@ function* walletSaga() {
   yield takeLatest(getWalletsRequested.type, getWalletsSaga);
   yield takeLatest(addWalletRequested.type, addWalletSaga);
   yield takeLatest(removeWalletRequested.type, removeWalletSaga);
-  yield takeLatest(onboardCreateWalletRequested.type, onboardCreateWalletSaga);
+  yield takeLatest(onboardWalletRequested.type, onboardWalletSaga);
   yield takeLatest(addNextWalletRequested.type, addNextWalletSaga);
 }
 

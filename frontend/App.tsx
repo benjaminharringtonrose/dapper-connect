@@ -109,7 +109,7 @@ const Root = () => {
       border: "#404040",
       activityIndicator: COLORS.white,
       error: "#cf6679",
-      success: "#03dac6",
+      success: "#50c878",
       input: "#262626",
       disabled: COLORS.gray,
       bottomTabActive: "",

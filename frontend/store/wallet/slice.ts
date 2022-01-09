@@ -14,8 +14,8 @@ export interface WalletState {
   loadingRemoveWallet: boolean;
   errorRemoveWallet?: Error;
   onboarded: boolean;
-  loadingOnboardCreateWallet: boolean;
-  errorOnboardCreateWallet?: Error;
+  loadingOnboardWallet: boolean;
+  errorOnboardWallet?: Error;
   nextIndex: number;
   loadingAddNextWallet: boolean;
   errorAddNextWallet?: Error;
@@ -30,8 +30,8 @@ const initialState: WalletState = {
   loadingRemoveWallet: false,
   errorRemoveWallet: undefined,
   onboarded: false,
-  loadingOnboardCreateWallet: false,
-  errorOnboardCreateWallet: undefined,
+  loadingOnboardWallet: false,
+  errorOnboardWallet: undefined,
   nextIndex: 0,
   loadingAddNextWallet: false,
   errorAddNextWallet: undefined,
@@ -89,15 +89,15 @@ const walletSlice = createSlice({
     resetWallets: (state, _: PayloadAction<undefined>) => {
       state.wallets = [];
     },
-    onboardCreateWalletRequested: (state, _: PayloadAction<undefined>) => {
-      state.loadingOnboardCreateWallet = true;
+    onboardWalletRequested: (state, _: PayloadAction<{ seedphrase?: string }>) => {
+      state.loadingOnboardWallet = true;
     },
-    onboardCreateWalletSucceeded: (state, _: PayloadAction<undefined>) => {
-      state.loadingOnboardCreateWallet = false;
+    onboardWalletSucceeded: (state, _: PayloadAction<undefined>) => {
+      state.loadingOnboardWallet = false;
     },
-    onboardCreateWalletFailed: (state, action) => {
-      state.loadingOnboardCreateWallet = false;
-      state.errorOnboardCreateWallet = action.payload.error;
+    onboardWalletFailed: (state, action) => {
+      state.loadingOnboardWallet = false;
+      state.errorOnboardWallet = action.payload.error;
     },
     setOnboardStatus: (state, action: PayloadAction<{ onboarded: boolean }>) => {
       state.onboarded = action.payload.onboarded;
@@ -129,9 +129,9 @@ export const {
   removeWalletSucceeded,
   removeWalletFailed,
   resetWallets,
-  onboardCreateWalletRequested,
-  onboardCreateWalletSucceeded,
-  onboardCreateWalletFailed,
+  onboardWalletRequested,
+  onboardWalletSucceeded,
+  onboardWalletFailed,
   setOnboardStatus,
   setNextIndex,
   addNextWalletRequested,

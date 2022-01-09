@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 import * as LocalAuthentication from "expo-local-authentication";
 import React, { useEffect, useRef } from "react";
-import { ActivityIndicator, Alert, Animated, Easing, Image, View } from "react-native";
+import { Alert, Animated, Easing, Image, View } from "react-native";
 import RNExitApp from "react-native-exit-app";
 import { Modalize } from "react-native-modalize";
 import { useTheme } from "react-native-paper";
@@ -12,40 +12,76 @@ import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { saveOnboardStatus } from "../helpers";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { OnboardCreateWalletModal } from "../modals/OnboardCreateWalletModal";
+import { OnboardExistingWalletModal } from "../modals/OnboardExistingWalletModal";
 import { OnboardSeedPhraseModal } from "../modals/OnboardSeedPhraseModal";
 import { setAuthenticated } from "../store/settings/slice";
-import { onboardCreateWalletRequested, setOnboardStatus } from "../store/wallet/slice";
+import { onboardWalletRequested, setOnboardStatus } from "../store/wallet/slice";
 
 import RootView from "./RootView";
 
 const StartupScreen = () => {
-  const { loadingFrontloadApp, faceID } = useAppSelector((state) => state.settings);
-  const { onboarded, loadingOnboardCreateWallet, wallets } = useAppSelector(
-    (state) => state.wallets
-  );
+  const { faceID } = useAppSelector((state) => state.settings);
+  const { onboarded, loadingOnboardWallet, wallets } = useAppSelector((state) => state.wallets);
 
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
 
   const anim = useRef(new Animated.Value(0)).current;
+  const floatAnim = useRef(new Animated.Value(0)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
+
   const createWalletModalRef = useRef<Modalize>(null);
   const seedPhraseModalRef = useRef<Modalize>(null);
+  const existingWalletModalRef = useRef<Modalize>(null);
 
   useEffect(() => {
     Animated.parallel([
+      // shift into place
       Animated.timing(anim, {
-        toValue: 1,
+        toValue: 0,
         duration: 1000,
         useNativeDriver: true,
         easing: Easing.bounce,
       }),
+      // opacity
       Animated.timing(opacity, {
         toValue: 1,
-        duration: 500,
+        duration: 1000,
         useNativeDriver: true,
       }),
+
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(floatAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(floatAnim, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      ),
+
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay(100),
+          Animated.timing(rotateAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotateAnim, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      ),
     ]).start();
   }, []);
 
@@ -62,11 +98,10 @@ const StartupScreen = () => {
   }, [faceID, onboarded]);
 
   useEffect(() => {
-    if (!loadingOnboardCreateWallet && !!wallets[0] && !onboarded) {
-      console.log("triggered");
+    if (!loadingOnboardWallet && !!wallets[0] && !onboarded) {
       seedPhraseModalRef.current?.open();
     }
-  }, [loadingOnboardCreateWallet, wallets]);
+  }, [loadingOnboardWallet, wallets]);
 
   const biometricsAuth = async () => {
     try {
@@ -108,13 +143,23 @@ const StartupScreen = () => {
     return;
   };
 
+  // new wallet flow
   const onCreateNewWallet = () => {
-    dispatch(onboardCreateWalletRequested());
+    dispatch(onboardWalletRequested({}));
     createWalletModalRef.current?.close();
   };
+  const onCompleteNewOnboarding = async () => {
+    await saveOnboardStatus(true);
+    dispatch(setOnboardStatus({ onboarded: true }));
+    seedPhraseModalRef.current?.close();
+  };
 
-  const onUseExistingWallet = () => {
-    //
+  // existing wallet flow
+  const onUseExistingWallet = async (seedphrase) => {
+    dispatch(onboardWalletRequested({ seedphrase }));
+    await saveOnboardStatus(true);
+    dispatch(setOnboardStatus({ onboarded: true }));
+    existingWalletModalRef.current?.close();
   };
 
   return (
@@ -130,11 +175,18 @@ const StartupScreen = () => {
         >
           <Animated.View
             style={{
+              opacity,
               transform: [
                 {
-                  translateY: anim.interpolate({
+                  translateY: floatAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [-SIZES.height / 2 + 60, -60],
+                    outputRange: [-89, -80],
+                  }),
+                },
+                {
+                  rotate: rotateAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ["-2deg", "2deg"],
                   }),
                 },
               ],
@@ -170,11 +222,6 @@ const StartupScreen = () => {
           >
             {"DapperWallet"}
           </Animated.Text>
-          {loadingFrontloadApp && (
-            <Animated.View style={{ opacity }}>
-              <ActivityIndicator size={"large"} color={colors.activityIndicator} />
-            </Animated.View>
-          )}
         </View>
         <Animated.View style={{ opacity }}>
           {!onboarded && (
@@ -182,7 +229,7 @@ const StartupScreen = () => {
               label={"Create a wallet"}
               colors={colors}
               onPress={() => createWalletModalRef.current?.open()}
-              loading={loadingOnboardCreateWallet}
+              loading={loadingOnboardWallet}
               style={{
                 position: "absolute",
                 bottom: insets.bottom + 100,
@@ -198,7 +245,7 @@ const StartupScreen = () => {
             <Button
               label={"Import wallet"}
               colors={colors}
-              onPress={onUseExistingWallet}
+              onPress={() => existingWalletModalRef.current?.open()}
               style={{
                 position: "absolute",
                 bottom: insets.bottom + 50,
@@ -216,12 +263,12 @@ const StartupScreen = () => {
         />
         <OnboardSeedPhraseModal
           ref={seedPhraseModalRef}
-          onCreateCompleteOnboarding={async () => {
-            console.log("here");
-            await saveOnboardStatus(true);
-            dispatch(setOnboardStatus({ onboarded: true }));
-            seedPhraseModalRef.current?.close();
-          }}
+          onCreateCompleteOnboarding={onCompleteNewOnboarding}
+          colors={colors}
+        />
+        <OnboardExistingWalletModal
+          ref={existingWalletModalRef}
+          onUseExistingWallet={onUseExistingWallet}
           colors={colors}
         />
       </>

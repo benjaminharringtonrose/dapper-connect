@@ -22,7 +22,6 @@ const HomeScreen = () => {
     refreshingHomeScreen,
   } = useAppSelector((state) => state.market);
   const dispatch = useAppDispatch();
-
   const { colors } = useTheme();
 
   const [selectedId, setSelectedId] = useState<string>(coins[0]?.id);

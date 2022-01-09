@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "react-native-paper";
 
-import { COLORS, FONTS, SIZES } from "../constants";
+import { FONTS, SIZES } from "../constants";
 
 import RootView from "./RootView";
 
@@ -25,7 +25,6 @@ const NotificationScreen = () => {
         );
       },
     });
-    console.log("mounted");
   }, []);
 
   return (

@@ -65,7 +65,6 @@ export function* frontloadAppSaga() {
     );
     yield call(getExchangesSaga, getExchangesRequested());
     yield call(getWalletsSaga, getWalletsRequested());
-    yield delay(1000);
     yield put(frontloadAppSucceeded());
   } catch (error) {
     console.log(error.message);
