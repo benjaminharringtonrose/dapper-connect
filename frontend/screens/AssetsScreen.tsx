@@ -11,6 +11,7 @@ import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } 
 import { Modalize } from "react-native-modalize";
 import { useTheme } from "react-native-paper";
 
+import { web3 } from "../api/web3";
 import { BalanceInfo, FadeInView, IconTextButton } from "../components";
 import { FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
@@ -20,7 +21,6 @@ import { getAccountRequested } from "../store/account";
 import { resetHoldings } from "../store/market";
 import { setToastMessages } from "../store/settings";
 import { addWalletRequested, getWalletsRequested, removeWalletRequested } from "../store/wallet";
-import { web3 } from "../store/web3";
 import { Holding } from "../types";
 import { CurrencyFormatter } from "../util";
 

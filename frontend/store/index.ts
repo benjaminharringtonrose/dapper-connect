@@ -2,8 +2,7 @@ import { applyMiddleware, combineReducers, createStore } from "@reduxjs/toolkit"
 import createSagaMiddleware from "redux-saga";
 import { fork } from "redux-saga/effects";
 
-import { injectStoreIntoClasses } from "../classes";
-import { injectStoreIntoHelpers } from "../helpers";
+import { networkMiddleware } from "../middleware";
 
 import accountSaga from "./account/sagas";
 import accountReducer from "./account/slice";
@@ -15,7 +14,6 @@ import settingsSaga from "./settings/sagas";
 import settingsReducer from "./settings/slice";
 import walletSaga from "./wallet/sagas";
 import walletReducer from "./wallet/slice";
-import { injectStoreIntoWeb3 } from "./web3";
 
 function* rootSaga() {
   yield fork(accountSaga);
@@ -35,13 +33,9 @@ const reducer = combineReducers({
   wallets: walletReducer,
 });
 
-export const store = createStore(reducer, applyMiddleware(sagaMiddleware));
+export const store = createStore(reducer, applyMiddleware(sagaMiddleware, networkMiddleware));
 
 sagaMiddleware.run(rootSaga);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-injectStoreIntoWeb3(store);
-injectStoreIntoHelpers(store);
-injectStoreIntoClasses(store);
