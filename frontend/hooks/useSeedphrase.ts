@@ -9,6 +9,6 @@ export const useSeedphrase = () => {
       const result = await getSeedPhraseFromSecureStore();
       setSeedphrase(result);
     })();
-  }, [seedphrase]);
+  });
   return seedphrase;
 };

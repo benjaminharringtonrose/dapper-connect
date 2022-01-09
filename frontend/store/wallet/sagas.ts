@@ -57,14 +57,13 @@ export function* onboardWalletSaga(action: PayloadAction<{ seedphrase?: string }
       const randomBytes = yield call(Random.getRandomBytesAsync, 16);
       seed = entropyToMnemonic(randomBytes);
     }
-    // index 1 because first wallet
+    // index 0 because first wallet
     const { wallet } = yield call(deriveAccountFromMnemonic, seed, 0);
     const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
     const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
-
+    yield call(saveSeedPhrase, seed, walletPkey);
     yield call(saveNextIndex, 1);
     yield call(savePrivateKey, walletAddress, walletPkey);
-    yield call(saveSeedPhrase, seed, walletPkey);
     yield call(saveAddress, walletAddress);
 
     const color = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
@@ -118,8 +117,8 @@ export function* addNextWalletSaga(action: PayloadAction<{ walletName: string }>
     const nextIndex = yield call(getNextIndexInSecureStorage);
     const address = yield call(getAddressInSecureStorage);
     const { privateKey } = yield call(getPrivateKey, address);
-    const { seedPhrase } = yield call(getSeedPhrase, privateKey);
-    const { wallet } = deriveAccountFromMnemonic(seedPhrase as string, nextIndex);
+    const { seedphrase } = yield call(getSeedPhrase, privateKey);
+    const { wallet } = deriveAccountFromMnemonic(seedphrase, nextIndex);
     const walletColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
     const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
     const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));

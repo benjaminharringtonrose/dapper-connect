@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "../components";
 import { FONTS, SIZES } from "../constants";
-import { getAddressInSecureStorage, getPrivateKey, getSeedPhrase } from "../helpers";
+import { useSeedphrase } from "../hooks/useSeedphrase";
 
 interface OnboardSeedPhraseModalProps {
   onCreateCompleteOnboarding: () => void;
@@ -20,37 +20,19 @@ export const OnboardSeedPhraseModal = forwardRef(
   (props: OnboardSeedPhraseModalProps, ref: Ref<Modalize>) => {
     const insets = useSafeAreaInsets();
 
-    const [loading, setLoading] = useState<boolean>(false);
     const [seedPhraseArray, setSeedPhraseArray] = useState<string[]>([]);
     const [secretPhrasCopied, setSecretPhraseCopied] = useState<boolean>(false);
 
-    useEffect(() => {
-      const initSeedPhrase = async () => {
-        try {
-          const address = await getAddressInSecureStorage();
-          const { privateKey } = await getPrivateKey(address);
-          const { seedphrase } = await getSeedPhrase(privateKey as string);
-          const seedPhraseArr = String(seedphrase).split(" ");
-          setSeedPhraseArray(seedPhraseArr);
-        } catch (error) {
-          console.warn(error);
-        }
-      };
-      initSeedPhrase();
-    }, []);
+    const seedphrase = useSeedphrase();
 
-    const onSubmit = async () => {
-      try {
-        setLoading(true);
-        //
-        console.log("hjsdgfjhgsdfjh");
-        props?.onCreateCompleteOnboarding();
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.warn(error.message);
+    useEffect(() => {
+      let phraseWords: string[];
+      if (seedphrase) {
+        phraseWords = String(seedphrase).split(" ");
       }
-    };
+      setSeedPhraseArray(phraseWords);
+    }, [seedphrase]);
+
     return (
       <Portal>
         <Modalize
@@ -83,7 +65,7 @@ export const OnboardSeedPhraseModal = forwardRef(
               justifyContent: "space-between",
             }}
           >
-            {seedPhraseArray.map((phrase, index) => {
+            {seedPhraseArray?.map((phrase, index) => {
               return (
                 <View
                   key={`${index}-${phrase}`}
@@ -116,10 +98,9 @@ export const OnboardSeedPhraseModal = forwardRef(
           />
           <Button
             label={"Finish"}
-            loading={loading}
             onPress={async () => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              await onSubmit();
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              props?.onCreateCompleteOnboarding();
             }}
             style={{ marginHorizontal: SIZES.padding, marginBottom: SIZES.radius }}
             colors={props.colors}

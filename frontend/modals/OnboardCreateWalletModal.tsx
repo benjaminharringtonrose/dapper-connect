@@ -2,7 +2,7 @@ import { Entypo } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Formik, FormikProps } from "formik";
 import React, { forwardRef, Ref, useState } from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -68,9 +68,7 @@ export const OnboardCreateWalletModal = forwardRef(
           ref={ref}
           useNativeDriver={false}
           adjustToContentHeight={true}
-          modalStyle={{
-            backgroundColor: props.colors.modal,
-          }}
+          modalStyle={{ backgroundColor: props.colors.modal }}
           handleStyle={{ backgroundColor: props.colors.modalHandle }}
         >
           <View>
@@ -155,15 +153,26 @@ export const OnboardCreateWalletModal = forwardRef(
                       noBorder
                     />
                   </View>
-                  <FormCheckBox
-                    label={"I have read and agree to the Terms of Use"}
-                    value={values.acceptedTCs}
-                    onSetFieldValue={(nextValue) => setFieldValue("acceptedTCs", nextValue)}
-                    touched={touched.acceptedTCs}
-                    error={errors.acceptedTCs}
-                    colors={props.colors}
-                    style={{ marginVertical: SIZES.radius }}
-                  />
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <FormCheckBox
+                      label={"I have read and agree to the"}
+                      value={values.acceptedTCs}
+                      onSetFieldValue={(nextValue) => setFieldValue("acceptedTCs", nextValue)}
+                      touched={touched.acceptedTCs}
+                      error={errors.acceptedTCs}
+                      colors={props.colors}
+                      style={{ marginVertical: SIZES.radius }}
+                    />
+                    <TouchableText
+                      label={"Terms of Use"}
+                      color={props.colors.primary}
+                      onPress={() => {
+                        //
+                      }}
+                      containerStyle={{ marginLeft: 4 }}
+                    />
+                  </View>
+
                   <FormSwitch
                     label={"Secure wallet with Face ID?"}
                     value={values.faceID}
@@ -192,3 +201,11 @@ export const OnboardCreateWalletModal = forwardRef(
     );
   }
 );
+
+const TouchableText = ({ label, color, onPress, containerStyle }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={containerStyle}>
+      <Text style={[FONTS.body4, { color }]}>{label}</Text>
+    </TouchableOpacity>
+  );
+};

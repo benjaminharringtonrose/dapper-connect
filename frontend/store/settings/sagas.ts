@@ -2,11 +2,13 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { call, delay, put, takeLatest } from "redux-saga/effects";
 
 import {
+  getAddressInSecureStorage,
   getColorScheme,
   getFaceIDInSecureStorage,
   getNetwork,
   getNextIndexInSecureStorage,
   getOnboardStatus,
+  getPrivateKey,
   removeAcknowledgementsInSecureStorage,
   removeColorSchemeInSecureStorage,
   removeFaceIDInSecureStorage,
@@ -85,12 +87,14 @@ export function* setColorSchemeSaga(action: PayloadAction<{ colorScheme: ColorSc
 
 export function* hardResetSaga() {
   try {
+    const address = yield call(getAddressInSecureStorage);
+    const { privateKey } = yield call(getPrivateKey, address);
+    yield call(removeSeedPhraseInSecureStorage, privateKey);
     yield call(resetWalletsInSecureStorage);
     yield call(removeNetworkInSecureStorage);
     yield call(removeColorSchemeInSecureStorage);
     yield call(removeFaceIDInSecureStorage);
     yield call(removePrivateKeyInSecureStorage);
-    yield call(removeSeedPhraseInSecureStorage);
     yield call(removeSelectedWalletInSecureStorage);
     yield call(removeOnboardStatusInSecureStorage);
     yield call(removeNextIndexInSecureStorage);

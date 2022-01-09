@@ -113,8 +113,8 @@ export const createNextWallet = async (name: string) => {
   const nextIndex = await getNextIndexInSecureStorage();
   const address = await getAddressInSecureStorage();
   const { privateKey } = await getPrivateKey(address);
-  const { seedPhrase } = await getSeedPhrase(privateKey);
-  const { wallet } = deriveAccountFromMnemonic(seedPhrase as string, nextIndex);
+  const { seedphrase } = await getSeedPhrase(privateKey);
+  const { wallet } = deriveAccountFromMnemonic(seedphrase as string, nextIndex);
   const walletColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
   const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
   const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
@@ -168,8 +168,12 @@ export const savePrivateKey = async (address: string, privateKey: string) => {
 
 export const getPrivateKey = async (address: string) => {
   try {
-    const pkey = await loadObject(`${PRIVATE_KEY}_${address}`);
-    return pkey || undefined;
+    const obj = await loadObject(`${PRIVATE_KEY}_${address}`);
+    return {
+      address: obj?.address,
+      privateKey: obj?.privateKey,
+      version: obj?.version,
+    };
   } catch (error) {
     console.log("getPrivateKey Error:", error);
     console.warn("getPrivateKey Error:", error);
@@ -189,8 +193,12 @@ export const saveSeedPhrase = async (seedphrase: string, privateKey: any): Promi
 export const getSeedPhrase = async (privateKey: any) => {
   try {
     const key = `${SEED_PHRASE}_${privateKey}`;
-    const seedPhraseData = await loadObject(key);
-    return seedPhraseData || undefined;
+    const obj = await loadObject(key);
+    return {
+      privateKey: obj?.privateKey,
+      seedphrase: obj?.seedphrase,
+      version: obj?.version,
+    };
   } catch (error) {
     console.log("getSeedPhrase Error:", error);
     console.warn("getSeedPhrase Error:", error);
@@ -298,8 +306,8 @@ export const removeAddressInSecureStorage = async (): Promise<void> => {
   return await remove(ADDRESS);
 };
 
-export const removeSeedPhraseInSecureStorage = async (): Promise<void> => {
-  return await remove(SEED_PHRASE);
+export const removeSeedPhraseInSecureStorage = async (privateKey: string): Promise<void> => {
+  return await remove(`${SEED_PHRASE}_${privateKey}`);
 };
 
 export const removeSelectedWalletInSecureStorage = async (): Promise<void> => {
