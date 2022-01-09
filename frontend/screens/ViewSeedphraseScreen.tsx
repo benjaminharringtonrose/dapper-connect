@@ -18,7 +18,7 @@ interface FormProps {
   password?: string;
 }
 
-const ViewSeedphraseScreen = () => {
+const ViewSeedPhraseScreen = () => {
   const { colors } = useTheme();
   const formRef = React.useRef<FormikProps<FormProps>>(null);
 
@@ -103,4 +103,4 @@ const ViewSeedphraseScreen = () => {
   );
 };
 
-export default ViewSeedphraseScreen;
+export default ViewSeedPhraseScreen;

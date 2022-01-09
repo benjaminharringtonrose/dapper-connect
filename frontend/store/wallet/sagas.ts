@@ -39,11 +39,11 @@ import {
   removeWalletSucceeded,
 } from "./slice";
 
-export function* onboardWalletSaga(action: PayloadAction<{ seedphrase?: string }>) {
+export function* onboardWalletSaga(action: PayloadAction<{ seedPhrase?: string }>) {
   try {
     let seed: string | undefined;
-    const { seedphrase } = action.payload;
-    seed = seedphrase;
+    const { seedPhrase } = action.payload;
+    seed = seedPhrase;
 
     // if no seed, create one
     if (!seed) {
@@ -110,8 +110,8 @@ export function* addNextWalletSaga(action: PayloadAction<{ walletName: string }>
     const nextIndex = yield call(secureStore.getNextIndex);
     const address = yield call(secureStore.getAddress);
     const { privateKey } = yield call(secureStore.getPrivateKey, address);
-    const { seedphrase } = yield call(secureStore.getSeedPhrase, privateKey);
-    const { wallet } = deriveAccountFromMnemonic(seedphrase, nextIndex);
+    const { seedPhrase } = yield call(secureStore.getSeedPhrase, privateKey);
+    const { wallet } = deriveAccountFromMnemonic(seedPhrase, nextIndex);
     const walletColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
     const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
     const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));

@@ -13,7 +13,7 @@ import { COLORS, FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { OnboardCreateWalletModal } from "../modals/OnboardCreateWalletModal";
 import { OnboardExistingWalletModal } from "../modals/OnboardExistingWalletModal";
-import { OnboardSeedphraseModal } from "../modals/OnboardSeedphraseModal";
+import { OnboardSeedPhraseModal } from "../modals/OnboardSeedPhraseModal";
 import { setAuthenticated } from "../store/settings/slice";
 import { onboardWalletRequested, setOnboardStatus } from "../store/wallet/slice";
 
@@ -33,7 +33,7 @@ const StartupScreen = () => {
   const opacity = useRef(new Animated.Value(0)).current;
 
   const createWalletModalRef = useRef<Modalize>(null);
-  const seedphraseModalRef = useRef<Modalize>(null);
+  const seedPhraseModalRef = useRef<Modalize>(null);
   const existingWalletModalRef = useRef<Modalize>(null);
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const StartupScreen = () => {
 
   useEffect(() => {
     if (!loadingOnboardWallet && !!wallets[0] && !onboarded) {
-      seedphraseModalRef.current?.open();
+      seedPhraseModalRef.current?.open();
     }
   }, [loadingOnboardWallet, wallets]);
 
@@ -151,7 +151,7 @@ const StartupScreen = () => {
   const onCompleteNewOnboarding = async () => {
     await secureStore.setOnboardStatus(true);
     dispatch(setOnboardStatus({ onboarded: true }));
-    seedphraseModalRef.current?.close();
+    seedPhraseModalRef.current?.close();
   };
 
   // existing wallet flow
@@ -261,8 +261,8 @@ const StartupScreen = () => {
           onCreateNewWallet={onCreateNewWallet}
           colors={colors}
         />
-        <OnboardSeedphraseModal
-          ref={seedphraseModalRef}
+        <OnboardSeedPhraseModal
+          ref={seedPhraseModalRef}
           onCreateCompleteOnboarding={onCompleteNewOnboarding}
           colors={colors}
         />

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
-import { getSeedphrase } from "../helpers";
+import { getSeedPhrase } from "../helpers";
 
-export const useSeedphrase = () => {
+export const useSeedPhrase = () => {
   const [seedphrase, setSeedphrase] = useState<string>(null);
   useEffect(() => {
     (async () => {
-      const result = await getSeedphrase();
+      const result = await getSeedPhrase();
       setSeedphrase(result);
     })();
   });

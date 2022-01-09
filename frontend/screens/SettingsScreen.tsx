@@ -26,7 +26,7 @@ const SettingsScreen = () => {
   const { colors } = useTheme();
   const connector = useWalletConnect();
   const navigation = useNavigation<
-    StackNavigationProp<AppStackParamList, "ViewSeedphraseScreen">
+    StackNavigationProp<AppStackParamList, "ViewSeedPhraseScreen">
   >();
 
   const getNetworkName = (network: Network) => {
@@ -77,7 +77,7 @@ const SettingsScreen = () => {
             title={"Seed Phrase"}
             value={""}
             type={"button"}
-            onPress={() => navigation.navigate("ViewSeedphraseScreen")}
+            onPress={() => navigation.navigate("ViewSeedPhraseScreen")}
             iconType={"right"}
             colors={colors}
           />

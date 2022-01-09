@@ -93,8 +93,8 @@ export const createNextWallet = async (name: string) => {
   const nextIndex = await secureStore.getNextIndex();
   const address = await secureStore.getAddress();
   const { privateKey } = await secureStore.getPrivateKey(address);
-  const { seedphrase } = await secureStore.getSeedPhrase(privateKey as string);
-  const { wallet } = deriveAccountFromMnemonic(seedphrase as string, nextIndex);
+  const { seedPhrase } = await secureStore.getSeedPhrase(privateKey as string);
+  const { wallet } = deriveAccountFromMnemonic(seedPhrase as string, nextIndex);
   const walletColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
   const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
   const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
@@ -111,19 +111,19 @@ export const createNextWallet = async (name: string) => {
   return nextDapperWallet;
 };
 
-export const getSeedphrase = async () => {
+export const getSeedPhrase = async () => {
   try {
     const address = await secureStore.getAddress();
     const { privateKey } = await secureStore.getPrivateKey(address);
-    const { seedphrase } = await secureStore.getSeedPhrase(privateKey as string);
-    return seedphrase as string;
+    const { seedPhrase } = await secureStore.getSeedPhrase(privateKey as string);
+    return seedPhrase as string;
   } catch (error) {
     console.warn("getSeedPhraseFromSecureStore Error:", error);
     console.log("getSeedPhraseFromSecureStore Error:", error);
   }
 };
 
-export function sanitizeSeedphrase(str: string) {
+export function sanitizeSeedPhrase(str: string) {
   // trims extra whitespaces, removes new lines and line breaks
   return str
     .replace(/(\r\n|\n|\r)/gm, " ")

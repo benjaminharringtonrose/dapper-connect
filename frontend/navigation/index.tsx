@@ -7,7 +7,7 @@ import {
   NotificationScreen,
   StartupScreen,
   TranslucentScreen,
-  ViewSeedphraseScreen,
+  ViewSeedPhraseScreen,
 } from "../screens";
 
 import Tabs from "./tabs";
@@ -16,7 +16,7 @@ export type AppStackParamList = {
   MainLayout: undefined;
   NotificationScreen: undefined;
   TranslucentScreen: undefined;
-  ViewSeedphraseScreen: undefined;
+  ViewSeedPhraseScreen: undefined;
 };
 
 export const AppStack = () => {
@@ -55,8 +55,8 @@ export const AppStack = () => {
         }}
       >
         <Stack.Screen
-          name="ViewSeedphraseScreen"
-          component={ViewSeedphraseScreen}
+          name="ViewSeedPhraseScreen"
+          component={ViewSeedPhraseScreen}
           options={{
             headerShown: true,
           }}

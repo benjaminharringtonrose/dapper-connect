@@ -9,21 +9,21 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "../components";
 import { FONTS, SIZES } from "../constants";
-import { useSeedphrase } from "../hooks/useSeedphrase";
+import { useSeedPhrase } from "../hooks/useSeedPhrase";
 
-interface OnboardSeedphraseModalProps {
+interface OnboardSeedPhraseModalProps {
   onCreateCompleteOnboarding: () => void;
   colors: ReactNativePaper.ThemeColors;
 }
 
-export const OnboardSeedphraseModal = forwardRef(
-  (props: OnboardSeedphraseModalProps, ref: Ref<Modalize>) => {
+export const OnboardSeedPhraseModal = forwardRef(
+  (props: OnboardSeedPhraseModalProps, ref: Ref<Modalize>) => {
     const insets = useSafeAreaInsets();
 
     const [seedPhraseArray, setSeedPhraseArray] = useState<string[]>([]);
     const [secretPhraseCopied, setSecretPhraseCopied] = useState<boolean>(false);
 
-    const seedphrase = useSeedphrase();
+    const seedphrase = useSeedPhrase();
 
     useEffect(() => {
       let phraseWordArray: string[];

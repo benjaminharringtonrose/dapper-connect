@@ -79,19 +79,19 @@ export class SecureStore {
       const key = `${SEED_PHRASE}_${privateKey}`;
       const obj = await loadObject(key);
       return {
-        seedphrase: obj?.seedphrase,
+        seedPhrase: obj?.seedPhrase,
       };
     } catch (error) {
-      console.log("getSeedphrase Error:", error);
-      console.warn("getSeedphrase Error:", error);
+      console.log("getSeedPhrase Error:", error);
+      console.warn("getSeedPhrase Error:", error);
       return undefined;
     }
   };
-  setSeedPhrase = async (seedphrase: string, privateKey: string): Promise<void> => {
+  setSeedPhrase = async (seedPhrase: string, privateKey: string): Promise<void> => {
     const key = `${SEED_PHRASE}_${privateKey}`;
     return await saveObject(key, {
       privateKey,
-      seedphrase,
+      seedPhrase,
       version: seedPhraseVersion,
     });
   };

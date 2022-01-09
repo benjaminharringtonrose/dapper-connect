@@ -89,7 +89,7 @@ const walletSlice = createSlice({
     resetWallets: (state, _: PayloadAction<undefined>) => {
       state.wallets = [];
     },
-    onboardWalletRequested: (state, _: PayloadAction<{ seedphrase?: string }>) => {
+    onboardWalletRequested: (state, _: PayloadAction<{ seedPhrase?: string }>) => {
       state.loadingOnboardWallet = true;
     },
     onboardWalletSucceeded: (state, _: PayloadAction<undefined>) => {
