@@ -3,26 +3,10 @@ import { mnemonicToSeedSync } from "bip39";
 import { addHexPrefix } from "ethereumjs-util";
 import { hdkey } from "ethereumjs-wallet";
 
-import {
-  ACCEPTED_TCS,
-  ADDRESS,
-  ALL_WALLETS,
-  COLOR_SCHEME,
-  DEFAULT_HD_PATH,
-  FACE_ID,
-  NETWORK,
-  NEXT_INDEX,
-  ONBOARDED,
-  PASSWORD,
-  PEACE_COLORS,
-  PRIVATE_KEY,
-  privateKeyVersion,
-  SEED_PHRASE,
-  seedPhraseVersion,
-  SELECTED_WALLET,
-} from "../constants";
+import { secureStore } from "../classes";
+import { ALL_WALLETS, DEFAULT_HD_PATH, PEACE_COLORS } from "../constants";
 import { setNextIndex } from "../store/wallet/slice";
-import { ColorScheme, DapperWallet, Network } from "../types";
+import { DapperWallet } from "../types";
 
 import { loadObject, loadString, remove, saveObject, saveString } from "./common";
 
@@ -81,10 +65,6 @@ export const removeWallet = async (
   return await getAllWallets();
 };
 
-export const resetWalletsInSecureStorage = async () => {
-  await remove(ALL_WALLETS);
-};
-
 export const deriveAccountFromMnemonic = (mnemonic: string, index = 0) => {
   const seed = mnemonicToSeedSync(mnemonic).slice(0, 32);
   const hdWallet = hdkey.fromMasterSeed(seed);
@@ -110,15 +90,15 @@ export const toChecksumAddress = (address: string): string | null => {
 };
 
 export const createNextWallet = async (name: string) => {
-  const nextIndex = await getNextIndexInSecureStorage();
-  const address = await getAddressInSecureStorage();
-  const { privateKey } = await getPrivateKey(address);
-  const { seedphrase } = await getSeedPhrase(privateKey);
+  const nextIndex = await secureStore.getNextIndex();
+  const address = await secureStore.getAddress();
+  const { privateKey } = await secureStore.getPrivateKey(address);
+  const { seedphrase } = await secureStore.getSeedPhrase(privateKey as string);
   const { wallet } = deriveAccountFromMnemonic(seedphrase as string, nextIndex);
   const walletColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
   const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
   const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
-  await saveNextIndex(nextIndex + 1);
+  await secureStore.setNextIndex(nextIndex + 1);
   store.dispatch(setNextIndex({ nextIndex: nextIndex + 1 }));
   const nextDapperWallet: DapperWallet = {
     name,
@@ -131,210 +111,11 @@ export const createNextWallet = async (name: string) => {
   return nextDapperWallet;
 };
 
-export const getOnboardStatus = async () => {
-  const onboarded = await loadString(ONBOARDED);
-  if (onboarded === "true") {
-    return true;
-  } else {
-    return false;
-  }
-};
-
-export const saveAcknowledgements = async (acceptedTCs: boolean) => {
-  await saveString(ACCEPTED_TCS, acceptedTCs ? "true" : "false");
-};
-
-export const getAcknowledgements = async () => {
-  const acceptedTCs = await loadString(ACCEPTED_TCS);
-  if (acceptedTCs === "true") {
-    return true;
-  } else {
-    return false;
-  }
-};
-
-export const saveOnboardStatus = async (onboarded: boolean) => {
-  await saveString(ONBOARDED, onboarded ? "true" : "false");
-};
-
-export const savePrivateKey = async (address: string, privateKey: string) => {
-  const key = `${PRIVATE_KEY}_${address}`;
-  await saveObject(key, {
-    address,
-    privateKey,
-    version: privateKeyVersion,
-  });
-};
-
-export const getPrivateKey = async (address: string) => {
+export const getSeedphrase = async () => {
   try {
-    const obj = await loadObject(`${PRIVATE_KEY}_${address}`);
-    return {
-      address: obj?.address,
-      privateKey: obj?.privateKey,
-      version: obj?.version,
-    };
-  } catch (error) {
-    console.log("getPrivateKey Error:", error);
-    console.warn("getPrivateKey Error:", error);
-    return undefined;
-  }
-};
-
-export const saveSeedPhrase = async (seedphrase: string, privateKey: any): Promise<void> => {
-  const key = `${SEED_PHRASE}_${privateKey}`;
-  return saveObject(key, {
-    privateKey,
-    seedphrase,
-    version: seedPhraseVersion,
-  });
-};
-
-export const getSeedPhrase = async (privateKey: any) => {
-  try {
-    const key = `${SEED_PHRASE}_${privateKey}`;
-    const obj = await loadObject(key);
-    return {
-      privateKey: obj?.privateKey,
-      seedphrase: obj?.seedphrase,
-      version: obj?.version,
-    };
-  } catch (error) {
-    console.log("getSeedPhrase Error:", error);
-    console.warn("getSeedPhrase Error:", error);
-    return undefined;
-  }
-};
-
-export const saveAddress = async (address: string): Promise<void> => {
-  return saveString(ADDRESS, address);
-};
-
-export const savePassword = async (password: string): Promise<void> => {
-  return saveString(PASSWORD, password);
-};
-
-export const getPassword = async (): Promise<string> => {
-  return await loadString(PASSWORD);
-};
-
-export const getNextIndexInSecureStorage = async () => {
-  const indexStr = await loadString(NEXT_INDEX);
-  if (indexStr) {
-    return Number(indexStr);
-  }
-  return 0;
-};
-
-export const saveNextIndex = async (index: number): Promise<void> => {
-  return await saveString(NEXT_INDEX, index.toString());
-};
-
-export const getAddressInSecureStorage = async () => {
-  return loadString(ADDRESS);
-};
-
-export const setSelectedWallet = async (wallet: DapperWallet) => {
-  return saveObject(SELECTED_WALLET, wallet as any); // need to figure out this type issue
-};
-
-export const getSelectedWallet = async () => {
-  try {
-    const selectedWallet = await loadObject(SELECTED_WALLET);
-    if (selectedWallet) {
-      return selectedWallet;
-    }
-    return undefined;
-  } catch (error) {
-    console.log("getSelectedWallet Error:", error);
-    console.warn("getSelectedWallet Error:", error);
-    return undefined;
-  }
-};
-
-export const getNetwork = async (): Promise<string> => {
-  const network = await loadString(NETWORK);
-  if (!network) return "mainnet";
-  return network;
-};
-
-export const setNetworkInSecureStorage = async (network: Network): Promise<void> => {
-  return await saveString(NETWORK, network);
-};
-
-export const removeNetworkInSecureStorage = async (): Promise<void> => {
-  return await remove(NETWORK);
-};
-
-export const getColorScheme = async (): Promise<string> => {
-  const colorScheme = await loadString(COLOR_SCHEME);
-  if (!colorScheme) return "dark";
-  return colorScheme;
-};
-
-export const setColorSchemeInSecureStorage = async (colorScheme: ColorScheme): Promise<void> => {
-  return await saveString(COLOR_SCHEME, colorScheme);
-};
-
-export const removeColorSchemeInSecureStorage = async (): Promise<void> => {
-  return await remove(COLOR_SCHEME);
-};
-
-export const getFaceIDInSecureStorage = async (): Promise<boolean> => {
-  const faceID = await loadString(FACE_ID);
-  if (!faceID) return true;
-  if (faceID === "true") {
-    return true;
-  } else {
-    return false;
-  }
-};
-
-export const toggleFaceIDInSecureStorage = async (faceID: "true" | "false"): Promise<void> => {
-  return await saveString(FACE_ID, faceID);
-};
-
-export const removeFaceIDInSecureStorage = async (): Promise<void> => {
-  return await remove(FACE_ID);
-};
-
-export const removePrivateKeyInSecureStorage = async (): Promise<void> => {
-  return await remove(PRIVATE_KEY);
-};
-
-export const removeAddressInSecureStorage = async (): Promise<void> => {
-  return await remove(ADDRESS);
-};
-
-export const removeSeedPhraseInSecureStorage = async (privateKey: string): Promise<void> => {
-  return await remove(`${SEED_PHRASE}_${privateKey}`);
-};
-
-export const removeSelectedWalletInSecureStorage = async (): Promise<void> => {
-  return await remove(SELECTED_WALLET);
-};
-
-export const removeOnboardStatusInSecureStorage = async (): Promise<void> => {
-  return await remove(ONBOARDED);
-};
-
-export const removeNextIndexInSecureStorage = async (): Promise<void> => {
-  return await remove(NEXT_INDEX);
-};
-
-export const removeAcknowledgementsInSecureStorage = async (): Promise<void> => {
-  return await remove(NEXT_INDEX);
-};
-
-export const removePasswordInSecureStorage = async (): Promise<void> => {
-  return await remove(NEXT_INDEX);
-};
-
-export const getSeedPhraseFromSecureStore = async () => {
-  try {
-    const address = await getAddressInSecureStorage();
-    const { privateKey } = await getPrivateKey(address);
-    const { seedphrase } = await getSeedPhrase(privateKey as string);
+    const address = await secureStore.getAddress();
+    const { privateKey } = await secureStore.getPrivateKey(address);
+    const { seedphrase } = await secureStore.getSeedPhrase(privateKey as string);
     return seedphrase as string;
   } catch (error) {
     console.warn("getSeedPhraseFromSecureStore Error:", error);
@@ -342,7 +123,7 @@ export const getSeedPhraseFromSecureStore = async () => {
   }
 };
 
-export function sanitizeSeedPhrase(str: string) {
+export function sanitizeSeedphrase(str: string) {
   // trims extra whitespaces, removes new lines and line breaks
   return str
     .replace(/(\r\n|\n|\r)/gm, " ")

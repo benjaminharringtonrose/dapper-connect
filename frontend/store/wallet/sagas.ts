@@ -5,20 +5,13 @@ import { addHexPrefix } from "ethereumjs-util";
 import * as Random from "expo-random";
 import { call, put, select, takeLatest } from "redux-saga/effects";
 
+import { secureStore } from "../../classes";
 import { DEFAULT_WALLET_NAME, PEACE_COLORS } from "../../constants";
 import {
   addWallet,
   deriveAccountFromMnemonic,
-  getAddressInSecureStorage,
   getAllWallets,
-  getNextIndexInSecureStorage,
-  getPrivateKey,
-  getSeedPhrase,
   removeWallet,
-  saveAddress,
-  saveNextIndex,
-  savePrivateKey,
-  saveSeedPhrase,
   toChecksumAddress,
 } from "../../helpers";
 import { DapperWallet } from "../../types";
@@ -61,10 +54,10 @@ export function* onboardWalletSaga(action: PayloadAction<{ seedphrase?: string }
     const { wallet } = yield call(deriveAccountFromMnemonic, seed, 0);
     const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
     const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
-    yield call(saveSeedPhrase, seed, walletPkey);
-    yield call(saveNextIndex, 1);
-    yield call(savePrivateKey, walletAddress, walletPkey);
-    yield call(saveAddress, walletAddress);
+    yield call(secureStore.setSeedPhrase, seed, walletPkey);
+    yield call(secureStore.setNextIndex, 1);
+    yield call(secureStore.setPrivateKey, walletAddress, walletPkey);
+    yield call(secureStore.setAddress, walletAddress);
 
     const color = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
 
@@ -114,10 +107,10 @@ export function* addWalletSaga(action: AddWalletRequestedAction) {
 export function* addNextWalletSaga(action: PayloadAction<{ walletName: string }>) {
   const { walletName } = action.payload;
   try {
-    const nextIndex = yield call(getNextIndexInSecureStorage);
-    const address = yield call(getAddressInSecureStorage);
-    const { privateKey } = yield call(getPrivateKey, address);
-    const { seedphrase } = yield call(getSeedPhrase, privateKey);
+    const nextIndex = yield call(secureStore.getNextIndex);
+    const address = yield call(secureStore.getAddress);
+    const { privateKey } = yield call(secureStore.getPrivateKey, address);
+    const { seedphrase } = yield call(secureStore.getSeedPhrase, privateKey);
     const { wallet } = deriveAccountFromMnemonic(seedphrase, nextIndex);
     const walletColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
     const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
@@ -130,7 +123,7 @@ export function* addNextWalletSaga(action: PayloadAction<{ walletName: string }>
       provider: "local",
       primary: false,
     };
-    yield call(saveNextIndex, nextIndex + 1);
+    yield call(secureStore.setNextIndex, nextIndex + 1);
     yield call(addWalletSaga, addWalletRequested({ wallet: nextDapperWallet }));
     yield put(addNextWalletSucceeded());
   } catch (error) {

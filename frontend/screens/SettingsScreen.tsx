@@ -1,4 +1,6 @@
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import * as Haptics from "expo-haptics";
 import React, { useRef } from "react";
@@ -11,6 +13,7 @@ import { Button, SectionTitle } from "../components";
 import { FONTS, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { NetworkModal } from "../modals/NetworkModal";
+import { AppStackParamList } from "../navigation";
 import { hardResetAppRequested, setColorScheme, toggleFaceId } from "../store/settings/slice";
 import { Network } from "../types";
 
@@ -22,6 +25,9 @@ const SettingsScreen = () => {
   const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const connector = useWalletConnect();
+  const navigation = useNavigation<
+    StackNavigationProp<AppStackParamList, "ViewSeedphraseScreen">
+  >();
 
   const getNetworkName = (network: Network) => {
     switch (network) {
@@ -68,15 +74,15 @@ const SettingsScreen = () => {
             colors={colors}
           />
           <Setting
-            title={"Change Password"}
+            title={"Seed Phrase"}
             value={""}
             type={"button"}
-            onPress={() => "press"}
+            onPress={() => navigation.navigate("ViewSeedphraseScreen")}
             iconType={"right"}
             colors={colors}
           />
           <Setting
-            title={"Multi-Factor Authentication"}
+            title={"Change Password"}
             value={""}
             type={"button"}
             onPress={() => "press"}

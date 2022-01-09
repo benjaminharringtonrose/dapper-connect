@@ -5,9 +5,9 @@ import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { secureStore } from "../classes";
 import { SectionTitle } from "../components";
 import { COLORS, FONTS, SIZES } from "../constants";
-import { setNetworkInSecureStorage } from "../helpers";
 import { useAppDispatch } from "../hooks";
 import { frontloadAppRequested, setNetwork } from "../store/settings/slice";
 import { Network } from "../types";
@@ -57,7 +57,7 @@ export const NetworkModal = forwardRef((props: NetworkModalProps, ref: Ref<Modal
               <TouchableOpacity
                 onPress={async () => {
                   dispatch(setNetwork({ network: item.id }));
-                  await setNetworkInSecureStorage(item.id);
+                  await secureStore.setNetwork(item.id);
                   dispatch(frontloadAppRequested());
                   props.onClose();
                 }}

@@ -11,26 +11,26 @@ import { Button } from "../components";
 import { FONTS, SIZES } from "../constants";
 import { useSeedphrase } from "../hooks/useSeedphrase";
 
-interface OnboardSeedPhraseModalProps {
+interface OnboardSeedphraseModalProps {
   onCreateCompleteOnboarding: () => void;
   colors: ReactNativePaper.ThemeColors;
 }
 
-export const OnboardSeedPhraseModal = forwardRef(
-  (props: OnboardSeedPhraseModalProps, ref: Ref<Modalize>) => {
+export const OnboardSeedphraseModal = forwardRef(
+  (props: OnboardSeedphraseModalProps, ref: Ref<Modalize>) => {
     const insets = useSafeAreaInsets();
 
     const [seedPhraseArray, setSeedPhraseArray] = useState<string[]>([]);
-    const [secretPhrasCopied, setSecretPhraseCopied] = useState<boolean>(false);
+    const [secretPhraseCopied, setSecretPhraseCopied] = useState<boolean>(false);
 
     const seedphrase = useSeedphrase();
 
     useEffect(() => {
-      let phraseWords: string[];
+      let phraseWordArray: string[];
       if (seedphrase) {
-        phraseWords = String(seedphrase).split(" ");
+        phraseWordArray = String(seedphrase).split(" ");
       }
-      setSeedPhraseArray(phraseWords);
+      setSeedPhraseArray(phraseWordArray);
     }, [seedphrase]);
 
     return (
@@ -86,8 +86,8 @@ export const OnboardSeedPhraseModal = forwardRef(
             })}
           </View>
           <Button
-            label={!secretPhrasCopied ? "Copy" : "Copied"}
-            postfixIcon={!secretPhrasCopied ? "copy" : "check"}
+            label={!secretPhraseCopied ? "Copy" : "Copied"}
+            postfixIcon={!secretPhraseCopied ? "copy" : "check"}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               Clipboard.setString(seedPhraseArray.join(" "));

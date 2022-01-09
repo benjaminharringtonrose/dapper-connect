@@ -28,8 +28,8 @@ interface CreateModalProps {
 export const CreateWalletModal = forwardRef((props: CreateModalProps, ref: Ref<Modalize>) => {
   const formRef = React.useRef<FormikProps<FormProps>>(null);
 
-  const ProfileSchema = Yup.object().shape({
-    name: Yup.string().required("Required"),
+  const ValidationSchema = Yup.object().shape({
+    name: Yup.string().required("required"),
   });
 
   const dispatch = useAppDispatch();
@@ -71,7 +71,7 @@ export const CreateWalletModal = forwardRef((props: CreateModalProps, ref: Ref<M
             initialValues={{
               name: undefined,
             }}
-            validationSchema={ProfileSchema}
+            validationSchema={ValidationSchema}
             onSubmit={onSubmit}
           >
             {({ handleChange, handleBlur, handleSubmit, values, touched, errors }) => (

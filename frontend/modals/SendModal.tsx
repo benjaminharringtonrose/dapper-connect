@@ -32,9 +32,9 @@ interface SendModalProps {
 export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) => {
   const formRef = React.useRef<FormikProps<FormProps>>(null);
 
-  const ProfileSchema = Yup.object().shape({
-    amount: Yup.string().required("Required"),
-    address: Yup.string().required("Required"),
+  const ValidationSchema = Yup.object().shape({
+    amount: Yup.string().required("required"),
+    address: Yup.string().required("required"),
   });
 
   const dispatch = useAppDispatch();
@@ -175,7 +175,7 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
               amount: undefined,
               address: undefined,
             }}
-            validationSchema={ProfileSchema}
+            validationSchema={ValidationSchema}
             onSubmit={onSubmit}
           >
             {({ handleChange, handleBlur, handleSubmit, values, touched, errors }) => (

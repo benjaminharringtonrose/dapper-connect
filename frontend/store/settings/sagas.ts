@@ -1,28 +1,7 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import { call, delay, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest } from "redux-saga/effects";
 
-import {
-  getAddressInSecureStorage,
-  getColorScheme,
-  getFaceIDInSecureStorage,
-  getNetwork,
-  getNextIndexInSecureStorage,
-  getOnboardStatus,
-  getPrivateKey,
-  removeAcknowledgementsInSecureStorage,
-  removeColorSchemeInSecureStorage,
-  removeFaceIDInSecureStorage,
-  removeNetworkInSecureStorage,
-  removeNextIndexInSecureStorage,
-  removeOnboardStatusInSecureStorage,
-  removePasswordInSecureStorage,
-  removePrivateKeyInSecureStorage,
-  removeSeedPhraseInSecureStorage,
-  removeSelectedWalletInSecureStorage,
-  resetWalletsInSecureStorage,
-  setColorSchemeInSecureStorage,
-  toggleFaceIDInSecureStorage,
-} from "../../helpers";
+import { secureStore } from "../../classes";
 import { ColorScheme, Days, Interval, Network } from "../../types";
 import { getExchangesSaga } from "../exchange/sagas";
 import { getExchangesRequested } from "../exchange/slice";
@@ -45,11 +24,11 @@ import {
 
 export function* frontloadAppSaga() {
   try {
-    const network: Network = yield call(getNetwork);
-    const faceID: boolean = yield call(getFaceIDInSecureStorage);
-    const colorScheme: ColorScheme = yield call(getColorScheme);
-    const onboarded: boolean = yield call(getOnboardStatus);
-    const nextIndex: number = yield call(getNextIndexInSecureStorage);
+    const network: Network = yield call(secureStore.getNetwork);
+    const faceID: boolean = yield call(secureStore.getFaceID);
+    const colorScheme: ColorScheme = yield call(secureStore.getColorScheme);
+    const onboarded: boolean = yield call(secureStore.getOnboardStatus);
+    const nextIndex: number = yield call(secureStore.getNextIndex);
     yield put(setNetwork({ network }));
     yield put(toggleFaceId({ faceID }));
     yield put(setColorScheme({ colorScheme }));
@@ -78,7 +57,7 @@ export function* frontloadAppSaga() {
 export function* setColorSchemeSaga(action: PayloadAction<{ colorScheme: ColorScheme }>) {
   try {
     const { colorScheme } = action.payload;
-    yield call(setColorSchemeInSecureStorage, colorScheme);
+    yield call(secureStore.setColorScheme, colorScheme);
   } catch (error) {
     console.log(error.message);
     console.warn(error.message);
@@ -87,19 +66,19 @@ export function* setColorSchemeSaga(action: PayloadAction<{ colorScheme: ColorSc
 
 export function* hardResetSaga() {
   try {
-    const address = yield call(getAddressInSecureStorage);
-    const { privateKey } = yield call(getPrivateKey, address);
-    yield call(removeSeedPhraseInSecureStorage, privateKey);
-    yield call(resetWalletsInSecureStorage);
-    yield call(removeNetworkInSecureStorage);
-    yield call(removeColorSchemeInSecureStorage);
-    yield call(removeFaceIDInSecureStorage);
-    yield call(removePrivateKeyInSecureStorage);
-    yield call(removeSelectedWalletInSecureStorage);
-    yield call(removeOnboardStatusInSecureStorage);
-    yield call(removeNextIndexInSecureStorage);
-    yield call(removeAcknowledgementsInSecureStorage);
-    yield call(removePasswordInSecureStorage);
+    const address = yield call(secureStore.getAddress);
+    const { privateKey } = yield call(secureStore.getPrivateKey, address);
+    yield call(secureStore.removeSeedPhrase, privateKey);
+    yield call(secureStore.resetWallets);
+    yield call(secureStore.removeNetwork);
+    yield call(secureStore.removeColorScheme);
+    yield call(secureStore.removeFaceID);
+    yield call(secureStore.removePrivateKey);
+    yield call(secureStore.removeSelectedWallet);
+    yield call(secureStore.removeOnboardStatus);
+    yield call(secureStore.removeNextIndex);
+    yield call(secureStore.removeAcknowledgements);
+    yield call(secureStore.removePassword);
     yield put(hardResetAppSucceeded());
   } catch (error) {
     console.log(error.message);
@@ -110,11 +89,7 @@ export function* hardResetSaga() {
 export function* toggleFaceIDSaga(action: PayloadAction<{ faceID: boolean }>) {
   try {
     const { faceID } = action.payload;
-    if (faceID) {
-      yield call(toggleFaceIDInSecureStorage, "true");
-    } else {
-      yield call(toggleFaceIDInSecureStorage, "false");
-    }
+    yield call(secureStore.setFaceID, faceID);
   } catch (error) {
     console.log(error.message);
     console.warn(error.message);

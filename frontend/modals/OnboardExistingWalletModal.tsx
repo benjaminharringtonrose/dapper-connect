@@ -8,9 +8,9 @@ import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Yup from "yup";
 
+import { secureStore } from "../classes";
 import { Button, FormCheckBox, FormInput, FormSwitch } from "../components";
 import { COLORS, FONTS, SIZES } from "../constants";
-import { saveAcknowledgements, savePassword, toggleFaceIDInSecureStorage } from "../helpers";
 import { useAppDispatch } from "../hooks";
 import { toggleFaceId } from "../store/settings";
 
@@ -31,15 +31,15 @@ export const OnboardExistingWalletModal = forwardRef(
   (props: OnboardExistingModalProps, ref: Ref<Modalize>) => {
     const formRef = React.useRef<FormikProps<FormProps>>(null);
 
-    const ProfileSchema = Yup.object().shape({
-      mnemonic: Yup.string().required("Required"),
-      newPassword: Yup.string().required("Required"),
+    const ValidationSchema = Yup.object().shape({
+      mnemonic: Yup.string().required("required"),
+      newPassword: Yup.string().required("required"),
       confirmPassword: Yup.string()
-        .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
-        .required("Required"),
+        .oneOf([Yup.ref("newPassword"), null], "passwords must match")
+        .required("required"),
       acceptedTCs: Yup.boolean()
-        .isTrue("You must accept the Terms of Use to use this product")
-        .required("Required"),
+        .isTrue("you must accept the Terms of Use to use this product")
+        .required("required"),
     });
 
     const dispatch = useAppDispatch();
@@ -58,10 +58,10 @@ export const OnboardExistingWalletModal = forwardRef(
       }
       try {
         setLoading(true);
-        await saveAcknowledgements(true);
-        await savePassword(values.confirmPassword);
+        await secureStore.setAcknowledgements(true);
+        await secureStore.setPassword(values.confirmPassword);
         dispatch(toggleFaceId({ faceID: values?.faceID }));
-        await toggleFaceIDInSecureStorage(values?.faceID ? "true" : "false");
+        await secureStore.setFaceID(values?.faceID);
         props.onUseExistingWallet(values?.mnemonic);
         setLoading(false);
       } catch (error) {
@@ -90,7 +90,7 @@ export const OnboardExistingWalletModal = forwardRef(
                 acceptedTCs: undefined,
                 faceID: undefined,
               }}
-              validationSchema={ProfileSchema}
+              validationSchema={ValidationSchema}
               onSubmit={onSubmit}
             >
               {({

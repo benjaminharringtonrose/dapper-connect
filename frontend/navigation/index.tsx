@@ -3,7 +3,12 @@ import React from "react";
 import { useTheme } from "react-native-paper";
 
 import { FONTS } from "../constants";
-import { NotificationScreen, StartupScreen, TranslucentScreen } from "../screens";
+import {
+  NotificationScreen,
+  StartupScreen,
+  TranslucentScreen,
+  ViewSeedphraseScreen,
+} from "../screens";
 
 import Tabs from "./tabs";
 
@@ -11,6 +16,7 @@ export type AppStackParamList = {
   MainLayout: undefined;
   NotificationScreen: undefined;
   TranslucentScreen: undefined;
+  ViewSeedphraseScreen: undefined;
 };
 
 export const AppStack = () => {
@@ -37,6 +43,25 @@ export const AppStack = () => {
           title: "Notifications",
         }}
       />
+      <Stack.Group
+        screenOptions={{
+          title: "",
+          presentation: "card",
+          headerBackTitleVisible: false,
+          headerStyle: {
+            backgroundColor: colors.background,
+            shadowColor: "transparent",
+          },
+        }}
+      >
+        <Stack.Screen
+          name="ViewSeedphraseScreen"
+          component={ViewSeedphraseScreen}
+          options={{
+            headerShown: true,
+          }}
+        />
+      </Stack.Group>
       <Stack.Screen name="TranslucentScreen" component={TranslucentScreen} />
     </Stack.Navigator>
   );
@@ -52,7 +77,6 @@ export const StartupStack = () => {
         title: "",
         headerStyle: {
           backgroundColor: colors.background,
-          borderWidth: 0,
           shadowColor: "transparent",
         },
       }}

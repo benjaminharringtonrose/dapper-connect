@@ -2,6 +2,7 @@ import { applyMiddleware, combineReducers, createStore } from "@reduxjs/toolkit"
 import createSagaMiddleware from "redux-saga";
 import { fork } from "redux-saga/effects";
 
+import { injectStoreIntoClasses } from "../classes";
 import { injectStoreIntoHelpers } from "../helpers";
 
 import accountSaga from "./account/sagas";
@@ -43,3 +44,4 @@ export type AppDispatch = typeof store.dispatch;
 
 injectStoreIntoWeb3(store);
 injectStoreIntoHelpers(store);
+injectStoreIntoClasses(store);
