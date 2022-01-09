@@ -89,8 +89,8 @@ export const createNextWallet = async (name: string) => {
   const nextIndex = await secureStore.getNextIndex();
   const address = await secureStore.getAddress();
   const { privateKey } = await secureStore.getPrivateKey(address);
-  const { seedPhrase } = await secureStore.getSeedPhrase(privateKey as string);
-  const { wallet } = deriveAccountFromMnemonic(seedPhrase as string, nextIndex);
+  const { seedPhrase } = await secureStore.getSeedPhrase(privateKey);
+  const { wallet } = deriveAccountFromMnemonic(seedPhrase, nextIndex);
   const walletColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
   const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
   const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
@@ -111,7 +111,7 @@ export const getSeedPhrase = async () => {
   try {
     const address = await secureStore.getAddress();
     const { privateKey } = await secureStore.getPrivateKey(address);
-    const { seedPhrase } = await secureStore.getSeedPhrase(privateKey as string);
+    const { seedPhrase } = await secureStore.getSeedPhrase(privateKey);
     return seedPhrase as string;
   } catch (error) {
     console.warn("getSeedPhraseFromSecureStore Error:", error);

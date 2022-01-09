@@ -44,7 +44,7 @@ export function* onboardWalletSaga(action: PayloadAction<{ seedPhrase?: string }
     let seed: string | undefined;
     const { seedPhrase } = action.payload;
     seed = seedPhrase;
-
+    console.log("onboardWalletSaga seed:", seed);
     // if no seed, create one
     if (!seed) {
       const randomBytes = yield call(Random.getRandomBytesAsync, 16);

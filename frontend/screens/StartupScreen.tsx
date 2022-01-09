@@ -172,8 +172,8 @@ const StartupScreen = () => {
   };
 
   // existing wallet flow
-  const onUseExistingWallet = async (seedphrase) => {
-    dispatch(onboardWalletRequested({ seedphrase }));
+  const onUseExistingWallet = async (seedPhrase) => {
+    dispatch(onboardWalletRequested({ seedPhrase }));
     await secureStore.setOnboardStatus(true);
     dispatch(setOnboardStatus({ onboarded: true }));
     existingWalletModalRef.current?.close();

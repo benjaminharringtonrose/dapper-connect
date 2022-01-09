@@ -23,15 +23,15 @@ export const OnboardSeedPhraseModal = forwardRef(
     const [seedPhraseArray, setSeedPhraseArray] = useState<string[]>([]);
     const [secretPhraseCopied, setSecretPhraseCopied] = useState<boolean>(false);
 
-    const seedphrase = useSeedPhrase();
+    const seedPhrase = useSeedPhrase();
 
     useEffect(() => {
       let phraseWordArray: string[];
-      if (seedphrase) {
-        phraseWordArray = String(seedphrase).split(" ");
+      if (seedPhrase) {
+        phraseWordArray = String(seedPhrase).split(" ");
       }
       setSeedPhraseArray(phraseWordArray);
-    }, [seedphrase]);
+    }, [seedPhrase]);
 
     return (
       <Portal>

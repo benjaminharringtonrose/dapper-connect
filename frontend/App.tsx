@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { KOVAN_API, MAINNET_API } from "@env";
 import {
   NavigationContainer,
   DarkTheme as NavigationDarkTheme,
@@ -18,7 +17,6 @@ import { Host } from "react-native-portalize";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SplashScreen from "react-native-splash-screen";
 import { Provider } from "react-redux";
-import Web3 from "web3";
 
 import { COLORS } from "./constants";
 import { useAppDispatch, useAppSelector } from "./hooks";
@@ -30,14 +28,6 @@ LogBox.ignoreLogs([
   "The provided value 'ms-stream' is not a valid 'responseType'",
   "The provided value 'moz-chunked-arraybuffer' is not a valid 'responseType'",
 ]);
-
-const serverEndpoint =
-  store?.getState?.()?.settings?.network === "mainnet" ? MAINNET_API : KOVAN_API;
-const provider = new Web3.providers.HttpProvider(serverEndpoint);
-
-console.log("store?.getState?.()?.settings?.network:", store?.getState?.()?.settings?.network);
-
-export const web3: Web3 = new Web3(provider);
 
 declare global {
   namespace ReactNativePaper {

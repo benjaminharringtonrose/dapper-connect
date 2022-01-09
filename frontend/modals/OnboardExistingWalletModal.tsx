@@ -23,7 +23,7 @@ interface FormProps {
 }
 
 interface OnboardExistingModalProps {
-  onUseExistingWallet: (seed: string) => void;
+  onUseExistingWallet: (seedPhrase: string) => void;
   colors: ReactNativePaper.ThemeColors;
 }
 

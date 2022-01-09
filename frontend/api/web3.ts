@@ -7,7 +7,6 @@ import { RootState } from "../store/index";
 let store: Store<RootState>;
 
 export const injectStore = (_store: Store<RootState>) => {
-  console.log(store?.getState?.()?.settings?.network);
   store = _store;
 };
 
