@@ -30,6 +30,7 @@ const StartupScreen = () => {
   const anim = useRef(new Animated.Value(0)).current;
   const floatAnim = useRef(new Animated.Value(0)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
   const createWalletModalRef = useRef<Modalize>(null);
@@ -76,6 +77,22 @@ const StartupScreen = () => {
             useNativeDriver: true,
           }),
           Animated.timing(rotateAnim, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      ),
+      // scaler
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay(100),
+          Animated.timing(scaleAnim, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scaleAnim, {
             toValue: 0,
             duration: 1000,
             useNativeDriver: true,
@@ -187,6 +204,12 @@ const StartupScreen = () => {
                   rotate: rotateAnim.interpolate({
                     inputRange: [0, 1],
                     outputRange: ["-2deg", "2deg"],
+                  }),
+                },
+                {
+                  scale: rotateAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [1, 1.07],
                   }),
                 },
               ],

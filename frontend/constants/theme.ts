@@ -4,7 +4,6 @@ const { width, height } = Dimensions.get("screen");
 export const COLORS = {
   primary: "#1E1E1E",
   secondary: "#3B3B3B",
-
   white: "#fff",
   green: "rgb(48, 209, 88)",
   lightGreen: "#4BEE70",
@@ -20,6 +19,7 @@ export const COLORS = {
   transparentBlack: "rgba(0, 0, 0, 0.8)",
   transparentBlack1: "rgba(0, 0, 0, 0.4)",
 };
+
 export const SIZES = {
   // global sizes
   base: 8,

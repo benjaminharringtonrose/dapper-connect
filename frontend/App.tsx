@@ -29,7 +29,6 @@ LogBox.ignoreLogs([
   "The provided value 'moz-chunked-arraybuffer' is not a valid 'responseType'",
 ]);
 
-// so I can add my custom colors
 declare global {
   namespace ReactNativePaper {
     interface ThemeColors {
@@ -52,6 +51,67 @@ declare global {
   }
 }
 
+const CustomDefaultTheme = {
+  ...NavigationDefaultTheme,
+  ...PaperDefaultTheme,
+  colors: {
+    ...NavigationDefaultTheme.colors,
+    ...PaperDefaultTheme.colors,
+    primary: "#0E68B3",
+    white: COLORS.white,
+    black: COLORS.black,
+    background: "#ffffff",
+    text: "#000000",
+    accent: "#ededed",
+    border: "#f2f2f2",
+    activityIndicator: "#c6c6c6",
+    error: "#b00020",
+    success: "#018786",
+    input: COLORS.white,
+    bottomTabActive: "",
+    bottomTabInactive: "#c6c6c6",
+    textGray: COLORS.lightGray3,
+    transparentBlack: "rgba(0, 0, 0, 0.5)",
+    shadow: "#e5e5e5",
+    backdrop: "#ededed",
+    modal: COLORS.white,
+    modalHandle: COLORS.white,
+    button: "#0E68B3",
+    translucent: "rgba(255, 255, 255, 0.9)",
+  },
+};
+
+const CustomDarkTheme = {
+  ...NavigationDarkTheme,
+  ...PaperDarkTheme,
+  colors: {
+    ...NavigationDarkTheme.colors,
+    ...PaperDarkTheme.colors,
+    primary: "#4682b4",
+    white: COLORS.white,
+    black: COLORS.black,
+    background: "#000000",
+    text: "#ffffff",
+    accent: "#212125",
+    border: "#404040",
+    activityIndicator: COLORS.white,
+    error: "#cf6679",
+    success: "#50c878",
+    input: "#262626",
+    disabled: COLORS.gray,
+    bottomTabActive: "",
+    bottomTabInactive: "#4c4c4c",
+    textGray: "#a6a6a6",
+    transparentBlack: COLORS.transparentBlack,
+    shadow: "#191919",
+    backdrop: COLORS.black,
+    modal: "#191919",
+    modalHandle: COLORS.white,
+    button: COLORS.white,
+    translucent: "rgba(25, 25, 25, 0.9)",
+  },
+};
+
 const Root = () => {
   const { loadingFrontloadApp, colorScheme, authenticated } = useAppSelector(
     (state) => state.settings
@@ -63,67 +123,6 @@ const Root = () => {
     SplashScreen.hide();
     dispatch(frontloadAppRequested());
   }, []);
-
-  const CustomDefaultTheme = {
-    ...NavigationDefaultTheme,
-    ...PaperDefaultTheme,
-    colors: {
-      ...NavigationDefaultTheme.colors,
-      ...PaperDefaultTheme.colors,
-      primary: "#0E68B3",
-      white: COLORS.white,
-      black: COLORS.black,
-      background: "#ffffff",
-      text: "#000000",
-      accent: "#ededed",
-      border: "#f2f2f2",
-      activityIndicator: "#c6c6c6",
-      error: "#b00020",
-      success: "#018786",
-      input: COLORS.white,
-      bottomTabActive: "",
-      bottomTabInactive: "#c6c6c6",
-      textGray: COLORS.lightGray3,
-      transparentBlack: "rgba(0, 0, 0, 0.5)",
-      shadow: "#e5e5e5",
-      backdrop: "#ededed",
-      modal: COLORS.white,
-      modalHandle: COLORS.white,
-      button: "#0E68B3",
-      translucent: "rgba(255, 255, 255, 0.9)",
-    },
-  };
-
-  const CustomDarkTheme = {
-    ...NavigationDarkTheme,
-    ...PaperDarkTheme,
-    colors: {
-      ...NavigationDarkTheme.colors,
-      ...PaperDarkTheme.colors,
-      primary: "#4682b4",
-      white: COLORS.white,
-      black: COLORS.black,
-      background: "#000000",
-      text: "#ffffff",
-      accent: "#212125",
-      border: "#404040",
-      activityIndicator: COLORS.white,
-      error: "#cf6679",
-      success: "#50c878",
-      input: "#262626",
-      disabled: COLORS.gray,
-      bottomTabActive: "",
-      bottomTabInactive: "#4c4c4c",
-      textGray: "#a6a6a6",
-      transparentBlack: COLORS.transparentBlack,
-      shadow: "#191919",
-      backdrop: COLORS.black,
-      modal: "#191919",
-      modalHandle: COLORS.white,
-      button: COLORS.white,
-      translucent: "rgba(25, 25, 25, 0.9)",
-    },
-  };
 
   const theme = colorScheme === "dark" ? CustomDarkTheme : CustomDefaultTheme;
 

@@ -1,15 +1,13 @@
 import { Entypo } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Formik, FormikProps } from "formik";
-import React, { useState } from "react";
+import React from "react";
 import { Text, View } from "react-native";
 import { useTheme } from "react-native-paper";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Yup from "yup";
 
 import { Button, FormInput } from "../components";
 import { FONTS, SIZES } from "../constants";
-import { useAppDispatch } from "../hooks";
 import { usePassword } from "../hooks/usePassword";
 
 import RootView from "./RootView";
@@ -22,13 +20,7 @@ const ViewSeedPhraseScreen = () => {
   const { colors } = useTheme();
   const formRef = React.useRef<FormikProps<FormProps>>(null);
 
-  const dispatch = useAppDispatch();
-  const insets = useSafeAreaInsets();
   const password = usePassword();
-
-  console.log("password", password);
-
-  const [loading, setLoading] = useState<boolean>(false);
 
   const ValidationSchema = Yup.object().shape({
     password: Yup.string().oneOf([password, null], "incorrect password").required("required"),
@@ -85,9 +77,7 @@ const ViewSeedPhraseScreen = () => {
                 />
               </View>
               <Button
-                type={"bordered"}
                 label={"View"}
-                loading={loading}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   handleSubmit();
