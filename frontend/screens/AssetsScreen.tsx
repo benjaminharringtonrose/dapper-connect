@@ -15,7 +15,7 @@ import { web3 } from "../api/web3";
 import { BalanceInfo, FadeInView, IconTextButton } from "../components";
 import { FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { CreateWalletModal, ReceiveModal, SendModal, WalletModal } from "../modals";
+import { AccountsModal, CreateAccountModal, ReceiveModal, SendModal } from "../modals";
 import { AppStackParamList } from "../navigation";
 import { getAccountRequested } from "../store/account";
 import { resetHoldings } from "../store/market";
@@ -31,10 +31,10 @@ import { CurrencyFormatter } from "../util";
 import RootView from "./RootView";
 
 const AssetsScreen = () => {
-  const walletModalRef = useRef<Modalize>(null);
+  const accountsModalRef = useRef<Modalize>(null);
   const sendModalRef = useRef<Modalize>(null);
   const receiveModalRef = useRef<Modalize>(null);
-  const createWalletModalRef = useRef<Modalize>(null);
+  const createAccountModalRef = useRef<Modalize>(null);
 
   const { holdings } = useAppSelector((state) => state.market);
   const { loadingGetAccount } = useAppSelector((state) => state.account);
@@ -71,7 +71,7 @@ const AssetsScreen = () => {
             paddingRight: SIZES.radius,
           }}
         >
-          <TouchableOpacity onPress={() => walletModalRef.current?.open()}>
+          <TouchableOpacity onPress={() => accountsModalRef.current?.open()}>
             <Ionicons name={"wallet"} size={32} color={colors.primary} />
           </TouchableOpacity>
         </FadeInView>
@@ -147,7 +147,7 @@ const AssetsScreen = () => {
   return (
     <RootView>
       <>
-        <View style={{ paddingBottom: SIZES.padding }}>
+        <View style={{ paddingBottom: SIZES.padding, paddingTop: SIZES.radius }}>
           {/* Header - Wallet Info */}
           <View
             style={{
@@ -217,11 +217,15 @@ const AssetsScreen = () => {
             <View style={{ paddingHorizontal: SIZES.padding }}>
               {/* Header Label */}
               <View style={{ flexDirection: "row", marginTop: SIZES.radius }}>
-                <Text style={[FONTS.h5, { flex: 1, color: colors.textGray }]}>{"Asset"}</Text>
-                <Text style={[FONTS.h5, { flex: 1, color: colors.textGray, textAlign: "right" }]}>
+                <Text style={[FONTS.body5, { flex: 1, color: colors.textGray }]}>{"Asset"}</Text>
+                <Text
+                  style={[FONTS.body5, { flex: 1, color: colors.textGray, textAlign: "right" }]}
+                >
                   {"Price"}
                 </Text>
-                <Text style={[FONTS.h5, { flex: 1, color: colors.textGray, textAlign: "right" }]}>
+                <Text
+                  style={[FONTS.body5, { flex: 1, color: colors.textGray, textAlign: "right" }]}
+                >
                   {"Holdings"}
                 </Text>
               </View>
@@ -256,7 +260,7 @@ const AssetsScreen = () => {
                 {/* Asset */}
                 <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
                   <Image source={{ uri: item?.image }} style={{ width: 20, height: 20 }} />
-                  <Text style={[FONTS.h4, { marginLeft: SIZES.radius, color: colors.text }]}>
+                  <Text style={[FONTS.body4, { marginLeft: SIZES.radius, color: colors.text }]}>
                     {item?.name}
                   </Text>
                 </View>
@@ -308,23 +312,23 @@ const AssetsScreen = () => {
           }}
           ListFooterComponent={<View style={{ marginBottom: 50 }} />}
         />
-        <WalletModal
-          ref={walletModalRef}
+        <AccountsModal
+          ref={accountsModalRef}
           colors={colors}
           onCreate={() => {
-            walletModalRef.current?.close();
-            createWalletModalRef.current?.open();
+            accountsModalRef.current?.close();
+            createAccountModalRef.current?.open();
           }}
           onSelectWallet={(address) => {
             setSelectedAddress(address);
             dispatch(getAccountRequested({ address }));
-            walletModalRef.current?.close();
+            accountsModalRef.current?.close();
           }}
           onResetSelectedAddress={() => {
             setSelectedAddress(accounts?.[0]?.address);
           }}
           onWalletConnect={onWalletConnect}
-          onClose={() => walletModalRef.current?.close()}
+          onClose={() => accountsModalRef.current?.close()}
           address={selectedAddress}
           connector={connector}
         />
@@ -347,12 +351,12 @@ const AssetsScreen = () => {
             );
           }}
         />
-        <CreateWalletModal
-          ref={createWalletModalRef}
+        <CreateAccountModal
+          ref={createAccountModalRef}
           colors={colors}
           onPress={(address) => {
             setSelectedAddress(address);
-            createWalletModalRef.current?.close();
+            createAccountModalRef.current?.close();
           }}
         />
       </>

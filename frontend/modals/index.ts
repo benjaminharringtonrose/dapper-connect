@@ -1,6 +1,6 @@
-import { CreateWalletModal } from "./CreateWalletModal";
+import { AccountsModal } from "./AccountsModal";
+import { CreateAccountModal } from "./CreateAccountModal";
 import { ReceiveModal } from "./ReceiveModal";
 import { SendModal } from "./SendModal";
-import { WalletModal } from "./WalletModal";
 
-export { CreateWalletModal, ReceiveModal, SendModal, WalletModal };
+export { AccountsModal, CreateAccountModal, ReceiveModal, SendModal };

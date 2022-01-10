@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, StyleProp, Text, View, ViewStyle } from "react-native";
 
-import { COLORS, FONTS, icons, SIZES } from "../constants";
+import { FONTS, icons, SIZES } from "../constants";
 import { CurrencyFormatter } from "../util";
 
 import FadeInView from "./FadeInView";
@@ -25,7 +25,7 @@ const BalanceInfo = ({
     <View style={[{}, containerStyle]}>
       {/* Title */}
       <FadeInView>
-        <Text style={[FONTS.h3, { color: colors.textGray }]}>{title}</Text>
+        <Text style={[FONTS.body3, { color: colors.text }]}>{title}</Text>
       </FadeInView>
       {/* Figures */}
       <View
@@ -62,7 +62,7 @@ const BalanceInfo = ({
           <>
             <Text
               style={[
-                FONTS.h4,
+                FONTS.body4,
                 {
                   marginLeft: SIZES.base,
                   alignSelf: "flex-end",
@@ -73,7 +73,7 @@ const BalanceInfo = ({
 
             <Text
               style={[
-                FONTS.h5,
+                FONTS.body5,
                 {
                   marginLeft: SIZES.radius,
                   alignSelf: "flex-end",
