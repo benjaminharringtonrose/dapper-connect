@@ -85,8 +85,7 @@ export const CreateAccountModal = forwardRef(
                     }}
                   >
                     <FormInput
-                      label={"Name"}
-                      placeholder={"My Wallet, etc..."}
+                      label={"Account Name"}
                       onChangeText={handleChange("name")}
                       onBlur={handleBlur("name")}
                       autoCorrect={true}

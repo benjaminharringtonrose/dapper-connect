@@ -19,7 +19,6 @@ export const seedPhraseVersion = 1.0;
 export const allWalletsVersion = 1.0;
 export const DEFAULT_HD_PATH = `m/44'/60'/0'/0`;
 export const DEFAULT_WALLET_NAME = "Account 1";
-export const PEACE_COLORS = ["blue", "green", "red", "yellow"];
 
 export const TOKENS = [
   {
@@ -58,6 +57,32 @@ export const TOKENS = [
     decimals: 18,
     website: "http://www.paxos.com/busd",
   },
+];
+
+export const PEACE_COLORS = [
+  "#FC5C54",
+  "#FFD95A",
+  "#E95D72",
+  "#6A87C8",
+  "#5FD0F3",
+  "#75C06B",
+  "#FFDD86",
+  "#5FC6D4",
+  "#FF949A",
+  "#FF8024",
+  "#9BA1A4",
+  "#EC66FF",
+  "#FF8CBC",
+  "#FF9A23",
+  "#C5DADB",
+  "#A8CE63",
+  "#71ABFF",
+  "#FFE279",
+  "#B6B1B6",
+  "#FF6780",
+  "#A575FF",
+  "#4D82FF",
+  "#FFB35A",
 ];
 
 export { theme, COLORS, SIZES, FONTS, icons };

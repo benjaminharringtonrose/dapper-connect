@@ -151,3 +151,21 @@ export const hasPreviousTransactions = async (address: string): Promise<boolean>
     return false;
   }
 };
+
+export function hashCode(text: string) {
+  let hash = 0,
+    i,
+    chr;
+  if (text.length === 0) return hash;
+  for (i = 0; i < text.length; i++) {
+    chr = text.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0;
+  }
+  return hash;
+}
+
+export function addressHashedColor(address: string) {
+  if (address == null) return null;
+  return PEACE_COLORS[Math.abs(hashCode(address.toLowerCase()) % PEACE_COLORS.length)];
+}

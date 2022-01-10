@@ -17,8 +17,6 @@ export interface WalletState {
   loadingOnboardWallet: boolean;
   errorOnboardWallet?: Error;
   nextIndex: number;
-  loadingAddNextAccount: boolean;
-  errorAddNextAccount?: Error;
 }
 
 const initialState: WalletState = {
@@ -33,8 +31,6 @@ const initialState: WalletState = {
   loadingOnboardWallet: false,
   errorOnboardWallet: undefined,
   nextIndex: 0,
-  loadingAddNextAccount: false,
-  errorAddNextAccount: undefined,
 };
 
 export type GetAccountsRequestedAction = PayloadAction<undefined>;
@@ -105,16 +101,6 @@ const walletSlice = createSlice({
     setNextIndex: (state, action: PayloadAction<{ nextIndex: number }>) => {
       state.nextIndex = action.payload.nextIndex;
     },
-    addNextAccountRequested: (state, _: PayloadAction<{ walletName: string }>) => {
-      state.loadingAddNextAccount = true;
-    },
-    addNextAccountSucceeded: (state, _: PayloadAction<undefined>) => {
-      state.loadingAddNextAccount = false;
-    },
-    addNextAccountFailed: (state, action: PayloadAction<{ error: Error }>) => {
-      state.loadingAddNextAccount = false;
-      state.errorAddNextAccount = action.payload.error;
-    },
   },
 });
 
@@ -134,9 +120,6 @@ export const {
   onboardWalletFailed,
   setOnboardStatus,
   setNextIndex,
-  addNextAccountRequested,
-  addNextAccountSucceeded,
-  addNextAccountFailed,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;
