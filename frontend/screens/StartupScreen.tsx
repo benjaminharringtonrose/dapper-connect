@@ -21,7 +21,7 @@ import RootView from "./RootView";
 
 const StartupScreen = () => {
   const { faceID } = useAppSelector((state) => state.settings);
-  const { onboarded, loadingOnboardWallet, wallets } = useAppSelector((state) => state.wallets);
+  const { onboarded, loadingOnboardWallet, accounts } = useAppSelector((state) => state.wallets);
 
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
@@ -115,10 +115,10 @@ const StartupScreen = () => {
   }, [faceID, onboarded]);
 
   useEffect(() => {
-    if (!loadingOnboardWallet && !!wallets[0] && !onboarded) {
+    if (!loadingOnboardWallet && !!accounts[0] && !onboarded) {
       seedPhraseModalRef.current?.open();
     }
-  }, [loadingOnboardWallet, wallets]);
+  }, [loadingOnboardWallet, accounts]);
 
   const biometricsAuth = async () => {
     try {

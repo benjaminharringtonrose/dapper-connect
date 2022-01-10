@@ -1,12 +1,13 @@
+import { ETHERSCAN_API_KEY } from "@env";
 import { getAddress } from "@ethersproject/address";
 import { mnemonicToSeedSync } from "bip39";
 import { addHexPrefix } from "ethereumjs-util";
 import { hdkey } from "ethereumjs-wallet";
 
 import { secureStore } from "../classes";
-import { ALL_WALLETS, DEFAULT_HD_PATH, PEACE_COLORS } from "../constants";
+import { ALL_ACCOUNTS, DEFAULT_HD_PATH, PEACE_COLORS } from "../constants";
 import { setNextIndex } from "../store/wallet/slice";
-import { DapperWallet } from "../types";
+import { WalletAccount } from "../types";
 
 let store;
 
@@ -14,51 +15,51 @@ export const injectStoreIntoHelpers = (_store) => {
   store = _store;
 };
 
-export const getAllWallets = async (): Promise<DapperWallet[]> => {
-  const allWallets = await secureStore.loadString(ALL_WALLETS);
-  if (!allWallets) return [];
-  const walletsObject: Record<string, DapperWallet> = JSON.parse(allWallets);
-  const walletsArray: DapperWallet[] = [];
-  for (const [address, wallet] of Object.entries(walletsObject)) {
-    walletsArray.push({ ...wallet, address });
+export const getAllAccounts = async (): Promise<WalletAccount[]> => {
+  const allAccounts = await secureStore.loadString(ALL_ACCOUNTS);
+  if (!allAccounts) return [];
+  const accountsObject: Record<string, WalletAccount> = JSON.parse(allAccounts);
+  const accountsArray: WalletAccount[] = [];
+  for (const [address, wallet] of Object.entries(accountsObject)) {
+    accountsArray.push({ ...wallet, address });
   }
-  return walletsArray;
+  return accountsArray;
 };
 
-export const addWallet = async (
-  wallet: DapperWallet,
-  prevWallets: DapperWallet[]
-): Promise<DapperWallet[]> => {
-  let walletsObject = {};
-  prevWallets?.forEach((wallet) => {
-    walletsObject = {
-      ...walletsObject,
-      [wallet.address]: wallet,
+export const addAccount = async (
+  account: WalletAccount,
+  prevAccounts: WalletAccount[]
+): Promise<WalletAccount[]> => {
+  let accountsObject = {};
+  prevAccounts?.forEach((account) => {
+    accountsObject = {
+      ...accountsObject,
+      [account.address]: account,
     };
   });
-  walletsObject = {
-    ...walletsObject,
-    [wallet.address as string]: wallet,
+  accountsObject = {
+    ...accountsObject,
+    [account.address as string]: account,
   };
-  await secureStore.saveObject(ALL_WALLETS, walletsObject);
-  return await getAllWallets();
+  await secureStore.saveObject(ALL_ACCOUNTS, accountsObject);
+  return await getAllAccounts();
 };
 
-export const removeWallet = async (
+export const removeAccount = async (
   address: string,
-  prevWallets: DapperWallet[]
-): Promise<DapperWallet[]> => {
-  let walletsObject = {};
-  prevWallets?.forEach((wallet) => {
+  prevAccounts: WalletAccount[]
+): Promise<WalletAccount[]> => {
+  let accountsObject = {};
+  prevAccounts?.forEach((wallet) => {
     if (wallet.address !== address) {
-      walletsObject = {
-        ...walletsObject,
+      accountsObject = {
+        ...accountsObject,
         [wallet.address]: wallet,
       };
     }
   });
-  await secureStore.saveObject(ALL_WALLETS, walletsObject);
-  return await getAllWallets();
+  await secureStore.saveObject(ALL_ACCOUNTS, accountsObject);
+  return await getAllAccounts();
 };
 
 export const deriveAccountFromMnemonic = (mnemonic: string, index = 0) => {
@@ -85,26 +86,26 @@ export const toChecksumAddress = (address: string): string | null => {
   }
 };
 
-export const createNextWallet = async (name: string) => {
+export const createNextAccount = async (name: string) => {
   const nextIndex = await secureStore.getNextIndex();
   const address = await secureStore.getAddress();
   const { privateKey } = await secureStore.getPrivateKey(address);
   const { seedPhrase } = await secureStore.getSeedPhrase(privateKey);
   const { wallet } = deriveAccountFromMnemonic(seedPhrase, nextIndex);
-  const walletColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
-  const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
-  const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
+  const accountColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
+  const accountAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
+  const accountPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
   await secureStore.setNextIndex(nextIndex + 1);
   store.dispatch(setNextIndex({ nextIndex: nextIndex + 1 }));
-  const nextDapperWallet: DapperWallet = {
+  const nextAccount: WalletAccount = {
     name,
-    color: walletColor,
-    address: walletAddress,
-    privateKey: walletPkey,
+    color: accountColor,
+    address: accountAddress,
+    privateKey: accountPkey,
     provider: "local",
     primary: false,
   };
-  return nextDapperWallet;
+  return nextAccount;
 };
 
 export const getSeedPhrase = async () => {
@@ -128,3 +129,25 @@ export function sanitizeSeedPhrase(str: string) {
     .filter((word) => !!word)
     .join(" ");
 }
+
+export const hasPreviousTransactions = async (address: string): Promise<boolean> => {
+  try {
+    let prevTransactions = false;
+    const url = `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&tag=latest&page=1&offset=1&apikey=${ETHERSCAN_API_KEY}`;
+    const response = await fetch(url);
+    const parsedResponse = await response.json();
+    // Timeout needed to avoid the 5 requests / second rate limit of etherscan API
+    setTimeout(() => {
+      if (parsedResponse.status !== "0" && parsedResponse.result.length > 0) {
+        prevTransactions = true;
+      } else {
+        prevTransactions = false;
+      }
+    }, 260);
+    return prevTransactions;
+  } catch (e) {
+    console.log("hasPreviousTransactions Error", e);
+    console.warn("hasPreviousTransactions Error", e);
+    return false;
+  }
+};

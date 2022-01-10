@@ -4,7 +4,7 @@ import * as ExpoSecureStore from "expo-secure-store";
 import {
   ACCEPTED_TCS,
   ADDRESS,
-  ALL_WALLETS,
+  ALL_ACCOUNTS,
   COLOR_SCHEME,
   FACE_ID,
   NETWORK,
@@ -15,13 +15,13 @@ import {
   privateKeyVersion,
   SEED_PHRASE,
   seedPhraseVersion,
-  SELECTED_WALLET,
+  SELECTED_ACCOUNT,
 } from "../constants";
-import { ColorScheme, DapperWallet, IStringMap, Network } from "../types";
+import { ColorScheme, IStringMap, Network, WalletAccount } from "../types";
 
 export class SecureStore {
-  resetWallets = async (): Promise<void> => {
-    return await this.remove(ALL_WALLETS);
+  resetAccounts = async (): Promise<void> => {
+    return await this.remove(ALL_ACCOUNTS);
   };
   getOnboardStatus = async (): Promise<boolean> => {
     const onboarded = await this.loadString(ONBOARDED);
@@ -131,14 +131,14 @@ export class SecureStore {
   removeNextIndex = async (): Promise<void> => {
     return await this.remove(NEXT_INDEX);
   };
-  getSelectedWallet = async () => {
-    return await this.loadObject(SELECTED_WALLET);
+  getSelectedAccount = async () => {
+    return await this.loadObject(SELECTED_ACCOUNT);
   };
-  setSelectedWallet = async (wallet: DapperWallet) => {
-    return await this.saveObject(SELECTED_WALLET, wallet);
+  setSelectedWallet = async (account: WalletAccount) => {
+    return await this.saveObject(SELECTED_ACCOUNT, account);
   };
   removeSelectedWallet = async (): Promise<void> => {
-    return await this.remove(SELECTED_WALLET);
+    return await this.remove(SELECTED_ACCOUNT);
   };
   getNetwork = async (): Promise<string> => {
     const network = await this.loadString(NETWORK);

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "react-native-paper";
 
+import { web3 } from "../api/web3";
 import { Chart, TextButton } from "../components";
 import { FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
@@ -27,8 +28,6 @@ const HomeScreen = () => {
   const [selectedId, setSelectedId] = useState<string>(coins[0]?.id);
   const [selectedNumDays, setSelectedNumDays] = useState<Days>(Days.one);
   const [selectedInterval, setSelectedInterval] = useState<Interval>(Interval.minutely);
-
-  console.log("rendered");
 
   useErrors([errorGetCoinMarket, errorGetSparkline]);
 

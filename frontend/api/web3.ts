@@ -12,6 +12,7 @@ export const injectStore = (_store: Store<RootState>) => {
 
 const serverEndpoint =
   store?.getState?.()?.settings?.network === "mainnet" ? MAINNET_API : KOVAN_API;
+
 const provider = new Web3.providers.HttpProvider(serverEndpoint);
 
 export const web3: Web3 = new Web3(provider);

@@ -197,17 +197,7 @@ export enum EthereumWalletType {
   seed = "seed",
 }
 
-export interface DapperAccount {
-  index: number;
-  label: string;
-  address: string;
-  avatar: null | string;
-  color: number;
-  visible: boolean;
-  image: string | null;
-}
-
-export interface DapperWallet {
+export interface WalletAccount {
   name?: string;
   address?: string;
   color?: string;

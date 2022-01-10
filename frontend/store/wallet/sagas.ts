@@ -1,42 +1,48 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { SECRET_KEY } from "@env";
+import { Wallet } from "@ethersproject/wallet";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { entropyToMnemonic } from "bip39";
+import CryptoJS from "crypto-js";
 import { addHexPrefix } from "ethereumjs-util";
 import * as Random from "expo-random";
 import { call, put, select, takeLatest } from "redux-saga/effects";
 
+import { web3 } from "../../api/web3";
 import { secureStore } from "../../classes";
 import { DEFAULT_WALLET_NAME, PEACE_COLORS } from "../../constants";
 import {
-  addWallet,
+  addAccount,
   deriveAccountFromMnemonic,
-  getAllWallets,
-  removeWallet,
+  getAllAccounts,
+  hasPreviousTransactions,
+  removeAccount,
   toChecksumAddress,
 } from "../../helpers";
-import { DapperWallet } from "../../types";
+import { WalletAccount } from "../../types";
+import { setEncryptedSeedPhrase } from "../settings/slice";
 import {
-  addNextWalletFailed,
-  addNextWalletRequested,
-  addNextWalletSucceeded,
-  AddWalletRequestedAction,
-  getWalletsFailed,
-  getWalletsRequested,
-  GetWalletsRequestedAction,
-  getWalletsSucceeded,
+  AddAccountRequestedAction,
+  addNextAccountFailed,
+  addNextAccountRequested,
+  addNextAccountSucceeded,
+  getAccountsFailed,
+  getAccountsRequested,
+  GetAccountsRequestedAction,
+  getAccountsSucceeded,
   onboardWalletFailed,
   onboardWalletRequested,
   onboardWalletSucceeded,
-  RemoveWalletRequestedAction,
+  RemoveAccountRequestedAction,
 } from "../wallet/slice";
 
 import {
-  addWalletFailed,
-  addWalletRequested,
-  addWalletSucceeded,
-  removeWalletFailed,
-  removeWalletRequested,
-  removeWalletSucceeded,
+  addAccountFailed,
+  addAccountRequested,
+  addAccountSucceeded,
+  removeAccountFailed,
+  removeAccountRequested,
+  removeAccountSucceeded,
 } from "./slice";
 
 export function* onboardWalletSaga(action: PayloadAction<{ seedPhrase?: string }>) {
@@ -51,7 +57,7 @@ export function* onboardWalletSaga(action: PayloadAction<{ seedPhrase?: string }
       seed = entropyToMnemonic(randomBytes);
     }
     // index 0 because first wallet
-    const { wallet } = yield call(deriveAccountFromMnemonic, seed, 0);
+    const { wallet, root } = yield call(deriveAccountFromMnemonic, seed, 0);
     const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
     const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
     yield call(secureStore.setSeedPhrase, seed, walletPkey);
@@ -59,9 +65,12 @@ export function* onboardWalletSaga(action: PayloadAction<{ seedPhrase?: string }
     yield call(secureStore.setPrivateKey, walletAddress, walletPkey);
     yield call(secureStore.setAddress, walletAddress);
 
+    const encryptedSeedPhrase = CryptoJS.AES.encrypt(seed, SECRET_KEY).toString();
+    yield put(setEncryptedSeedPhrase({ encryptedSeedPhrase }));
+
     const color = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
 
-    const dapperWallet: DapperWallet = {
+    const dapperWallet: WalletAccount = {
       name: DEFAULT_WALLET_NAME,
       address: walletAddress,
       color,
@@ -70,7 +79,26 @@ export function* onboardWalletSaga(action: PayloadAction<{ seedPhrase?: string }
       provider: "local",
     };
 
-    yield call(addWalletSaga, addWalletRequested({ wallet: dapperWallet }));
+    yield call(addAccountSaga, addAccountRequested({ account: dapperWallet }));
+
+    // Starting on index 1, we are gonna hit etherscan API and check the tx history
+    // for each account. If there's history we add it to the wallet.
+    //(We stop once we find the first one with no history)
+    const index = 1;
+    let lookup = true;
+    while (lookup) {
+      const child = root.deriveChild(index);
+      const walletObj = child.getWallet();
+      const nextWallet = new Wallet(addHexPrefix(walletObj.getPrivateKey().toString("hex")));
+
+      const hasTxHistory = yield call(hasPreviousTransactions, nextWallet.address);
+      console.log(hasTxHistory);
+      if (hasTxHistory) {
+        console.log("hasTxHistory:", hasTxHistory);
+      } else {
+        lookup = false;
+      }
+    }
 
     yield put(onboardWalletSucceeded());
   } catch (error) {
@@ -80,31 +108,43 @@ export function* onboardWalletSaga(action: PayloadAction<{ seedPhrase?: string }
   }
 }
 
-export function* getWalletsSaga(_: GetWalletsRequestedAction) {
+export function* getAccountsSaga(_: GetAccountsRequestedAction) {
   try {
-    const wallets: DapperWallet[] = yield call(getAllWallets);
-    yield put(getWalletsSucceeded({ wallets }));
+    const accounts: WalletAccount[] = yield call(getAllAccounts);
+    accounts.forEach((account) => {
+      web3.eth.accounts.wallet.add({
+        address: account.address,
+        privateKey: account.privateKey,
+      });
+    });
+    yield put(getAccountsSucceeded({ accounts }));
   } catch (error) {
     console.log(error.message);
     console.warn(error.message);
-    yield put(getWalletsFailed({ error }));
+    yield put(getAccountsFailed({ error }));
   }
 }
 
-export function* addWalletSaga(action: AddWalletRequestedAction) {
+export function* addAccountSaga(action: AddAccountRequestedAction) {
   try {
-    const { wallet } = action.payload;
-    const prevWallets: DapperWallet[] = yield select((state) => state.wallets.wallets);
-    const wallets = yield call(addWallet, wallet, prevWallets);
-    yield put(addWalletSucceeded({ wallets }));
+    const { account } = action.payload;
+    const prevAccounts: WalletAccount[] = yield select((state) => state.wallets.accounts);
+    const accounts = yield call(addAccount, account, prevAccounts);
+
+    web3.eth.accounts.wallet.add({
+      address: account.address,
+      privateKey: account.privateKey,
+    });
+
+    yield put(addAccountSucceeded({ accounts }));
   } catch (error) {
     console.log(error.message);
     console.warn(error.message);
-    yield put(addWalletFailed({ error }));
+    yield put(addAccountFailed({ error }));
   }
 }
 
-export function* addNextWalletSaga(action: PayloadAction<{ walletName: string }>) {
+export function* addNextAccountSaga(action: PayloadAction<{ walletName: string }>) {
   const { walletName } = action.payload;
   try {
     const nextIndex = yield call(secureStore.getNextIndex);
@@ -115,7 +155,8 @@ export function* addNextWalletSaga(action: PayloadAction<{ walletName: string }>
     const walletColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
     const walletAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
     const walletPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
-    const nextDapperWallet: DapperWallet = {
+
+    const nextDapperWallet: WalletAccount = {
       name: walletName,
       color: walletColor,
       address: walletAddress,
@@ -123,35 +164,39 @@ export function* addNextWalletSaga(action: PayloadAction<{ walletName: string }>
       provider: "local",
       primary: false,
     };
+
     yield call(secureStore.setNextIndex, nextIndex + 1);
-    yield call(addWalletSaga, addWalletRequested({ wallet: nextDapperWallet }));
-    yield put(addNextWalletSucceeded());
+    yield call(addAccountSaga, addAccountRequested({ account: nextDapperWallet }));
+    yield put(addNextAccountSucceeded());
   } catch (error) {
     console.log("addNextWalletSaga Error:", error);
     console.warn("addNextWalletSaga Error:", error);
-    yield put(addNextWalletFailed({ error }));
+    yield put(addNextAccountFailed({ error }));
   }
 }
 
-export function* removeWalletSaga(action: RemoveWalletRequestedAction) {
+export function* removeAccountSaga(action: RemoveAccountRequestedAction) {
   try {
     const { address } = action.payload;
-    const prevWallets: DapperWallet[] = yield select((state) => state.wallets.wallets);
-    const wallets = yield call(removeWallet, address, prevWallets);
-    yield put(removeWalletSucceeded({ wallets }));
+    const prevAccounts: WalletAccount[] = yield select((state) => state.wallets.accounts);
+    const accounts = yield call(removeAccount, address, prevAccounts);
+
+    web3.eth.accounts.wallet.remove(address);
+
+    yield put(removeAccountSucceeded({ accounts }));
   } catch (error) {
     console.log(error.message);
     console.warn(error.message);
-    yield put(removeWalletFailed({ error }));
+    yield put(removeAccountFailed({ error }));
   }
 }
 
 function* walletSaga() {
-  yield takeLatest(getWalletsRequested.type, getWalletsSaga);
-  yield takeLatest(addWalletRequested.type, addWalletSaga);
-  yield takeLatest(removeWalletRequested.type, removeWalletSaga);
+  yield takeLatest(getAccountsRequested.type, getAccountsSaga);
+  yield takeLatest(addAccountRequested.type, addAccountSaga);
+  yield takeLatest(removeAccountRequested.type, removeAccountSaga);
   yield takeLatest(onboardWalletRequested.type, onboardWalletSaga);
-  yield takeLatest(addNextWalletRequested.type, addNextWalletSaga);
+  yield takeLatest(addNextAccountRequested.type, addNextAccountSaga);
 }
 
 export default walletSaga;

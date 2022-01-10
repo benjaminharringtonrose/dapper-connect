@@ -7,8 +7,8 @@ import { getExchangesSaga } from "../exchange/sagas";
 import { getExchangesRequested } from "../exchange/slice";
 import { getCoinMarketRequested, getSparklineRequested } from "../market";
 import { getCoinMarketSaga, getSparklineSaga } from "../market/sagas";
-import { getWalletsSaga } from "../wallet";
-import { getWalletsRequested } from "../wallet";
+import { getAccountsSaga } from "../wallet";
+import { getAccountsRequested } from "../wallet";
 import { setNextIndex, setOnboardStatus } from "../wallet/slice";
 
 import {
@@ -29,6 +29,7 @@ export function* frontloadAppSaga() {
     const colorScheme: ColorScheme = yield call(secureStore.getColorScheme);
     const onboarded: boolean = yield call(secureStore.getOnboardStatus);
     const nextIndex: number = yield call(secureStore.getNextIndex);
+
     yield put(setNetwork({ network }));
     yield put(toggleFaceId({ faceID }));
     yield put(setColorScheme({ colorScheme }));
@@ -45,7 +46,7 @@ export function* frontloadAppSaga() {
       })
     );
     yield call(getExchangesSaga, getExchangesRequested());
-    yield call(getWalletsSaga, getWalletsRequested());
+    yield call(getAccountsSaga, getAccountsRequested());
     yield put(frontloadAppSucceeded());
   } catch (error) {
     console.log(error.message);
@@ -69,7 +70,7 @@ export function* hardResetSaga() {
     const address = yield call(secureStore.getAddress);
     const { privateKey } = yield call(secureStore.getPrivateKey, address);
     yield call(secureStore.removeSeedPhrase, privateKey);
-    yield call(secureStore.resetWallets);
+    yield call(secureStore.resetAccounts);
     yield call(secureStore.removeNetwork);
     yield call(secureStore.removeColorScheme);
     yield call(secureStore.removeFaceID);

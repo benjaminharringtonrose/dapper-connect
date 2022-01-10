@@ -20,7 +20,11 @@ import { AppStackParamList } from "../navigation";
 import { getAccountRequested } from "../store/account";
 import { resetHoldings } from "../store/market";
 import { setToastMessages } from "../store/settings";
-import { addWalletRequested, getWalletsRequested, removeWalletRequested } from "../store/wallet";
+import {
+  addAccountRequested,
+  getAccountsRequested,
+  removeAccountRequested,
+} from "../store/wallet/slice";
 import { Holding } from "../types";
 import { CurrencyFormatter } from "../util";
 
@@ -35,17 +39,21 @@ const AssetsScreen = () => {
   const { holdings } = useAppSelector((state) => state.market);
   const { loadingGetAccount } = useAppSelector((state) => state.account);
   const { toastMessages } = useAppSelector((state) => state.settings);
-  const { wallets } = useAppSelector((state) => state.wallets);
+  const { accounts } = useAppSelector((state) => state.wallets);
 
   const navigation = useNavigation<StackNavigationProp<AppStackParamList, "NotificationScreen">>();
   const dispatch = useAppDispatch();
   const connector = useWalletConnect();
   const { colors } = useTheme();
 
-  const [selectedHolding, setSelectedHolding] = useState<Holding>(undefined);
-  const [selectedAddress, setSelectedAddress] = useState<string | undefined>(wallets?.[0]?.address);
+  console.log(web3.eth.accounts.wallet.length);
 
-  const wallet = wallets?.find((wallet) => wallet.address === selectedAddress);
+  const [selectedHolding, setSelectedHolding] = useState<Holding>(undefined);
+  const [selectedAddress, setSelectedAddress] = useState<string | undefined>(
+    accounts?.[0]?.address
+  );
+
+  const account = accounts?.find((account) => account.address === selectedAddress);
 
   const totalWallet = holdings?.reduce((a, b) => a + (b.total || 0), 0);
   const valueChange = holdings?.reduce((a, b) => a + (b.holdingValueChange7d || 0), 0);
@@ -95,8 +103,8 @@ const AssetsScreen = () => {
       setSelectedAddress(connector.accounts[0]);
       dispatch(getAccountRequested({ address: connector.accounts[0] }));
       dispatch(
-        addWalletRequested({
-          wallet: {
+        addAccountRequested({
+          account: {
             name: connector.clientMeta.name,
             address: connector.accounts[0],
             provider: "walletconnect",
@@ -117,10 +125,10 @@ const AssetsScreen = () => {
             onPress: async () => {
               connector.killSession();
               dispatch(resetHoldings());
-              const wcWallet = wallets?.find((wallet) => wallet.provider === "walletconnect");
-              dispatch(removeWalletRequested({ address: wcWallet.address }));
-              setSelectedAddress(wallets?.[0]?.address);
-              dispatch(getAccountRequested({ address: wallets?.[0]?.address }));
+              const wcWallet = accounts?.find((wallet) => wallet.provider === "walletconnect");
+              dispatch(removeAccountRequested({ address: wcWallet.address }));
+              setSelectedAddress(accounts?.[0]?.address);
+              dispatch(getAccountRequested({ address: accounts?.[0]?.address }));
             },
           },
           { text: "Nevermind" },
@@ -133,7 +141,7 @@ const AssetsScreen = () => {
 
   const onRefresh = () => {
     dispatch(getAccountRequested({ address: selectedAddress }));
-    dispatch(getWalletsRequested());
+    dispatch(getAccountsRequested());
   };
 
   return (
@@ -154,7 +162,7 @@ const AssetsScreen = () => {
           >
             {/* Balance Info */}
             <BalanceInfo
-              title={wallet?.name || "Your Wallet"}
+              title={account?.name || "Account #1"}
               displayAmount={totalWallet}
               changePercentage={percentageChange}
               colors={colors}
@@ -313,7 +321,7 @@ const AssetsScreen = () => {
             walletModalRef.current?.close();
           }}
           onResetSelectedAddress={() => {
-            setSelectedAddress(wallets?.[0]?.address);
+            setSelectedAddress(accounts?.[0]?.address);
           }}
           onWalletConnect={onWalletConnect}
           onClose={() => walletModalRef.current?.close()}
@@ -324,7 +332,6 @@ const AssetsScreen = () => {
           ref={sendModalRef}
           colors={colors}
           onPress={() => sendModalRef.current?.close()}
-          web3={web3}
           address={selectedAddress}
         />
         <ReceiveModal
@@ -347,7 +354,6 @@ const AssetsScreen = () => {
             setSelectedAddress(address);
             createWalletModalRef.current?.close();
           }}
-          web3={web3}
         />
       </>
     </RootView>

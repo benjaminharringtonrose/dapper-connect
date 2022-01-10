@@ -13,6 +13,7 @@ export interface SettingsState {
   errorHardReset?: Error;
   authenticated: boolean;
   faceID: boolean;
+  encryptedSeedPhrase?: string;
 }
 
 export const InitialSettingsState: SettingsState = {
@@ -25,6 +26,7 @@ export const InitialSettingsState: SettingsState = {
   errorHardReset: undefined,
   authenticated: false,
   faceID: false,
+  encryptedSeedPhrase: undefined,
 };
 
 type ErrorAction = PayloadAction<{ error: Error }>;
@@ -76,6 +78,9 @@ const settingsSlice = createSlice({
     toggleFaceId: (state, action: PayloadAction<{ faceID: boolean }>) => {
       state.faceID = action.payload.faceID;
     },
+    setEncryptedSeedPhrase: (state, action: PayloadAction<{ encryptedSeedPhrase: string }>) => {
+      state.encryptedSeedPhrase = action.payload.encryptedSeedPhrase;
+    },
   },
 });
 
@@ -91,6 +96,7 @@ export const {
   hardResetAppFailed,
   setAuthenticated,
   toggleFaceId,
+  setEncryptedSeedPhrase,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

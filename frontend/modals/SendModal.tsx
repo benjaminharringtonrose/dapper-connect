@@ -8,9 +8,9 @@ import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Web3 from "web3";
 import * as Yup from "yup";
 
+import { web3 } from "../api/web3";
 import { Button, FormInput } from "../components";
 import { COLORS, FONTS, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
@@ -24,7 +24,6 @@ interface FormProps {
 
 interface SendModalProps {
   onPress: () => void;
-  web3: Web3;
   address: string;
   colors: ReactNativePaper.ThemeColors;
 }
@@ -43,7 +42,7 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
   const { toastMessages } = useAppSelector((state) => state.settings);
   const { holdings } = useAppSelector((state) => state.market);
   const holding = holdings.find((holding) => holding.id === "ethereum");
-  const { wallets } = useAppSelector((state) => state.wallets);
+  const { accounts } = useAppSelector((state) => state.wallets);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [reviewVisible, setReviewVisible] = useState<boolean>(false);
@@ -52,18 +51,15 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
   const [usdAmount, setUsdAmount] = useState<number | undefined>();
 
   const calculateTransactionFee = async (values: FormProps) => {
-    const wallet = wallets.find((wallet) => wallet.address === props.address);
+    const account = accounts.find((wallet) => wallet.address === props.address);
     const tx = {
-      from: wallet.address,
+      from: account.address,
       to: values.address,
     };
-    const gasPrice = await props.web3.eth.getGasPrice();
-    const gasLimit = await props.web3.eth.estimateGas(tx);
+    const gasPrice = await web3.eth.getGasPrice();
+    const gasLimit = await web3.eth.estimateGas(tx);
     const transactionFee = Number(
-      props.web3.utils.fromWei(
-        (Number(gasPrice) * gasLimit * holding?.currentPrice).toString(),
-        "ether"
-      )
+      web3.utils.fromWei((Number(gasPrice) * gasLimit * holding?.currentPrice).toString(), "ether")
     );
     const usdAmount = Number(values.amount) * holding?.currentPrice;
     const maxTotal = transactionFee + usdAmount;
@@ -99,38 +95,39 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
     }
     try {
       setLoading(true);
-      const wallet = wallets.find((wallet) => wallet.address === props.address);
-      const wei = props.web3.utils.toWei(values.amount, "ether");
-      if (wallet.provider === "walletconnect") {
+      const account = accounts.find((wallet) => wallet.address === props.address);
+      const wei = web3.utils.toWei(values.amount, "ether");
+      if (account.provider === "walletconnect") {
         if (connector.connected) {
           try {
             await connector.sendTransaction({
               data: "0x",
-              from: wallet?.address,
+              from: account?.address,
               to: values.address,
-              value: props.web3.utils.numberToHex(Number(wei)),
+              value: web3.utils.numberToHex(Number(wei)),
             });
             console.log("success");
           } catch (error) {
             console.log(error.message);
           }
         }
-      } else if (wallet.provider === "local") {
+      } else if (account.provider === "local") {
         const tx = {
           data: "0x",
-          from: wallet?.address,
+          from: account?.address,
           to: values.address,
-          value: props.web3.utils.numberToHex(Number(wei)),
+          value: web3.utils.numberToHex(Number(wei)),
         };
-        const gasLimit = await props.web3.eth.estimateGas(tx);
-        const signedTx = await props.web3.eth.accounts.signTransaction(
+        const gasLimit = await web3.eth.estimateGas(tx);
+
+        const signedTx = await web3.eth.accounts.signTransaction(
           {
             ...tx,
             gas: gasLimit,
           },
-          wallet.privateKey
+          account.privateKey
         );
-        props.web3.eth.sendSignedTransaction(signedTx.rawTransaction, function (error, hash) {
+        web3.eth.sendSignedTransaction(signedTx.rawTransaction, function (error, hash) {
           if (!error) {
             console.log("🎉 The hash of your transaction is: ", hash);
             Clipboard.setString(hash);

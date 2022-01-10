@@ -1,24 +1,16 @@
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import React, { forwardRef, Ref, useEffect, useRef, useState } from "react";
-import {
-  Alert,
-  Animated,
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Animated, Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button, PeaceArt, SectionTitle } from "../components";
-import { COLORS, FONTS, SIZES } from "../constants";
+import { FONTS, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getAccountRequested } from "../store/account";
-import { removeWalletRequested } from "../store/wallet";
+import { removeAccountRequested } from "../store/wallet";
 
 interface WalletModalProps {
   colors: ReactNativePaper.ThemeColors;
@@ -36,8 +28,8 @@ const { width } = Dimensions.get("screen");
 
 export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modalize>) => {
   const anim = useRef(new Animated.Value(0)).current;
-  const { wallets } = useAppSelector((state) => state.wallets);
-  const wallet = wallets?.find((wallet) => wallet.address === props.address);
+  const { accounts } = useAppSelector((state) => state.wallets);
+  const account = accounts?.find((wallet) => wallet.address === props.address);
 
   const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
@@ -74,7 +66,7 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
         useNativeDriver={false}
         flatListProps={{
           keyExtractor: (item) => item.address,
-          data: wallets,
+          data: accounts,
           ListHeaderComponent: () => {
             return (
               <View
@@ -144,14 +136,14 @@ export const WalletModal = forwardRef((props: WalletModalProps, ref: Ref<Modaliz
                         {
                           text: "Delete",
                           onPress: () => {
-                            dispatch(removeWalletRequested({ address: item?.address }));
+                            dispatch(removeAccountRequested({ address: item?.address }));
                             if (item?.address === props.address) {
                               props.onResetSelectedAddress();
-                              dispatch(getAccountRequested({ address: wallets[0]?.address }));
+                              dispatch(getAccountRequested({ address: accounts[0]?.address }));
                             } else {
                               dispatch(getAccountRequested({ address: props.address }));
                             }
-                            if (wallet.provider === "walletconnect") {
+                            if (account.provider === "walletconnect") {
                               props.connector.killSession();
                             }
                             setEditMode(!editMode);

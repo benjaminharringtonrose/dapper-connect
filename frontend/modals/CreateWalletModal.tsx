@@ -5,15 +5,14 @@ import { View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Web3 from "web3";
 import * as Yup from "yup";
 
 import { Button, FormInput } from "../components";
 import { COLORS, SIZES } from "../constants";
-import { createNextWallet } from "../helpers";
+import { createNextAccount } from "../helpers";
 import { useAppDispatch } from "../hooks";
 import { getAccountRequested } from "../store/account";
-import { addWalletRequested } from "../store/wallet";
+import { addAccountRequested } from "../store/wallet";
 
 interface FormProps {
   name?: string;
@@ -21,7 +20,6 @@ interface FormProps {
 
 interface CreateModalProps {
   onPress: (address: string) => void;
-  web3: Web3;
   colors: ReactNativePaper.ThemeColors;
 }
 
@@ -43,10 +41,10 @@ export const CreateWalletModal = forwardRef((props: CreateModalProps, ref: Ref<M
     }
     try {
       setLoading(true);
-      const newWallet = await createNextWallet(values.name);
-      dispatch(addWalletRequested({ wallet: newWallet }));
-      props.onPress(newWallet.address);
-      dispatch(getAccountRequested({ address: newWallet.address }));
+      const newAccount = await createNextAccount(values.name);
+      dispatch(addAccountRequested({ account: newAccount }));
+      props.onPress(newAccount.address);
+      dispatch(getAccountRequested({ address: newAccount.address }));
       setLoading(false);
     } catch (error) {
       setLoading(false);

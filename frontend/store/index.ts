@@ -2,7 +2,8 @@ import { applyMiddleware, combineReducers, createStore } from "@reduxjs/toolkit"
 import createSagaMiddleware from "redux-saga";
 import { fork } from "redux-saga/effects";
 
-import { networkMiddleware } from "../middleware";
+import { injectStoreIntoHelpers } from "../helpers";
+import { networkMiddleware, providerMiddleware } from "../middleware";
 
 import accountSaga from "./account/sagas";
 import accountReducer from "./account/slice";
@@ -34,6 +35,8 @@ const reducer = combineReducers({
 });
 
 export const store = createStore(reducer, applyMiddleware(sagaMiddleware, networkMiddleware));
+
+injectStoreIntoHelpers(store);
 
 sagaMiddleware.run(rootSaga);
 

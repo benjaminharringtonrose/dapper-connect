@@ -3,43 +3,43 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { generateMnemonic } from "bip39";
 import { State } from "react-native-gesture-handler";
 
-import { DapperWallet } from "../../types";
+import { WalletAccount } from "../../types";
 
 export interface WalletState {
-  wallets?: DapperWallet[];
-  loadingGetWallets: boolean;
-  errorGetWallets?: Error;
-  loadingAddWallet: boolean;
-  errorAddWallet?: Error;
-  loadingRemoveWallet: boolean;
-  errorRemoveWallet?: Error;
+  accounts?: WalletAccount[];
+  loadingGetAccounts: boolean;
+  errorGetAccounts?: Error;
+  loadingAddAccount: boolean;
+  errorAddAccount?: Error;
+  loadingRemoveAccount: boolean;
+  errorRemoveAccount?: Error;
   onboarded: boolean;
   loadingOnboardWallet: boolean;
   errorOnboardWallet?: Error;
   nextIndex: number;
-  loadingAddNextWallet: boolean;
-  errorAddNextWallet?: Error;
+  loadingAddNextAccount: boolean;
+  errorAddNextAccount?: Error;
 }
 
 const initialState: WalletState = {
-  wallets: [],
-  loadingGetWallets: false,
-  errorGetWallets: undefined,
-  loadingAddWallet: false,
-  errorAddWallet: undefined,
-  loadingRemoveWallet: false,
-  errorRemoveWallet: undefined,
+  accounts: [],
+  loadingGetAccounts: false,
+  errorGetAccounts: undefined,
+  loadingAddAccount: false,
+  errorAddAccount: undefined,
+  loadingRemoveAccount: false,
+  errorRemoveAccount: undefined,
   onboarded: false,
   loadingOnboardWallet: false,
   errorOnboardWallet: undefined,
   nextIndex: 0,
-  loadingAddNextWallet: false,
-  errorAddNextWallet: undefined,
+  loadingAddNextAccount: false,
+  errorAddNextAccount: undefined,
 };
 
-export type GetWalletsRequestedAction = PayloadAction<undefined>;
-export type AddWalletRequestedAction = PayloadAction<{ wallet: DapperWallet }>;
-export type RemoveWalletRequestedAction = PayloadAction<{ address: string }>;
+export type GetAccountsRequestedAction = PayloadAction<undefined>;
+export type AddAccountRequestedAction = PayloadAction<{ account: WalletAccount }>;
+export type RemoveAccountRequestedAction = PayloadAction<{ address: string }>;
 
 type ErrorAction = PayloadAction<{ error: Error }>;
 
@@ -47,47 +47,47 @@ const walletSlice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
-    getWalletsRequested: (state, _: GetWalletsRequestedAction) => {
-      state.loadingGetWallets = true;
+    getAccountsRequested: (state, _: GetAccountsRequestedAction) => {
+      state.loadingGetAccounts = true;
     },
-    getWalletsSucceeded: (state, action: PayloadAction<{ wallets: DapperWallet[] }>) => {
-      const { wallets } = action.payload;
-      state.loadingGetWallets = false;
-      state.wallets = wallets;
+    getAccountsSucceeded: (state, action: PayloadAction<{ accounts: WalletAccount[] }>) => {
+      const { accounts } = action.payload;
+      state.loadingGetAccounts = false;
+      state.accounts = accounts;
     },
-    getWalletsFailed: (state, action: ErrorAction) => {
+    getAccountsFailed: (state, action: ErrorAction) => {
       const { error } = action.payload;
-      state.loadingGetWallets = false;
-      state.errorGetWallets = error;
+      state.loadingGetAccounts = false;
+      state.errorGetAccounts = error;
     },
-    addWalletRequested: (state, _: AddWalletRequestedAction) => {
-      state.loadingGetWallets = true;
+    addAccountRequested: (state, _: AddAccountRequestedAction) => {
+      state.loadingGetAccounts = true;
     },
-    addWalletSucceeded: (state, action: PayloadAction<{ wallets: DapperWallet[] }>) => {
-      const { wallets } = action.payload;
-      state.loadingGetWallets = false;
-      state.wallets = wallets;
+    addAccountSucceeded: (state, action: PayloadAction<{ accounts: WalletAccount[] }>) => {
+      const { accounts } = action.payload;
+      state.loadingGetAccounts = false;
+      state.accounts = accounts;
     },
-    addWalletFailed: (state, action: ErrorAction) => {
+    addAccountFailed: (state, action: ErrorAction) => {
       const { error } = action.payload;
-      state.loadingGetWallets = false;
-      state.errorGetWallets = error;
+      state.loadingAddAccount = false;
+      state.errorAddAccount = error;
     },
-    removeWalletRequested: (state, _: RemoveWalletRequestedAction) => {
-      state.loadingGetWallets = true;
+    removeAccountRequested: (state, _: RemoveAccountRequestedAction) => {
+      state.loadingRemoveAccount = true;
     },
-    removeWalletSucceeded: (state, action: PayloadAction<{ wallets: DapperWallet[] }>) => {
-      const { wallets } = action.payload;
-      state.loadingRemoveWallet = false;
-      state.wallets = wallets;
+    removeAccountSucceeded: (state, action: PayloadAction<{ accounts: WalletAccount[] }>) => {
+      const { accounts } = action.payload;
+      state.loadingRemoveAccount = false;
+      state.accounts = accounts;
     },
-    removeWalletFailed: (state, action: ErrorAction) => {
+    removeAccountFailed: (state, action: ErrorAction) => {
       const { error } = action.payload;
-      state.loadingRemoveWallet = false;
-      state.errorRemoveWallet = error;
+      state.loadingRemoveAccount = false;
+      state.errorRemoveAccount = error;
     },
-    resetWallets: (state, _: PayloadAction<undefined>) => {
-      state.wallets = [];
+    resetAccounts: (state, _: PayloadAction<undefined>) => {
+      state.accounts = [];
     },
     onboardWalletRequested: (state, _: PayloadAction<{ seedPhrase?: string }>) => {
       state.loadingOnboardWallet = true;
@@ -105,38 +105,38 @@ const walletSlice = createSlice({
     setNextIndex: (state, action: PayloadAction<{ nextIndex: number }>) => {
       state.nextIndex = action.payload.nextIndex;
     },
-    addNextWalletRequested: (state, _: PayloadAction<{ walletName: string }>) => {
-      state.loadingAddNextWallet = true;
+    addNextAccountRequested: (state, _: PayloadAction<{ walletName: string }>) => {
+      state.loadingAddNextAccount = true;
     },
-    addNextWalletSucceeded: (state, _: PayloadAction<{ walletName: string }>) => {
-      state.loadingAddNextWallet = false;
+    addNextAccountSucceeded: (state, _: PayloadAction<undefined>) => {
+      state.loadingAddNextAccount = false;
     },
-    addNextWalletFailed: (state, action: PayloadAction<{ error: Error }>) => {
-      state.loadingAddNextWallet = false;
-      state.errorAddNextWallet = action.payload.error;
+    addNextAccountFailed: (state, action: PayloadAction<{ error: Error }>) => {
+      state.loadingAddNextAccount = false;
+      state.errorAddNextAccount = action.payload.error;
     },
   },
 });
 
 export const {
-  getWalletsRequested,
-  getWalletsSucceeded,
-  getWalletsFailed,
-  addWalletRequested,
-  addWalletSucceeded,
-  addWalletFailed,
-  removeWalletRequested,
-  removeWalletSucceeded,
-  removeWalletFailed,
-  resetWallets,
+  getAccountsRequested,
+  getAccountsSucceeded,
+  getAccountsFailed,
+  addAccountRequested,
+  addAccountSucceeded,
+  addAccountFailed,
+  removeAccountRequested,
+  removeAccountSucceeded,
+  removeAccountFailed,
+  resetAccounts,
   onboardWalletRequested,
   onboardWalletSucceeded,
   onboardWalletFailed,
   setOnboardStatus,
   setNextIndex,
-  addNextWalletRequested,
-  addNextWalletSucceeded,
-  addNextWalletFailed,
+  addNextAccountRequested,
+  addNextAccountSucceeded,
+  addNextAccountFailed,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

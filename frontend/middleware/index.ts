@@ -1,3 +1,4 @@
 import networkMiddleware from "./networkMiddleware";
+import providerMiddleware from "./providerMiddleware";
 
-export { networkMiddleware };
+export { networkMiddleware, providerMiddleware };
