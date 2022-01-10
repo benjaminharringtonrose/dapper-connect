@@ -6,7 +6,8 @@ import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Button, PeaceArt } from "../components";
+import { Button } from "../components";
+import Blockie from "../components/Blockie";
 import { FONTS, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getAccountRequested } from "../store/account";
@@ -63,8 +64,9 @@ export const AccountsModal = forwardRef((props: AccountsModalProps, ref: Ref<Mod
       <Modalize
         ref={ref}
         adjustToContentHeight={true}
-        useNativeDriver={false}
+        useNativeDriver={true}
         flatListProps={{
+          showsVerticalScrollIndicator: false,
           keyExtractor: (item) => item.address,
           data: accounts,
           ListHeaderComponent: () => {
@@ -76,11 +78,12 @@ export const AccountsModal = forwardRef((props: AccountsModalProps, ref: Ref<Mod
                   alignItems: "center",
                   borderBottomColor: props.colors.border,
                   borderBottomWidth: 1,
+                  paddingVertical: SIZES.radius,
                 }}
               >
                 <View style={{ flex: 2, paddingLeft: SIZES.padding }} />
                 <Text
-                  style={[FONTS.h2, { flex: 4, color: props.colors.text, textAlign: "center" }]}
+                  style={[FONTS.body2, { flex: 4, color: props.colors.text, textAlign: "center" }]}
                 >
                   {"Accounts"}
                 </Text>
@@ -127,14 +130,17 @@ export const AccountsModal = forwardRef((props: AccountsModalProps, ref: Ref<Mod
                     minHeight: 50,
                     borderColor: props.colors.border,
                     borderBottomWidth: 1,
-                    padding: SIZES.padding,
+                    paddingHorizontal: SIZES.padding,
+                    paddingVertical: SIZES.radius,
                     flexDirection: "row",
                     alignItems: "center",
                     width,
                   }}
                 >
-                  <View style={{ paddingRight: SIZES.radius }}>
-                    <PeaceArt selectedColor={item.color} colors={props.colors} />
+                  <View style={{ paddingRight: SIZES.padding }}>
+                    <View style={{ borderRadius: 64 / 2, overflow: "hidden" }}>
+                      <Blockie seed={item.address} size={7} scale={7} />
+                    </View>
                   </View>
 
                   <View style={{ flex: 1 }}>
@@ -201,7 +207,7 @@ export const AccountsModal = forwardRef((props: AccountsModalProps, ref: Ref<Mod
           },
           ListFooterComponent: () => {
             return (
-              <>
+              <View style={{ backgroundColor: props.colors.modal }}>
                 <Button
                   type={"bordered"}
                   label={"Create Account"}
@@ -216,14 +222,14 @@ export const AccountsModal = forwardRef((props: AccountsModalProps, ref: Ref<Mod
                   style={{ marginVertical: SIZES.radius, marginHorizontal: SIZES.padding }}
                   colors={props.colors}
                 />
-              </>
+                <View
+                  style={{ backgroundColor: props.colors.modal, paddingBottom: insets.bottom }}
+                />
+              </View>
             );
           },
         }}
-        modalStyle={{
-          bottom: insets.bottom,
-          backgroundColor: props.colors.modal,
-        }}
+        modalStyle={{ backgroundColor: props.colors.modal }}
         handleStyle={{ backgroundColor: props.colors.modalHandle }}
       />
     </Portal>

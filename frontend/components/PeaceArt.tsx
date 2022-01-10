@@ -23,7 +23,10 @@ const PeaceArt = ({
         backgroundColor: colors.modal,
         width: SIDE_WIDTH,
         height: SIDE_WIDTH,
-        borderRadius: SIDE_WIDTH / 4,
+        borderRadius: SIDE_WIDTH / 2,
+        borderWidth: 2,
+        padding: 20,
+        borderColor: OUTLINE,
         justifyContent: "center",
         alignItems: "center",
       }}

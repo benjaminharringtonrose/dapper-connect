@@ -92,14 +92,15 @@ export const createNextAccount = async (name: string) => {
   const { privateKey } = await secureStore.getPrivateKey(address);
   const { seedPhrase } = await secureStore.getSeedPhrase(privateKey);
   const { wallet } = deriveAccountFromMnemonic(seedPhrase, nextIndex);
-  const accountColor = PEACE_COLORS[Math.floor(Math.random() * PEACE_COLORS.length)];
   const accountAddress = addHexPrefix(toChecksumAddress(wallet.getAddress().toString("hex")));
   const accountPkey = addHexPrefix(wallet.getPrivateKey().toString("hex"));
   await secureStore.setNextIndex(nextIndex + 1);
   store.dispatch(setNextIndex({ nextIndex: nextIndex + 1 }));
+  const color = addressHashedColor(accountAddress);
+
   const nextAccount: WalletAccount = {
     name,
-    color: accountColor,
+    color,
     address: accountAddress,
     privateKey: accountPkey,
     provider: "local",

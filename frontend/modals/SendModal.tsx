@@ -159,10 +159,7 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
         ref={ref}
         useNativeDriver={false}
         adjustToContentHeight={true}
-        modalStyle={{
-          backgroundColor: props.colors.modal,
-          bottom: insets.bottom,
-        }}
+        modalStyle={{ backgroundColor: props.colors.modal }}
         handleStyle={{ backgroundColor: props.colors.modalHandle }}
       >
         <View style={{}}>
@@ -327,6 +324,7 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
             )}
           </Formik>
         </View>
+        <View style={{ backgroundColor: props.colors.modal, paddingBottom: insets.bottom }} />
       </Modalize>
     </Portal>
   );

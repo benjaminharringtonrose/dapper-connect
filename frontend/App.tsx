@@ -87,7 +87,7 @@ const CustomDarkTheme = {
   colors: {
     ...NavigationDarkTheme.colors,
     ...PaperDarkTheme.colors,
-    primary: "#4682b4",
+    primary: COLORS.white,
     white: COLORS.white,
     black: COLORS.black,
     background: "#000000",

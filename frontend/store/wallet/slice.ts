@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { generateMnemonic } from "bip39";
-import { State } from "react-native-gesture-handler";
 
 import { WalletAccount } from "../../types";
 

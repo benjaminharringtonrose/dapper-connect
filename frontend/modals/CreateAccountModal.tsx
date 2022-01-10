@@ -60,7 +60,6 @@ export const CreateAccountModal = forwardRef(
           adjustToContentHeight={true}
           modalStyle={{
             backgroundColor: props.colors.modal,
-            bottom: insets.bottom,
           }}
           handleStyle={{ backgroundColor: props.colors.modalHandle }}
         >
@@ -112,6 +111,7 @@ export const CreateAccountModal = forwardRef(
               )}
             </Formik>
           </View>
+          <View style={{ backgroundColor: props.colors.modal, paddingBottom: insets.bottom }} />
         </Modalize>
       </Portal>
     );

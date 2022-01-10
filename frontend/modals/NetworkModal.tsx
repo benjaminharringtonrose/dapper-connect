@@ -28,6 +28,7 @@ export const NetworkModal = forwardRef((props: NetworkModalProps, ref: Ref<Modal
         ref={ref}
         adjustToContentHeight={true}
         useNativeDriver={false}
+        modalStyle={{ backgroundColor: props.colors.modal }}
         flatListProps={{
           keyExtractor: (item) => item.id,
           data: [
@@ -38,6 +39,7 @@ export const NetworkModal = forwardRef((props: NetworkModalProps, ref: Ref<Modal
             return (
               <View
                 style={{
+                  flex: 1,
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
@@ -47,7 +49,11 @@ export const NetworkModal = forwardRef((props: NetworkModalProps, ref: Ref<Modal
                   borderBottomWidth: StyleSheet.hairlineWidth,
                 }}
               >
-                <SectionTitle title={"NETWORKS"} />
+                <Text
+                  style={[FONTS.body2, { flex: 4, color: props.colors.text, textAlign: "center" }]}
+                >
+                  {"Networks"}
+                </Text>
               </View>
             );
           },
@@ -76,10 +82,9 @@ export const NetworkModal = forwardRef((props: NetworkModalProps, ref: Ref<Modal
               </TouchableOpacity>
             );
           },
-        }}
-        modalStyle={{
-          bottom: insets.bottom,
-          backgroundColor: props.colors.modal,
+          ListFooterComponent: (
+            <View style={{ backgroundColor: props.colors.modal, paddingBottom: insets.bottom }} />
+          ),
         }}
       />
     </Portal>
