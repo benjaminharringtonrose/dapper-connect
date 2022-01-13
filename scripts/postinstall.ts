@@ -40,7 +40,7 @@ function removeBadNodeModules() {
   }
 }
 
-removeBadNodeModules();
+// removeBadNodeModules();
 
 child_process.execSync("npx patch-package", { stdio: "inherit" });
 
