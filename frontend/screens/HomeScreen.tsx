@@ -193,6 +193,7 @@ const HomeScreen = () => {
                   justifyContent: "center",
                   backgroundColor,
                   paddingHorizontal: SIZES.padding,
+                  borderRadius: SIZES.radius,
                 }}
                 onPress={() => {
                   setSelectedId(item.id);

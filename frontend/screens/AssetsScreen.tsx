@@ -239,13 +239,13 @@ const AssetsScreen = () => {
                 ? colors.success
                 : colors.error;
 
-            const backgroundColor = selectedHolding?.id
-              ? item?.id === selectedHolding?.id
-                ? colors.accent
-                : colors.background
-              : item?.id === holdings?.[0]?.id
-              ? colors.accent
-              : colors.background;
+            // const backgroundColor = selectedHolding?.id
+            //   ? item?.id === selectedHolding?.id
+            //     ? colors.accent
+            //     : colors.background
+            //   : item?.id === holdings?.[0]?.id
+            //   ? colors.accent
+            //   : colors.background;
 
             return (
               <TouchableOpacity
@@ -253,7 +253,7 @@ const AssetsScreen = () => {
                   flexDirection: "row",
                   height: 55,
                   paddingHorizontal: SIZES.padding,
-                  backgroundColor,
+                  backgroundColor: colors.background,
                 }}
                 onPress={() => setSelectedHolding(item)}
               >

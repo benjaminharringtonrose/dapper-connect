@@ -1,10 +1,11 @@
-import { Feather } from "@expo/vector-icons";
 import React, { forwardRef, Ref } from "react";
-import { Dimensions, Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import { Modalize } from "react-native-modalize";
 import { Portal } from "react-native-portalize";
 import QRCode from "react-native-qrcode-svg";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Button } from "../components";
 import { COLORS, FONTS, SIZES } from "../constants";
 
 interface ReceiveModalProps {
@@ -14,6 +15,8 @@ interface ReceiveModalProps {
 }
 
 export const ReceiveModal = forwardRef((props: ReceiveModalProps, ref: Ref<Modalize>) => {
+  const insets = useSafeAreaInsets();
+
   return (
     <Portal>
       <Modalize
@@ -27,31 +30,23 @@ export const ReceiveModal = forwardRef((props: ReceiveModalProps, ref: Ref<Modal
           style={{
             alignItems: "center",
             marginTop: SIZES.padding,
-            height: Dimensions.get("screen").height / 2,
           }}
         >
           <QRCode value={props.address} size={200} />
           <View style={{ paddingVertical: SIZES.padding }}>
-            <Text style={[FONTS.h4, { color: COLORS.lightGray3, width: 200, textAlign: "center" }]}>
+            <Text style={[FONTS.h4, { color: props.colors.text, width: 200, textAlign: "center" }]}>
               {props.address}
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={props.onPress}
-            style={{
-              backgroundColor: props.colors.primary,
-              padding: SIZES.radius,
-              borderRadius: 10,
-              width: 60,
-              height: 60,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Feather name="copy" size={24} color={props.colors.background} />
-            <Text style={[FONTS.h5, { color: props.colors.background }]}>{"Copy"}</Text>
-          </TouchableOpacity>
         </View>
+        <Button
+          label={"Copy"}
+          postfixIcon={"copy"}
+          onPress={props.onPress}
+          style={{ marginHorizontal: SIZES.padding, marginBottom: SIZES.radius }}
+          colors={props.colors}
+        />
+        <View style={{ backgroundColor: props.colors.modal, paddingBottom: insets.bottom }} />
       </Modalize>
     </Portal>
   );
