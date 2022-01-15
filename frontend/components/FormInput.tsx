@@ -7,6 +7,7 @@ export interface FormInputProps extends InputProps {
   error?: string;
   touched?: boolean;
   colors: ReactNativePaper.ThemeColors;
+  icon?: () => JSX.Element | null;
 }
 const FormInput = (props: FormInputProps) => {
   return (

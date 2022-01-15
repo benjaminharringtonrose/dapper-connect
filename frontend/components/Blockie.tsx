@@ -113,9 +113,13 @@ class Blockie extends Component<BlockieProps, {}> {
     const scale = this.props.scale || 8;
 
     return (
-      <Svg height={size * scale} width={size * scale}>
-        {this.renderIcon(size, scale)}
-      </Svg>
+      <View>
+        <View style={{ borderRadius: (size * scale) / 2, overflow: "hidden" }}>
+          <Svg height={size * scale} width={size * scale}>
+            {this.renderIcon(size, scale)}
+          </Svg>
+        </View>
+      </View>
     );
   }
 }

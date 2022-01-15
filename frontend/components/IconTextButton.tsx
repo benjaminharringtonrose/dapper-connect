@@ -5,10 +5,11 @@ import {
   StyleProp,
   Text,
   TouchableOpacity,
+  View,
   ViewStyle,
 } from "react-native";
 
-import { COLORS, FONTS, SIZES } from "../constants";
+import { FONTS } from "../constants";
 
 interface IconTextButtonProps {
   label: string;
@@ -21,7 +22,6 @@ interface IconTextButtonProps {
 
 const IconTextButton = ({
   label,
-  icon,
   customIcon,
   containerStyle,
   onPress,
@@ -31,19 +31,12 @@ const IconTextButton = ({
     <TouchableOpacity
       onPress={onPress}
       style={[
-        {
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          height: 50,
-          borderRadius: SIZES.radius,
-          backgroundColor: colors.button,
-        },
+        { flexDirection: "column", justifyContent: "center", alignItems: "center" },
         containerStyle,
       ]}
     >
-      {customIcon ? customIcon() : <Image source={icon} style={{ width: 20, height: 20 }} />}
-      <Text style={[FONTS.h3, { marginLeft: SIZES.base, color: colors.background }]}>{label}</Text>
+      {customIcon && customIcon()}
+      <Text style={[FONTS.h3, { color: colors.text }]}>{label}</Text>
     </TouchableOpacity>
   );
 };

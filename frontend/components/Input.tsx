@@ -9,6 +9,8 @@ import {
   ViewStyle,
 } from "react-native";
 
+import { FONTS } from "../constants";
+
 export interface InputProps extends TextInputProps {
   label?: string;
   style?: StyleProp<ViewStyle>;
@@ -24,39 +26,41 @@ export const Input = React.forwardRef<TextInput, InputProps>((props: InputProps,
     <View
       style={[
         {
-          opacity: 0.8,
           borderColor: props.colors.border,
           borderBottomWidth: props?.noBorder ? 0 : 1,
         },
         props.style,
       ]}
     >
-      {!!props.label && (
-        <Text
-          style={{
-            fontWeight: "600",
-            color: props.colors.text,
-          }}
-        >
-          {props.label}
-        </Text>
-      )}
       <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <TextInput
-          ref={ref}
-          placeholderTextColor={props.colors.text}
-          selectionColor={props.colors.text}
-          autoCapitalize={"none"}
-          {...props}
-          style={[
-            {
-              opacity: 0.8,
-              minHeight: 40,
-              color: props.colors.text,
-            },
-            props.inputStyle,
-          ]}
-        />
+        <View style={{ flex: 1 }}>
+          {!!props.label && (
+            <Text
+              style={{
+                fontWeight: "600",
+                color: props.colors.textGray,
+              }}
+            >
+              {props.label}
+            </Text>
+          )}
+          <TextInput
+            ref={ref}
+            placeholderTextColor={props.colors.textGray}
+            selectionColor={props.colors.textGray}
+            autoCapitalize={"none"}
+            {...props}
+            style={[
+              FONTS.body2,
+              {
+                flex: 1,
+                minHeight: 40,
+                color: props.colors.textGray,
+              },
+              props.inputStyle,
+            ]}
+          />
+        </View>
         {!!props?.icon && props?.icon()}
       </View>
     </View>

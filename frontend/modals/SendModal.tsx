@@ -45,6 +45,7 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
   const { accounts } = useAppSelector((state) => state.wallets);
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingReview, setLoadingReview] = useState<boolean>(false);
   const [reviewVisible, setReviewVisible] = useState<boolean>(false);
   const [transactionFee, setTransactionFee] = useState<number | undefined>();
   const [maxTotal, setMaxTotal] = useState<number | undefined>();
@@ -72,6 +73,7 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
 
   const onReview = async () => {
     try {
+      setLoadingReview(true);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       const formData = formRef.current?.values;
       formRef.current?.setTouched({ amount: true, address: true });
@@ -86,6 +88,8 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
     } catch (e) {
       Alert.alert(e.message);
       console.log(e.message);
+    } finally {
+      setLoadingReview(false);
     }
   };
 
@@ -185,7 +189,7 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
                 >
                   <FormInput
                     label={"Amount"}
-                    placeholder={"ETH"}
+                    placeholder={"0"}
                     onChangeText={handleChange("amount")}
                     onBlur={handleBlur("amount")}
                     keyboardType={"decimal-pad"}
@@ -202,7 +206,7 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
                   />
                   <FormInput
                     label={"Address"}
-                    placeholder={"0xbc28Ea04101F03a....."}
+                    placeholder={"0xbc28Ea04....."}
                     onChangeText={handleChange("address")}
                     onBlur={handleBlur("address")}
                     autoCorrect={true}
@@ -242,7 +246,11 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
                       <Text style={{ flex: 1, color: props.colors.text }}>{"Ethereum (ETH)"}</Text>
                     </View>
                     <View
-                      style={{ height: 2, backgroundColor: COLORS.lightGray, marginVertical: 10 }}
+                      style={{
+                        height: 2,
+                        backgroundColor: props.colors.border,
+                        marginVertical: 10,
+                      }}
                     />
                     <View style={{ flexDirection: "row" }}>
                       <Text style={{ flex: 1, color: props.colors.text }}>{"Amount"}</Text>
@@ -251,7 +259,11 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
                       >{`≈ ${CurrencyFormatter.format(usdAmount)}`}</Text>
                     </View>
                     <View
-                      style={{ height: 2, backgroundColor: COLORS.lightGray, marginVertical: 10 }}
+                      style={{
+                        height: 2,
+                        backgroundColor: props.colors.border,
+                        marginVertical: 10,
+                      }}
                     />
                     <View style={{ flexDirection: "row" }}>
                       <Text style={{ flex: 1, color: props.colors.text }}>{"Transaction Fee"}</Text>
@@ -260,7 +272,11 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
                       </Text>
                     </View>
                     <View
-                      style={{ height: 2, backgroundColor: props.colors.input, marginVertical: 10 }}
+                      style={{
+                        height: 2,
+                        backgroundColor: props.colors.border,
+                        marginVertical: 10,
+                      }}
                     />
                     <View style={{ flexDirection: "row" }}>
                       <Text style={{ flex: 1, color: props.colors.text }}>{"Max Total"}</Text>
@@ -303,7 +319,7 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
                 ) : (
                   <Button
                     label={"Review"}
-                    loading={loading}
+                    loading={loadingReview}
                     onPress={onReview}
                     style={{ marginTop: SIZES.padding }}
                     colors={props.colors}
@@ -312,9 +328,9 @@ export const SendModal = forwardRef((props: SendModalProps, ref: Ref<Modalize>) 
                 <Button
                   label={"Send"}
                   loading={loading}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    handleSubmit();
+                  onPress={async () => {
+                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    await handleSubmit();
                   }}
                   disabled={maxTotal > holding.total || !reviewVisible}
                   style={{ marginTop: SIZES.padding }}

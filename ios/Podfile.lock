@@ -15,11 +15,11 @@ PODS:
     - ExpoModulesCore
   - EXLocalAuthentication (12.1.0):
     - ExpoModulesCore
-  - Expo (44.0.1):
+  - Expo (44.0.4):
     - ExpoModulesCore
   - ExpoHaptics (11.1.0):
     - ExpoModulesCore
-  - ExpoModulesCore (0.6.3):
+  - ExpoModulesCore (0.6.4):
     - React-Core
     - ReactCommon/turbomodule/core
   - ExpoSystemUI (1.1.0):
@@ -307,7 +307,7 @@ PODS:
     - React-cxxreact (= 0.64.3)
     - React-jsi (= 0.64.3)
     - React-perflogger (= 0.64.3)
-  - RNCAsyncStorage (1.15.14):
+  - RNCAsyncStorage (1.15.15):
     - React-Core
   - RNCCheckbox (0.5.9):
     - React-Core
@@ -317,7 +317,7 @@ PODS:
     - React
   - RNExitApp (1.1.0):
     - React
-  - RNGestureHandler (2.1.0):
+  - RNGestureHandler (2.1.1):
     - React-Core
   - RNReanimated (2.3.1):
     - DoubleConversion
@@ -535,20 +535,20 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
-  EXApplication: 2b8f4d665e050ecddffcfb1ce258b7216b6b7777
-  EXConstants: 1514e671cb9ef1279696a44db86e2085dfa5e6ad
-  EXErrorRecovery: 9e481432a9ba7220832340911028892b49682a89
-  EXFileSystem: 35453fcb2f311ac6c67a2c77527fd4ac8dabe526
-  EXFont: e0a7f501df6e833398dfd4b075a022370e215236
-  EXKeepAwake: e190d9ee4550bcf5f8a46bdb199735f542795ebb
-  EXLocalAuthentication: e6eddea07741480f84c1618bf111adaefcd86cc7
-  Expo: 0fc6c66a71414a8b76e7d96f160af8d1e8b85e78
-  ExpoHaptics: a6dfeceb9da635c15fbb80aa92fbfc9dde7966eb
-  ExpoModulesCore: a13b4c1f9cb420b4177f2675bfe83f3cd5b2d318
-  ExpoSystemUI: 2f45522bbdb4e28328efb548f7fe54c2d0d74d38
-  EXRandom: 9b9f014c04850cf84e651ed100895a387106cdc3
-  EXSecureStore: ada74c249250643e19b58692202ebaed611e8dd4
-  EXSplashScreen: 6f02bcc84bf6bdc19dcb7ae934b7015a3aaef008
+  EXApplication: bdc8dc27713235565da1029a34385229f31b8e08
+  EXConstants: 5d18484e38e8eacef7695a82214b6ac90133dedf
+  EXErrorRecovery: deea88a01d38f8b1c1181b4e1d179b0ba0e4bb5b
+  EXFileSystem: 7d1309ba6b38b82ef7fc9e80174de3f9184ac8b4
+  EXFont: 1fb13af43dc517c01c0ff21a6e32f9f9bf2ea602
+  EXKeepAwake: b571c2ad8323b2fced6e907766e2549f75119471
+  EXLocalAuthentication: 4c7166ed3133d2c75586093833936652e7d2c7fc
+  Expo: d9b8b5e49c200471fc473a652a84fe30dee73027
+  ExpoHaptics: c62a5fc7bba0184d0165d559fc2b0fc46168ef40
+  ExpoModulesCore: 64abda7af7cf659d2fa092934e29c6f4ea7e849f
+  ExpoSystemUI: a6ee69bdbe8bc6caf815117fb5e09330cd820448
+  EXRandom: 06978dcf45075f3c9e17ae5e726b887316ee9877
+  EXSecureStore: fa0fdde1c81ceee2a3cb0519e649feae42767969
+  EXSplashScreen: 7872675b95bb07c25f922b3d3dfae70c76fb5a00
   FBLazyVector: c71c5917ec0ad2de41d5d06a5855f6d5eda06971
   FBReactNativeSpec: 8f6ca650f85cc1a622ee41045532632a2a08c725
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
@@ -564,10 +564,10 @@ SPEC CHECKSUMS:
   React-jsiexecutor: df6abc9fafbecb8e5b7a5fbc5e6d4bd017d594d5
   React-jsinspector: 34e23860273a23695342f58eed3ffd3ba10c31e0
   react-native-get-random-values: 30b3f74ca34e30e2e480de48e4add2706a40ac8f
-  react-native-safe-area-context: 5cf05f49df9d17261e40e518481f2e334c6cd4b5
-  react-native-segmented-control: 7ce68fa4a9240ba599156795bfaf25c1c2481b89
+  react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
+  react-native-segmented-control: 06607462630512ff8eef652ec560e6235a30cc3e
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
-  react-native-webview: e9e45ecf842acae5117ea6d3d91612540bebe36b
+  react-native-webview: 28a8636d97ee641f2ee8f20492d7a6c269c1d703
   React-perflogger: cc76a4254d19640f1d8ad1c66fdee800414b805c
   React-RCTActionSheet: 7448f049318d8d7e8a9a1ebb742ada721757eea8
   React-RCTAnimation: fb9b3fa1a4a9f5e6ab01b3368693ce69860ba76a
@@ -580,12 +580,12 @@ SPEC CHECKSUMS:
   React-RCTVibration: c7f845861e79eae13dc1e8217a3cf47a3945b504
   React-runtimeexecutor: 493d9abb8b23c3f84e19ae221eeba92cadcb70dc
   ReactCommon: 8fea6422328e2fc093e25c9fac67adbcf0f04fb4
-  RNCAsyncStorage: 4b6538222ce3f01f61011f512226ba3aaa0dc336
-  RNCCheckbox: 7e2cd6ea8e200210c36fe0898bbe200826bdaf56
-  RNCClipboard: f49f3de56b40d0f4104680dabadc7a1f063f4fd4
-  RNCMaskedView: f127cd9652acfa31b91dcff613e07ba18b774db6
-  RNExitApp: 7d81855142a4d11eb75f4f06fdebf5a950d7aef2
-  RNGestureHandler: e5c7cab5f214503dcefd6b2b0cefb050e1f51c4a
+  RNCAsyncStorage: 0bef6a21517c0254bd6bd59a3672963abfa0d18e
+  RNCCheckbox: 6369808337432cdbd5025d62ceced2480b4c51df
+  RNCClipboard: 99fc8ad669a376b756fbc8098ae2fd05c0ed0668
+  RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
+  RNExitApp: c4e052df2568b43bec8a37c7cd61194d4cfee2c3
+  RNGestureHandler: e1ad51d31a580755079d5124d3ab66f0fcaa8311
   RNReanimated: 7f143675d94978c3555345d5bfa8ed6ae800c5d3
   RNScreens: 522705f2e5c9d27efb17f24aceb2bf8335bc7b8e
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f

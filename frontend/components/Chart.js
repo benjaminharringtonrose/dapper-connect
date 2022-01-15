@@ -6,7 +6,7 @@ import {
   ChartYLabel,
   monotoneCubicInterpolation,
 } from "@rainbow-me/animated-charts";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { useTheme } from "react-native-paper";
 import { runOnJS } from "react-native-reanimated";
@@ -18,14 +18,31 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 const Chart = ({ containerStyle, chartPrices }) => {
   const { colors } = useTheme();
 
-  const data = chartPrices
-    ? chartPrices?.map((item) => {
-        return {
-          x: item[0],
-          y: item[1],
-        };
-      })
-    : [];
+  // const [points, setPoints] = useState([]);
+
+  // useEffect(() => {
+  //   calculate();
+  // }, [chartPrices]);
+
+  // const calculate = () => {
+  //   const data = chartPrices?.map((item) => {
+  //     return {
+  //       x: item[0],
+  //       y: item[1],
+  //     };
+  //   });
+  //   setPoints(monotoneCubicInterpolation({ data, range: 200 }));
+  // };
+
+  const data =
+    chartPrices && chartPrices.length > 0
+      ? chartPrices?.map((item) => {
+          return {
+            x: item[0],
+            y: item[1],
+          };
+        })
+      : new Array(80).fill({ x: "0", y: "0" });
 
   const points = monotoneCubicInterpolation({ data, range: 200 });
 

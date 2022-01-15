@@ -1,5 +1,4 @@
-import { Feather } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Fontisto, Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useNavigation } from "@react-navigation/native";
@@ -15,7 +14,7 @@ import { web3 } from "../api/web3";
 import { BalanceInfo, FadeInView, IconTextButton } from "../components";
 import { FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { AccountsModal, CreateAccountModal, ReceiveModal, SendModal } from "../modals";
+import { AccountsModal, CreateAccountModal, ReceiveModal, SendModal, SwapModal } from "../modals";
 import { AppStackParamList } from "../navigation";
 import { getAccountRequested } from "../store/account";
 import { resetHoldings } from "../store/market";
@@ -26,7 +25,7 @@ import {
   removeAccountRequested,
 } from "../store/wallet/slice";
 import { Holding } from "../types";
-import { CurrencyFormatter } from "../util";
+import { CurrencyFormatter, getPriceColor } from "../util";
 
 import RootView from "./RootView";
 
@@ -35,6 +34,7 @@ const AssetsScreen = () => {
   const sendModalRef = useRef<Modalize>(null);
   const receiveModalRef = useRef<Modalize>(null);
   const createAccountModalRef = useRef<Modalize>(null);
+  const swapModalRef = useRef<Modalize>(null);
 
   const { holdings } = useAppSelector((state) => state.market);
   const { loadingGetAccount } = useAppSelector((state) => state.account);
@@ -45,8 +45,6 @@ const AssetsScreen = () => {
   const dispatch = useAppDispatch();
   const connector = useWalletConnect();
   const { colors } = useTheme();
-
-  console.log(web3.eth.accounts.wallet.length);
 
   const [selectedHolding, setSelectedHolding] = useState<Holding>(undefined);
   const [selectedAddress, setSelectedAddress] = useState<string | undefined>(
@@ -147,7 +145,7 @@ const AssetsScreen = () => {
   return (
     <RootView>
       <>
-        <View style={{ paddingBottom: SIZES.padding, paddingTop: SIZES.radius }}>
+        <View style={{ paddingVertical: SIZES.radius }}>
           {/* Header - Wallet Info */}
           <View
             style={{
@@ -166,37 +164,38 @@ const AssetsScreen = () => {
               displayAmount={totalWallet}
               changePercentage={percentageChange}
               colors={colors}
+              address={selectedAddress}
             />
             {/* Buttons */}
             <View
               style={{
                 flexDirection: "row",
-                marginTop: 30,
-                marginBottom: -15,
+                marginVertical: SIZES.radius,
                 paddingHorizontal: SIZES.radius,
               }}
             >
               <IconTextButton
                 label={"Send"}
-                customIcon={() => <Feather name={"upload"} size={24} color={colors.background} />}
-                containerStyle={{
-                  flex: 1,
-                  height: 40,
-                  marginRight: SIZES.radius,
-                }}
+                customIcon={() => <Feather name={"upload"} size={24} color={colors.text} />}
                 onPress={() => sendModalRef.current?.open()}
                 colors={colors}
+                containerStyle={{ flex: 1 }}
               />
               <IconTextButton
                 label={"Receive"}
-                customIcon={() => <Feather name={"download"} size={24} color={colors.background} />}
-                containerStyle={{
-                  flex: 1,
-                  height: 40,
-                  marginRight: SIZES.radius,
-                }}
+                customIcon={() => <Feather name={"download"} size={24} color={colors.text} />}
                 onPress={() => receiveModalRef.current?.open()}
                 colors={colors}
+                containerStyle={{ flex: 1 }}
+              />
+              <IconTextButton
+                label={"Swap"}
+                customIcon={() => (
+                  <Ionicons name={"swap-horizontal"} size={24} color={colors.text} />
+                )}
+                onPress={() => swapModalRef.current?.open()}
+                colors={colors}
+                containerStyle={{ flex: 1 }}
               />
             </View>
           </View>
@@ -205,7 +204,6 @@ const AssetsScreen = () => {
         <FlatList
           data={holdings}
           keyExtractor={(item, index) => item?.id || `${index}-flatlist`}
-          contentContainerStyle={{ marginTop: SIZES.padding }}
           refreshControl={
             <RefreshControl
               refreshing={loadingGetAccount}
@@ -216,7 +214,7 @@ const AssetsScreen = () => {
           ListHeaderComponent={
             <View style={{ paddingHorizontal: SIZES.padding }}>
               {/* Header Label */}
-              <View style={{ flexDirection: "row", marginTop: SIZES.radius }}>
+              <View style={{ flexDirection: "row" }}>
                 <Text style={[FONTS.body5, { flex: 1, color: colors.textGray }]}>{"Asset"}</Text>
                 <Text
                   style={[FONTS.body5, { flex: 1, color: colors.textGray, textAlign: "right" }]}
@@ -232,21 +230,7 @@ const AssetsScreen = () => {
             </View>
           }
           renderItem={({ item }) => {
-            const priceColor =
-              item?.priceChangePercentageInCurrency7d === 0
-                ? colors.textGray
-                : item?.priceChangePercentageInCurrency7d > 0
-                ? colors.success
-                : colors.error;
-
-            // const backgroundColor = selectedHolding?.id
-            //   ? item?.id === selectedHolding?.id
-            //     ? colors.accent
-            //     : colors.background
-            //   : item?.id === holdings?.[0]?.id
-            //   ? colors.accent
-            //   : colors.background;
-
+            const priceColor = getPriceColor(item?.priceChangePercentageInCurrency7d, colors);
             return (
               <TouchableOpacity
                 style={{
@@ -358,6 +342,12 @@ const AssetsScreen = () => {
             setSelectedAddress(address);
             createAccountModalRef.current?.close();
           }}
+        />
+        <SwapModal
+          ref={swapModalRef}
+          colors={colors}
+          address={selectedAddress}
+          onPress={() => swapModalRef.current?.close()}
         />
       </>
     </RootView>

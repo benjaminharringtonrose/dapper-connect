@@ -101,7 +101,7 @@ export const getPriceColor = (
   colors: ReactNativePaper.ThemeColors
 ) => {
   if (priceChangePercentage === 0) {
-    return COLORS.lightGray3;
+    return colors.textGray;
   } else if (priceChangePercentage > 0) {
     return colors.success;
   } else {

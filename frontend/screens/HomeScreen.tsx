@@ -43,6 +43,8 @@ const HomeScreen = () => {
     );
   };
 
+  console.log("render");
+
   const onSelectOneWeek = () => {
     setSelectedNumDays(Days.seven);
     setSelectedInterval(Interval.hourly);
