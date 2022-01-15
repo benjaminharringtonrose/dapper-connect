@@ -1,4 +1,4 @@
-import { Feather, Fontisto, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useNavigation } from "@react-navigation/native";
@@ -10,7 +10,6 @@ import { Alert, FlatList, Image, RefreshControl, Text, TouchableOpacity, View } 
 import { Modalize } from "react-native-modalize";
 import { useTheme } from "react-native-paper";
 
-import { web3 } from "../api/web3";
 import { BalanceInfo, FadeInView, IconTextButton } from "../components";
 import { FONTS, icons, SIZES } from "../constants";
 import { useAppDispatch, useAppSelector } from "../hooks";
